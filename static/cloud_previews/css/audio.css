@@ -1,0 +1,56 @@
+body{
+    margin: 0;
+}
+.fixed-bottom{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#controls{
+    height: 60px;
+    background-color: #25282c;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    flex-direction: row;
+}
+#controls span{
+    cursor: pointer;
+    height: 54px;
+    width: 54px;
+    top: 0 !important;
+    margin: 4px;
+}
+#controls span i{
+    color: white;
+    font-size: 45px;
+    padding-top: 6px;
+    padding-left: 4px;
+}
+#controls div{
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+}
+#controls div.extend{
+    flex-grow: 1;
+}
+#controls div input#play-head{
+    width: 100%;
+}
+#controls div.vol-wrap *{
+    cursor: pointer;
+}
+#controls div.vol-wrap input#vol-control{
+    display: none;
+    width: 0;
+}
+#controls div.vol-wrap:hover input#vol-control{
+    display: flex !important;
+    width: 100% !important;
+}
+#controls div.vol-wrap:hover span{
+    display: none !important;
+}
+

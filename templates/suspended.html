@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Kelp Account Suspended</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta charset="UTF-8">
+        <link rel="shortcut icon" href="/favicon">
+        <link rel="stylesheet" href="/static/css/bootstrap/bootstrap-swc_interface.css">
+        <link rel="stylesheet" href="/static/css/base_styles/base_style.css">
+        <link rel='stylesheet' href="/static/css/pages/suspend.css">
+
+        <script src="/static/js/jquery/jquery.min.js"></script>
+        <script src="/static/js/popper/popper.min.js"></script>
+        <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+
+        <script src="/static/js/modules/moment.min.js"></script>
+        <script src="/static/js/modules/moment-precise-range.js"></script>
+    </head>
+    <body>
+        <div class="wrapper fadeInDown">
+            <div class="card w-50">
+                <div class="card-header text-center text-danger">
+                    <br>
+                    <h3>Your account was {{ "<b>permanently</b>"|safe if user.get_suspend_time() == -1 }} suspended</h3>
+                    <br>
+                </div>
+                <div class="fadeIn first card-body">
+                    <div>
+                        {% if user.get_suspend_time() != -1 %}
+                            <p><b>Suspended until:</b> {{ user.get_suspend_time().strftime("%d.%m.%Y - %H:%M") }}</p>
+                        {% endif %}
+                        <div class="text-left container">
+                            {% if user.get_suspend_message() != "" %}
+                                <b>Reason:</b> <br>
+                                <div class="ml-1">{{ user.get_suspend_message()|safe }}</div>
+                            {% else %}
+                                <br>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-secondary">
+                    {% if user.get_suspend_time() == -1 %}
+                        <a href="/" class="underlineHover fadeIn fourth">Home</a>
+                        <a href="/" class="underlineHover fadeIn fourth ml-3">Support</a>
+                    {% else %}
+                        Remaining time:<br> <span id="time-left"></span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if user.get_suspend_time() != -1 %}
+            <script>
+                let span = document.getElementById("time-left")
+                let until = moment(new Date({{ user.get_suspend_timestamp() * 1000 }}))
+                setInterval(()=>{
+                    let now = moment(new Date())
+                    span.innerText = moment.preciseDiff(now, until)
+                }, 1000)
+            </script>
+        {% endif %}
+    </body>
+</html>

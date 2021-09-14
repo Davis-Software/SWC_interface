@@ -1,0 +1,55 @@
+{% extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/code_generator/code_generator_nav.css">
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron bg-1">
+        <h1>Kelp Code Generator</h1>
+    </div>
+
+    <div class="row mx-0">
+
+        <div class="col-lg-3 col-md-4 col-sm-12 mt-4">
+            <div class="card card-hover">
+                <div class="card-body">
+                    <img>
+                    <a href="/code-generator/npc" class="stretched-link"></a>
+                </div>
+                <div class="card-footer"><h5>NPC</h5></div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-12 mt-4">
+            <div class="card card-hover">
+                <div class="card-body">
+                    <img>
+                    <a href="/code-generator/message" class="stretched-link"></a>
+                </div>
+                <div class="card-footer"><h5>Interactive Message</h5></div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-12 mt-4">
+            <div class="card card-hover">
+                <div class="card-body">
+                    <img>
+                    <a href="/code-generator/sidebar" class="stretched-link"></a>
+                </div>
+                <div class="card-footer"><h5>Sidebar</h5></div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-12 mt-4">
+            <div class="card card-hover">
+                <div class="card-body">
+                    <img>
+                    <a href="/code-generator/inventory" class="stretched-link"></a>
+                </div>
+                <div class="card-footer"><h5>Inventory</h5></div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block pre_head %}
+{#        <title>{{ app.name }}</title>#}
+        <title>{{ app.name }} {{ "- " + request.path.split("/")[1].capitalize() if request.path != "/" else "" }}</title>
+    {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SWC Web Interface">
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon">
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap-swc_interface.css">
+    <link rel="stylesheet" href="/static/css/base_styles/base_style.css">
+    <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
+
+    <link rel="stylesheet" href="/static/font/material_icons/material_icons.css">
+
+    <script src="/static/js/jquery/jquery.min.js"></script>
+    <script src="/static/js/popper/popper.min.js"></script>
+    <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+
+    <script src="/static/js/modules/modalGenerator.js"></script>
+    <script src="/static/js/modules/cookie_tools.js"></script>
+
+    {% block base_head %}{% endblock %}
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div id="modal-wrapper"></div>
+
+    {% block nav %}
+        {% include "components/navbar.html" %}
+    {% endblock %}
+
+    <div id="navbar-spacer"></div>
+    {% block body %}{% endblock %}
+    {% block body_extensions %}{% endblock %}
+
+    {% block base_scripts %}{% endblock %}
+    {% block footer %}{% endblock %}
+
+    <script src="/static/js/base_scripts/base_script.js"></script>
+    {% include "components/cookie_notice.html" %}
+</body>
+</html>

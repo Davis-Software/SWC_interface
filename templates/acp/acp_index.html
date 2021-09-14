@@ -1,0 +1,44 @@
+{% extends "base/acp_base.html" %}
+
+{% block body %}
+
+    <div class="text-center mt-5 mb-5">
+        <h4>Welcome <a href="/user/{{ user.get_username() }}" target="_blank">{{ user.get_username() }}</a></h4>
+    </div>
+
+    <div class="row m-0">
+        <div class="col-3">
+            <div class="card h-100">
+                <div class="card-header">Stats</div>
+                <div class="card-body">
+                    Users :  <br>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card h-100">
+                <div class="card-header">Report Stats</div>
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card h-100">
+                <div class="card-header">Debug Info</div>
+                <div class="card-body">
+                    Application name: {{ app.name }} <br>
+                    Application version: {{ app.version }} <br>
+                    Your user: {{ user }} <br>
+                </div>
+            </div>
+        </div>
+{#        <div class="col-12 mt-2">#}
+{#            <div class="card h-100">#}
+{#                <div class="card-header"></div>#}
+{#                <div class="card-body">{{  }}</div>#}
+{#            </div>#}
+{#        </div>#}
+    </div>
+
+{% endblock %}

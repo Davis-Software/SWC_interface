@@ -1,0 +1,126 @@
+body{
+    overflow: hidden;
+}
+
+textarea.form-control{
+    transition: none;
+    min-height: 35vh;
+    border-radius: 0.5rem;
+}
+
+.card-link{
+    cursor: pointer;
+}
+
+#user-nav{
+    width: 15vw;
+    height: calc(92vh - 48px);
+    border-right: solid 1px #111;
+    overflow-y: hidden;
+}
+#user-list{
+    height: calc(92vh - 48px - 118px);
+    display: inherit !important;
+    flex-wrap: inherit !important;
+    overflow-y: auto;
+}
+#user-list .spinner-border{
+    margin-top: 25vh;
+    margin-left: 6.5vw;
+}
+#user-list .user-btn{
+    background-color: transparent;
+    color: white;
+    width: 100%;
+    border: none;
+    text-align: left;
+    padding: 5px;
+    transition: all .2s;
+}
+#user-list .user-btn:hover{
+    background-color: #555;
+    padding-left: 30px;
+}
+#user-list .user-btn.active{
+    border: none;
+    outline: none;
+    background-color: #4CAF50;
+    color: white;
+    padding-left: 30px;
+}
+#user-list .user-btn small{
+    color: var(--bs-info);
+    transform: scale(0.65) rotate(45deg);
+}
+#user-list .user-btn.active small{
+    color: var(--bs-white);
+}
+.opt-list .btn{
+    min-width: 10vw;
+}
+.btn-nostyle{
+    background-color: transparent;
+    width: 100%;
+    border: none;
+    color: white;
+    padding: 5px;
+    margin-top: 20px;
+    transition: all .2s;
+}
+.btn-nostyle:hover{
+    background-color: #555;
+    margin-top: 15px;
+    padding: 10px;
+    color: var(--success) !important;
+}
+.btnbottom{
+    width: 15vw;
+    border-right: solid 1px #111;
+    height: 60px;
+}
+.tab-content{
+    width: calc(100vw - 15vw);
+}
+#user-content{
+    overflow-y: auto;
+    height: calc(100vh - 90px);
+}
+#user-content .spinner-border{
+    margin-left: 45vw;
+    margin-top: 30vh;
+}
+.btn i.material-icons{
+    vertical-align: middle;
+    line-height: 0 !important;
+    position: relative;
+    top: -2px;
+}
+#user-content .collapse{
+    max-height: 45vh;
+    overflow-y: auto;
+}
+#user-content .collapsing{
+    max-height: 45vh;
+}
+
+
+.user-options{
+    height: 92vh;
+}
+.user-info-sec{
+    border: 2px var(--primary) solid;
+}
+.user-option-sec{
+    border: 1px var(--warning) solid;
+    height: calc(80% - 2rem);
+}
+
+.form-control{
+    transition: all .3s;
+    background-color: #272b30;
+    color: #fff;
+}
+.form-control:focus{
+    background-color: #272b30;
+    color: #fff;
+}

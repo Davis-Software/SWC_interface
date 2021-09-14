@@ -1,0 +1,107 @@
+{% extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/user/user_settings.css">
+{% endblock %}
+
+{% block body %}
+<main class="pt-5 container">
+    <div id="accordion">
+        <div class="card link-expander-card">
+            <div class="card-header card-link cursor-pointer" data-bs-toggle="collapse" data-bs-target="#collapse_one">
+                <span class="card-link test link-expander">Account</span>
+            </div>
+            <div class="collapse show" id="collapse_one" data-bs-parent="#accordion">
+                <div class="card-body">
+                    <div class="bg-dark p-3 mb-3">
+                        <div class="row">
+                            <img class="col user-img-change" data-user="{{ user.get_username() }}" src="{{ user.get_avatar() }}" alt="{{ user.get_username() }}">
+                            <div class="col mt-3">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <span>Username: <b>{{ user.get_username() }}</b></span> <br>
+                                        <span>Member since: <b>{{ user.get_created().strftime("%d.%m.%Y %H:%M") }}</b></span> <br>
+                                        <span>Description:</span>
+                                        <div class="border border-info p-3 mt-2">
+                                            {{ user.get_description(use_markdown=True)|safe }}
+                                        </div>
+                                        <div class="description-raw" hidden>{{ user.get_description() }}</div>
+                                    </div>
+                                    <div class="col button-group mt-4">
+                                        <span>Options:</span> <br>
+                                        <button class="btn btn-outline-info m-1" onclick="edit_description()">Edit Description</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card link-expander-card">
+            <div class="card-header card-link cursor-pointer" data-bs-toggle="collapse" data-bs-target="#collapse_two">
+                <span class="card-link link-expander">Security</span>
+            </div>
+            <div class="collapse" id="collapse_two" data-bs-parent="#accordion">
+                <div class="card-body">
+                    <div class="bg-dark p-3 mb-3">
+                        <h4>Password</h4>
+                        <div class="mt-3">
+                            <span>Password Info</span>
+                            <ul>
+                                <li>Hash Type: SHA-512</li>
+                                <li>Hash Integrity: {{ "✔️" if True else "❌" }}</li>
+                            </ul>
+                            <hr>
+                            <button class="btn btn-warning" onclick="change_password()">Change Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card link-expander-card">
+            <div class="card-header card-link cursor-pointer" data-bs-toggle="collapse" data-bs-target="#collapse_privacy">
+                <span class="card-link link-expander">Privacy</span>
+            </div>
+            <div class="collapse" id="collapse_privacy" data-bs-parent="#accordion">
+                <div class="card-body">
+                    <div class="bg-dark p-3 mb-3">
+                        <h4>Cookies</h4>
+                        <div class="mt-3 ml-3">
+                            <ul class="list-unstyled">
+                                <li>Allowed: <span id="cookies-allowed"></span></li>
+                                <li>In use: <span id="cookies-count"></span></li>
+                                <li><small>*excluding user session</small></li>
+                            </ul>
+                            <h5>Options</h5>
+                            <a role="button" class="btn btn-danger" href="/clear-cookies/html">Deny and delete all cookies</a> <br>
+                            <span class="text-danger">Warning: </span> <span>This option will also delete your user session thus logging you out!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card link-expander-card">
+            <div class="card-header card-link cursor-pointer text-danger" data-bs-toggle="collapse" data-bs-target="#collapse_three">
+                <span class="card-link link-expander">Delete Files or Account</span>
+            </div>
+            <div class="collapse" id="collapse_three" data-bs-parent="#accordion">
+                <div class="card-body">
+                    <div class="p-3 mb-3 m-2 border border-danger">
+                        <h4 class="text-danger">Danger Zone</h4>
+                        <div class="mt-3 d-lg-flex justify-content-lg-center">
+                            <button class="btn btn-danger m-1" onclick="delete_data('account')">Delete account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script src="/static/js/user/user_settings.js"></script>
+{% endblock %}

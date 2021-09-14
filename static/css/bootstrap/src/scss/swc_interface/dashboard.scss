@@ -1,0 +1,81 @@
+$dashboard-padding-value: 25px;
+
+:root{
+    --dashboard-padding-value: #{$dashboard-padding-value};
+}
+#dashboard-wrapper{
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(var(--bs-gutter-y) * -1);
+
+    .dashboard-element{
+        flex: 0 0 auto;
+        transition: all .3s;
+        width: 33.33333333%;
+
+        .dashboard-element-body{
+            position: relative;
+            background-color: #121212;
+            margin: 10px;
+            padding: $dashboard-padding-value;
+            border-radius: 5px;
+            height: calc(100% - var(--dashboard-padding-value));
+
+            .dashboard-element-label{
+                padding-top: 1vh;
+                font-size: 0.8em;
+                font-family: 'Source Sans Pro', sans-serif;
+                color: #808080;
+            }
+
+            .progress{
+                border-radius: 0;
+                .progress-bar{
+                    background-color: cornflowerblue;
+                }
+            }
+
+            .text-button{
+                background: none;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+                outline: none;
+
+                &.green{
+                    color: #00bc8c;
+                }
+                &.red{
+                    color: #E74C3C;
+                }
+                &.blue{
+                    color: #0065b8;
+                }
+            }
+
+            .hold-bottom{
+                position: absolute;
+                bottom: 20px;
+            }
+
+            .expand-max{
+                width: calc(100% - var(--dashboard-padding-value) - 10px);
+            }
+
+        }
+    }
+}
+
+
+
+
+
+
+
+@media (max-width: 992px) {
+    #dashboard-wrapper .dashboard-element{
+        width: 100%;
+    }
+}

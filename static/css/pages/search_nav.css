@@ -1,0 +1,26 @@
+.cursor-pointer{
+    transition: all .2s;
+    cursor: pointer;
+}
+
+.hit-group a{
+    position: relative;
+    display: flex;
+    background-color: transparent;
+    color: #fff;
+}
+.hit-group a:hover{
+  background-color: #3e444c;
+}
+.hit-group a img{
+    position: relative;
+    left: -5px;
+    height: 64px;
+    width: 64px;
+    border-radius: 15%;
+    object-fit: cover;
+}
+.hit-group a div{
+    position: relative;
+    left: 5px;
+}

@@ -1,0 +1,70 @@
+.ext-card{
+    padding: 20px;
+}
+.bg-1{
+    height: 200px;
+    background-color: transparent;
+    background-image: url("/static/img/backgrounds/background_mc_kelp_underwater_2.png");
+    background-position: bottom;
+    background-size: cover;
+    text-align: center;
+}
+.jumbotron h1{
+    font-size: 65px;
+}
+
+#plugins-main{
+    width: 100%;
+    min-height: 40vh;
+    border-radius: 0.5rem;
+    padding: 20px 20px 50px 20px;
+    background-color: var(--dark);
+}
+
+.list-group-item.media{
+    background-color: transparent;
+    display: flex;
+}
+.list-group-item.media img{
+    height: 64px;
+    width: 64px;
+    border-radius: 15%;
+    object-fit: cover;
+    z-index: 100;
+}
+.list-group-item.media .spinner{
+    position: absolute;
+    top: 29px;
+    left: 36px;
+    z-index: 99;
+}
+.list-group-item.media .media-body h5 a{
+    font-size: 1rem;
+    font-family: Rubik, serif;
+}
+.list-group-item.media .media-body h5 small{
+    font-size: .8rem;
+    font-family: Roboto, serif;
+}
+.list-group-item.media .media-body h5 a:hover{
+    text-decoration: none;
+}
+
+.card-header .material-icons{
+    vertical-align: middle;
+    line-height: 0 !important;
+    position: relative;
+    top: -2px;
+}
+
+.spacer{
+    margin-bottom: 200px;
+}
+
+.spinner-holder .spinner-border, .spinner-holder{
+    text-align: center;
+}
+
+@media screen and (max-width: 481px){
+
+}

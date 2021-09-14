@@ -1,0 +1,83 @@
+{% extends "base/acp_base.html" %}
+
+{% block head %}
+    <link rel='stylesheet' href="/static/css/acp/acp_users.css">
+    <script src="/static/js/modules/remarkable.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="d-inline-flex">
+        <div id="user-nav">
+            <h5 class="p-3">Users</h5>
+            <div>
+                <div class="mb-2">
+                    <input type="search" class="form-control bg-dark text-light" placeholder="Search..." id="user-search">
+                </div>
+                <div class="fixed-bottom btnbottom">
+                    <button class="btn-nostyle text-info" onclick="new_user()">New User</button>
+                </div>
+            </div>
+            <ul id="user-list" class="nav">
+                <li><div class="spinner-border"></div></li>
+            </ul>
+        </div>
+        <div class="tab-content" id="user-content"></div>
+    </div>
+
+
+    <template id="user-content-template">
+        <div class="user-options m-3 p-3">
+            <div class="d-flex align-items-center p-3 user-info-sec">
+                <div class="flex-shrink-0">
+                    <img src="/user?avatar=user_username" alt="" class="mr-3 mt-1" style="height:120px;">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h4>
+                        <a href="/user/user_username" target="_blank">user_username</a>
+                        <small>
+{#                            <a href="#" onclick="edit_name('module_uuid', 'module_name')">Edit name</a>#}
+                        </small>
+                    </h4>
+                    <ul class="list-unstyled">
+                        <li>Member since: user_created</li>
+                        <li>EMail: user_email</li>
+                        <li>Admin: user_admin</li>
+                    </ul>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <ul class="float-end list-unstyled opt-list">
+                        <li class="mb-1">
+                            <button class="btn btn-warning" onclick="delete_avatar('user_username')">Delete Avatar</button>
+                        </li>
+                        <li class="mb-1">
+                            <button class="btn btn-danger" onclick="suspend_user('user_username')">Suspend User</button>
+                        </li>
+                        <li class="mb-1">
+                            <button class="btn btn-danger" onclick="delete_user('user_username')">Delete User</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-1 p-3 user-option-sec">
+                <div class="container" id="opt-acc_user_username">
+
+                    <div class="card link-expander-card">
+                        <div class="card-header card-link" data-bs-toggle="collapse" data-bs-target="#collapse_one_3">
+                            <span class="card-link link-expander">Description</span>
+                        </div>
+                        <div class="collapse" id="collapse_one_3" data-bs-parent="#opt-acc_module_id">
+                            <div class="card-body">
+                                <div class="float-left markdown-container">
+                                    user_description
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </template>
+    <script src="/static/js/acp/acp_users.js"></script>
+{% endblock %}

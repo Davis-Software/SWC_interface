@@ -1,0 +1,18 @@
+{%extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pages/index.css">
+{% endblock %}
+
+{% block body %}
+    <div class="bg-info h-25">
+        <h1 class="pt-5 text-center">everything still wip</h1>
+    </div>
+    <div id="dashboard-wrapper">
+        {% include "pages/dashboard_elements/cloud_element.html" %}
+        {% include "pages/dashboard_elements/joke_element.html" %}
+        {% include "pages/dashboard_elements/news_element.html" %}
+    </div>
+
+    <script src="/static/js/pages/index.js"></script>
+{% endblock %}

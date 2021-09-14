@@ -1,0 +1,8 @@
+SQLAlchemy
+flask
+flask_sqlalchemy
+Markdown
+requests
+Werkzeug
+schedule
+mammoth

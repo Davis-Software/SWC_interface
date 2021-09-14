@@ -1,0 +1,71 @@
+{% extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/user/user_profile.css">
+    <script>
+        const username = "{{ profile.get_username() }}"
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="pt-5">
+        {% if profile.get_suspended() %}
+            {% if (user and user.get_admin()) %}
+                <h1 class="mb-5 text-warning text-center">This account is suspended! Non-Admins won't be able to see it's contents</h1>
+            {% else %}
+                <div class="p-1 bg-dark">
+                    <div class="container">
+                        <div class="media p-3">
+                            <img src="/static/img/lock.png" alt="account locked" class="me-3 mt-3 rounded-circle bg-light user-avatar">
+                            <div class="media-body pt-4">
+                                <h4>{{ profile.get_username() }}</h4>
+                            </div>
+                        </div>
+                        <div class="media-body mt-4">
+                            <h5 class="text-warning text-center">This account is suspended</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+        {% if (user and user.get_admin()) or not profile.get_suspended() %}
+            <div class="p-1 bg-dark">
+                <div class="container">
+                    <div class="d-flex align-items-center p-3">
+                        <div class="flex-shrink-0">
+                            <img src="{{ profile.get_avatar() }}" alt="{{ profile.get_username() }}" class="me-3 mt-1 rounded-circle bg-light user-avatar">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4>
+                                {{ '<i class="material-icons">build</i>'|safe if profile.get_admin() }}
+                                {{ profile.get_username() }}
+                            </h4>
+                            <span>Member since: {{ profile.get_created().strftime("%d.%m.%Y") }}</span> <br>
+                        </div>
+                        <div>
+                            <ul class="float-right list-unstyled">
+                                {% if profile.get_username() != session.get("username") %}
+                                    {% if user and user.get_admin() %}
+                                        <li class="mb-1">
+                                            <button class="btn btn-outline-warning" onclick="admin_options('{{ profile.get_username() }}', {{ "true" if profile.get_admin() else "false" }}, {{ "true" if profile.get_suspended() else "false" }})">&nbsp;&nbsp;&nbsp;Options&nbsp;&nbsp;&nbsp;</button>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="mb-1">
+                                        <a href="/profile/settings" class="btn btn-outline-warning">&nbsp;&nbsp;Settings&nbsp;&nbsp;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="container px-5 py-4">
+                        <span id="description">{{ profile.get_description(True)|safe }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+
+    <script src="/static/js/user/user_profile.js"></script>
+{% endblock %}

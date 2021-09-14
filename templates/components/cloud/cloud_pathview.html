@@ -1,0 +1,13 @@
+<ul class="path-view">
+    <li>
+        <a href="/{{ request.path.split("/")[1] }}">
+            <span>{{ "My Cloud" if personal else "Public Cloud" }} ></span>
+        </a>
+    </li>
+    <li class="path-refresh">
+        <span class="material-icons">refresh</span>
+    </li>
+    <li class="progress">
+        <div class="progress-bar progress-bar-animated" style="width: 2%;"></div>
+    </li>
+</ul>

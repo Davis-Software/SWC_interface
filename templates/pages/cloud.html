@@ -1,0 +1,35 @@
+{% extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pages/cloud.css">
+    <script src="/static/js/pages/cloud.js" defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="cloud-wrapper">
+        {% include "components/cloud/cloud_sidebar.html" %}
+
+        <div class="cloud-main">
+            {% include "components/cloud/cloud_pathview.html" %}
+            <div class="table-scroller">
+                <table class="table table-hover cloud-files">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Options</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="file-preview">
+                <iframe></iframe>
+            </div>
+        </div>
+    </div>
+
+    {% include "components/cloud/cloud_html_templates.html" %}
+{% endblock %}

@@ -1,0 +1,67 @@
+:root {
+  --dashboard-padding-value: 25px;
+}
+
+#dashboard-wrapper {
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: calc(var(--bs-gutter-y) * -1);
+}
+#dashboard-wrapper .dashboard-element {
+  flex: 0 0 auto;
+  transition: all 0.3s;
+  width: 33.33333333%;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body {
+  position: relative;
+  background-color: #121212;
+  margin: 10px;
+  padding: 25px;
+  border-radius: 5px;
+  height: calc(100% - var(--dashboard-padding-value));
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .dashboard-element-label {
+  padding-top: 1vh;
+  font-size: 0.8em;
+  font-family: "Source Sans Pro", sans-serif;
+  color: #808080;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .progress {
+  border-radius: 0;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .progress .progress-bar {
+  background-color: cornflowerblue;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .text-button {
+  background: none;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .text-button.green {
+  color: #00bc8c;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .text-button.red {
+  color: #E74C3C;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .text-button.blue {
+  color: #0065b8;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .hold-bottom {
+  position: absolute;
+  bottom: 20px;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .expand-max {
+  width: calc(100% - var(--dashboard-padding-value) - 10px);
+}
+
+@media (max-width: 992px) {
+  #dashboard-wrapper .dashboard-element {
+    width: 100%;
+  }
+}
+
+/*# sourceMappingURL=dashboard.css.map */

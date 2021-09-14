@@ -1,0 +1,20 @@
+/*!
+ * SWC_Interface-Bootstrap
+ * (contains bootstrap)
+*/
+
+@import "variables";
+@import "bootstrap/bootstrap";
+@import "bootswatch";
+@import "swc_interface/root";
+
+footer{
+    background-color: $dark;
+    .footer-copyright{
+        background-color: #222;
+    }
+}
+
+::selection {
+    background: $info;
+}

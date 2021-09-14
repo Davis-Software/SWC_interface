@@ -1,0 +1,12 @@
+body{
+    background-image: url(/static/img/backgrounds/background_mc_kelp_underwater_0.png);
+}
+.form-control{
+    transition: all .3s;
+    background-color: #272b30;
+    color: #fff;
+}
+.form-control:focus{
+    background-color: #272b30;
+    color: #fff;
+}

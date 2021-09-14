@@ -1,0 +1,32 @@
+body{
+    margin: 0 4px;
+}
+#editor{
+    height: calc(100vh - 29px);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.bottom-bar{
+    background-color: #25282c;
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.bottom-bar .spacer{
+    width: 40px;
+    height: 100%;
+    border-bottom-left-radius: 5px;
+}
+.bottom-bar .content{
+    flex-grow: 1;
+    border-top: solid 1px #191919;
+    border-bottom-right-radius: 5px;
+    color: white;
+}
+.bottom-bar .content span{
+    font-size: 14px;
+    line-height: 25px;
+    margin-left: 12px;
+}

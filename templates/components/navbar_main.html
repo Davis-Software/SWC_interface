@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg fixed-top bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="/favicon" alt="logo" style="width:60px;">
+            <span class="text-white ms-1">{{ app.name }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <i class="material-icons">menu</i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+                {% if account != None %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary text-white" href="/dashboard">
+                            <span class="text-white material-icons">dashboard</span> DASHBOARD
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary text-white" href="/server">
+                            <span class="text-white material-icons">dns</span> SERVER
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary text-white" href="/tools">
+                            <span class="text-white material-icons">build</span> TOOLS
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        {% if request.path.split("/")[1] not in ["cloud", "personal-cloud"] %}
+                            <a class="btn btn-primary text-white" href="/personal-cloud">
+                                <span class="text-white material-icons">cloud</span> CLOUD
+                            </a>
+                        {% else %}
+                            <a class="btn btn-primary text-white" href="/{{ "personal-cloud" if request.path.split("/")[1] == "cloud" else "cloud" }}">
+                                <span class="text-white material-icons">cloud</span> {{ "MY CLOUD" if request.path.split("/")[1] == "cloud" else "PUBLIC CLOUD" }}
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-lg-0 mt-sm-3">
+                        <div class="btn-section">
+                            <div class="dropdown ml-3">
+                                <button class="btn btn-outline-info dropdown-toggle" data-bs-auto-close="outside" data-bs-toggle="dropdown">{{ account }} </button>
+                                <div class="dropdown-menu dropdown-menu-left user-account-dropdown">
+                                    <a class="dropdown-item" href="/profile">Your Profile</a>
+                                    <hr class="dropdown-divider">
+                                    <a class="dropdown-item" href="/profile/settings">Settings</a>
+                                    {% if user.get_admin() %}
+                                        <a class="text-warning dropdown-item" href="/acp">Admin Panel</a>
+                                    {% endif %}
+                                    <hr class="dropdown-divider">
+                                    <a class="dropdown-item text-danger" href="/logout">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li>
+                        <div>
+                            <a class="btn btn-outline-success text-white" href="/login{{ "?goto_confirm=" + request.path if request.path != "/" }}">Login</a>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

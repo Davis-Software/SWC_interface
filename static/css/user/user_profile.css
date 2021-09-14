@@ -1,0 +1,110 @@
+i.material-icons{
+    vertical-align: middle;
+    line-height: 0 !important;
+    position: relative;
+    top: -2px;
+}
+
+.border-normal{
+    border-radius: 2.6rem;
+}
+
+
+
+
+
+.ext-card{
+    padding: 20px;
+    min-width: 250px;
+}
+.ext-card .card{
+    transition: all .2s;
+    cursor: pointer;
+}
+.ext-card .card:hover{
+    transform: scale(1.02);
+}
+.card{
+    border-radius: 2.6rem;
+}
+.card .card-body{
+    padding: 0;
+    z-index: 100;
+    min-height: 100px;
+}
+.card .card-body img{
+    border-top-right-radius: 2.6rem;
+    border-top-left-radius: 2.6rem;
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.user-avatar{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+.ext-card .card-body small{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    transform: rotate(45deg);
+}
+.ext-card .card-body small.hidden{
+    display: none;
+}
+.ext-card .card-body .spinner{
+    position: absolute;
+    top: 90px;
+    left: 45%;
+    z-index: -20;
+}
+.ext-card .card-footer *{
+    z-index: 150;
+}
+.card .card-footer{
+    margin-bottom: 10px;
+}
+.card .card-footer span{
+    margin-left: 5px;
+}
+
+.spacer{
+    margin-bottom: 200px;
+}
+
+.spinner-holder .spinner-border, .spinner-holder{
+    text-align: center;
+}
+
+.tab-content>.active {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 481px){
+    .ext-card{
+        padding: 20px;
+        max-width: 100vw;
+    }
+    .border-normal{
+        width: 100%;
+        border-radius: 0;
+        margin: 0 !important;
+    }
+    .media{
+        flex-wrap: wrap;
+    }
+    .media-body ul {
+        margin-top: 15px;
+        display: flex;
+    }
+    .media-body ul li{
+        margin: 2px;
+    }
+    .tab-content>.active {
+        display: block;
+    }
+}

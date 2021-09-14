@@ -1,0 +1,22 @@
+#navbar-spacer{
+    height: 0 !important;
+}
+#main-jumbotron{
+    background-image: url(/static/img/backgrounds/background_code_python_blur.png);
+    background-position: center;
+    height: 15vh;
+    padding-top: 5vh;
+}
+#info-section{
+    margin-top: 5vh;
+    min-height: 70vh;
+    text-align: center;
+}
+.info-text{
+    max-width: 50vw;
+    margin-left: 25vw;
+}
+
+.container div{
+    text-align: left;
+}

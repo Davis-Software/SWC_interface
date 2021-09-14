@@ -1,0 +1,28 @@
+{% extends "base/minimal_base.html" %}
+
+{%block pre_head%}
+    <meta name="description" content="{{error}}">
+    <title>Error {{ error_code }} - {{ error }}</title>
+{%endblock%}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pages/error_page.css">
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron text-center" id="main-jumbotron">
+        <h1 class="main-title">{{ error_code }} - {{ error }}</h1>
+    </div>
+    <div id="info-section">
+        <p class="info-text">{{error_description}}</p>
+        {% if error_traceback %}
+            <p> <a data-bs-toggle="collapse" href="#coll1">SHOW TRACEBACK</a> </p>
+            <div class="collapse container text-left bg-dark" id="coll1">
+                <div class="p-3">
+                    {{ error_traceback|safe }}
+                </div>
+            </div>
+        {% endif %}
+        <button onclick="history.back()" class="btn btn-primary mt-4">Go back</button>
+    </div>
+{% endblock %}

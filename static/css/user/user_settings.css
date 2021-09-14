@@ -1,0 +1,36 @@
+.user-img-change{
+    max-width: 500px !important;
+    max-height: 500px !important;
+    padding: 0;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    object-fit: cover;
+}
+.user-img-change:hover{
+    transition: all .3s;
+    transform: scale(1.01);
+    border: solid 1px gray;
+}
+
+#avatar-preview{
+    object-fit: cover;
+}
+
+.form-control{
+    transition: all .3s;
+    background-color: #272b30;
+    color: #fff;
+}
+.form-control:focus{
+    background-color: #272b30;
+    color: #fff;
+}
+.card-header{
+    cursor: pointer;
+}
+.card-header span.material-icons{
+    vertical-align: middle;
+    line-height: 0 !important;
+    position: relative;
+    top: -2px;
+}

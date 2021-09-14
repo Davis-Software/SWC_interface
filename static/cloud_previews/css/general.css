@@ -1,0 +1,16 @@
+@import "/static/font/material_icons/material_icons.css";
+@import "/static/css/bootstrap/bootstrap-swc_interface.css";
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+::-webkit-scrollbar-track {
+    background: rgb(102, 102, 102);
+}
+::selection {
+    background: #3498db;
+}

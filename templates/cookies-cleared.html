@@ -1,0 +1,21 @@
+{% extends "base/minimal_base.html" %}
+
+{% block body %}
+    <div class="jumbotron text-center" id="main-jumbotron">
+        <h1 class="main-title">Cleared all cookies associated with this website</h1>
+    </div>
+    <div id="info-section" class="container">
+        <h5 class="info-text">Cleared Cookies:</h5>
+        <ul class="list-group">
+            {% if not cleared_cookies %}
+                <li class="list-group-item bg-dark"><b>no cookies cleared</b></li>
+            {% endif %}
+            {% for cookie in cleared_cookies %}
+                <li class="list-group-item bg-dark"><b>{{ cookie.name }}</b> - <span class="text-info">{{ py.utils.string.shorten_to(cookie.value, 45, False) }}</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="text-center mt-5">
+        <a class="btn btn-info" href="/">Back to Home</a>
+    </div>
+{% endblock %}
