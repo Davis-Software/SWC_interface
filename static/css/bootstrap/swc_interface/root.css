@@ -150,12 +150,27 @@
 .cloud-wrapper .cloud-sidebar .sidebar-switch .nav-item .nav-link.active {
   background-color: var(--bs-primary) !important;
 }
+.cloud-wrapper .cloud-sidebar.should-close .cloud-sidebar-toggle {
+  display: block !important;
+}
+.cloud-wrapper .cloud-sidebar.should-close .cloud-sidebar-toggle i {
+  display: none;
+}
+.cloud-wrapper .cloud-sidebar.should-close .cloud-sidebar-toggle span {
+  display: block;
+}
 .cloud-wrapper .cloud-sidebar.closed {
   width: 60px !important;
   min-width: 60px !important;
 }
 .cloud-wrapper .cloud-sidebar.closed .cloud-sidebar-toggle {
   display: block !important;
+}
+.cloud-wrapper .cloud-sidebar.closed .cloud-sidebar-toggle i {
+  display: block !important;
+}
+.cloud-wrapper .cloud-sidebar.closed .cloud-sidebar-toggle span {
+  display: none !important;
 }
 .cloud-wrapper .cloud-sidebar.closed .cloud-sidebar-head {
   display: none !important;
@@ -169,8 +184,10 @@
 .cloud-wrapper .cloud-main {
   flex-grow: 1;
 }
+.cloud-wrapper .cloud-main div.path-view {
+  overflow-y: auto;
+}
 .cloud-wrapper .cloud-main ul.path-view {
-  overflow-x: auto;
   height: 40px;
   display: flex;
   flex-direction: row;
@@ -178,6 +195,7 @@
   border-radius: 5px;
   background-color: #191919;
   padding: 0;
+  white-space: nowrap;
 }
 .cloud-wrapper .cloud-main ul.path-view li:first-child {
   margin-left: 4px !important;
@@ -294,6 +312,12 @@
 }
 .cloud-wrapper .cloud-main table tbody tr td button.material-icons.inactive {
   display: none;
+}
+.cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(:first-child), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(:first-child) {
+  display: none;
+}
+.cloud-wrapper .cloud-main table.invisible {
+  display: none !important;
 }
 .cloud-wrapper .cloud-main .file-preview {
   display: none;

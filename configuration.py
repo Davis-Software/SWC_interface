@@ -41,7 +41,8 @@ use_extra_databases = False
 connect_database_on_enable = True
 
 temp_db_template = {
-
+    "exposed_cloud_files": {},
+    "exposed_cloud_files_positions": {}
 }
 
 cloud_save_path = "E:\\SWC"

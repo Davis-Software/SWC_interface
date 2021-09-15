@@ -1,7 +1,8 @@
 import os
 
-import mammoth
-from __init__ import RequestCode, send_file, render_template
+import uuid
+from datetime import datetime
+from __init__ import RequestCode, send_file, render_template, temp_db
 from utils import file_utils
 from os.path import join, isdir, exists
 
@@ -52,18 +53,10 @@ def load_file_preview(path: str, personal: bool, user: str):
     elif file_type == "ARCHIVE":
         pass
 
-    elif file_type == "OPEN_DOCUMENT":
+    elif file_type in ["OPEN_DOCUMENT", "OFFICE_DOCUMENT"]:
         return render_template(
-            "components/cloud/previews/open_docs.html"
-        )
-
-    elif file_type == "OFFICE_DOCUMENT":
-        with open(location, "rb") as f:
-            data = mammoth.convert_to_html(f)
-        return render_template(
-            "components/cloud/previews/office_docs.html",
-            file_content=data.value,
-            warnings=data.messages
+            "components/cloud/previews/ms_docs.html",
+            position=expose_cloud_file(location)
         )
 
     elif file_type == "XHTML":      # must add feature to view html and rendered
@@ -102,6 +95,11 @@ def load_file_preview(path: str, personal: bool, user: str):
             file_name=path
         )
 
+    elif file_type == "PDF":
+        return render_template(
+            "components/cloud/previews/pdf.html"
+        )
+
 
 def download_file(path: str, personal: bool, user: str):
     location = file_utils.make_cloud_path(
@@ -113,6 +111,35 @@ def download_file(path: str, personal: bool, user: str):
         return {}, RequestCode.ClientError.MisdirectedRequest
 
     return send_file(location), RequestCode.Success.OK
+
+
+def expose_cloud_file(location):
+    print(
+        temp_db.data["exposed_cloud_files_positions"],
+        temp_db.data["exposed_cloud_files"]
+    )
+    if location in temp_db.data["exposed_cloud_files_positions"]:
+        position = temp_db.data["exposed_cloud_files_positions"][location]
+        temp_db.data["exposed_cloud_files"][position] = {
+            "target": location,
+            "exposed": datetime.now()
+        }
+        return position
+
+    position = str(uuid.uuid4())
+    temp_db.data["exposed_cloud_files_positions"][location] = position
+    temp_db.data["exposed_cloud_files"][position] = {
+        "target": location,
+        "exposed": datetime.now()
+    }
+
+    return position
+
+
+def download_exposed_file(position):
+    return send_file(
+        temp_db.data["exposed_cloud_files"][position]["target"]
+    )
 
 
 class FileOperation:

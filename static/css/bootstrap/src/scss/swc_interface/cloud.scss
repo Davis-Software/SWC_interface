@@ -89,12 +89,29 @@ $min-cloud-width: 200px;
             }
         }
 
+        &.should-close{
+            .cloud-sidebar-toggle{
+                display: block !important;
+                i{
+                    display: none;
+                }
+                span{
+                    display: block;
+                }
+            }
+        }
         &.closed{
             width: 60px !important;
             min-width: 60px !important;
 
             .cloud-sidebar-toggle{
                 display: block !important;
+                i{
+                    display: block !important;
+                }
+                span{
+                    display: none !important;
+                }
             }
             .cloud-sidebar-head{
                 display: none !important;
@@ -112,8 +129,10 @@ $min-cloud-width: 200px;
     .cloud-main{
         flex-grow: 1;
 
+        div.path-view{
+            overflow-y: auto;
+        }
         ul.path-view{
-            overflow-x: auto;
             height: 40px;
             display: flex;
             flex-direction: row;
@@ -121,6 +140,7 @@ $min-cloud-width: 200px;
             border-radius: 5px;
             background-color:#191919;
             padding: 0;
+            white-space: nowrap;
             li:first-child{
                 margin-left: 4px !important;
             }
@@ -237,6 +257,14 @@ $min-cloud-width: 200px;
                         display: none;
                     }
                 }
+            }
+            &.mobile-view{
+                tbody tr td:not(:first-child), thead tr th:not(:first-child){
+                    display: none;
+                }
+            }
+            &.invisible{
+                display: none !important;
             }
         }
         .file-preview{

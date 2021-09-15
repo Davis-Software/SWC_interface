@@ -1,8 +1,9 @@
-from __init__ import session, abort
+from __init__ import session, abort, temp_db
 from cloud import file_adapter
 from utils import api_utils
 from utils.request_code import RequestCode
 from user_data.user_auth import cloud_required
+from datetime import datetime, timedelta
 
 
 @cloud_required
@@ -30,3 +31,11 @@ def handle_arguments(args, form, c_path: str, personal_cloud: bool):
         return api_utils.make_response(
             *file_adapter.download_file(c_path, personal_cloud, user)
         )
+
+
+def handle_exposition(position):
+    if position in temp_db.data["exposed_cloud_files"]:
+        if temp_db.data["exposed_cloud_files"][position]["exposed"] > datetime.now() + timedelta(minutes=5):
+            abort(RequestCode.ClientError.RequestTimeout)
+        return file_adapter.download_exposed_file(position)
+    abort(RequestCode.ClientError.NotFound)

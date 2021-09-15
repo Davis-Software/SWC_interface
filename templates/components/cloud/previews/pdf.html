@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>image preview</title>
+    <title>pdf preview</title>
     <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
-    <link rel="stylesheet" href="/static/cloud_previews/css/open_docs.css">
+    <link rel="stylesheet" href="/static/cloud_previews/css/pdf.css">
 </head>
 <body>
-    <iframe src=""></iframe>
+    <embed src="{{ request.path }}?download" type="application/pdf">
 </body>
 </html>

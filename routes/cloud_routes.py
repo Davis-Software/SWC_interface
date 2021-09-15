@@ -24,3 +24,10 @@ def route_personal_cloud(cloud_path):
         return ret or api_utils.empty_success()
 
     return render_template("pages/cloud.html", personal=True)
+
+
+@app.route("/exposed-cloud/<string:position>")
+def route_exposed_cloud(position):
+    return request_handler.handle_exposition(
+        position
+    )

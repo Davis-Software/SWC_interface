@@ -83,7 +83,8 @@ function load_files(){
     }
     function generate_file_list(files){
         cloud_main.classList.remove("file-loaded")
-        preview_frame.contentDocument.documentElement.innerHTML = ""
+        // preview_frame.contentDocument.documentElement.innerHTML = ""
+        preview_frame.innerHTML = ""
 
         if(!files){
             show_error("Unknown Error (more info in console)")
@@ -169,14 +170,14 @@ function load_files(){
 
     xhr.send()
 }
-preview_frame.contentDocument.documentElement.addEventListener("loadstart", _ => {
+preview_frame.addEventListener("loadstart", _ => {
     path_view.classList.add("load")
     load_progress.style.width = "0%"
 })
-preview_frame.contentDocument.documentElement.addEventListener("progress", e => {
+preview_frame.addEventListener("progress", e => {
     load_progress.style.width = `${e.loaded/e.total*100}%`
 })
-preview_frame.contentDocument.documentElement.addEventListener("load", _ => {
+preview_frame.addEventListener("load", _ => {
     load_progress.classList.add("progress-bar-striped")
     load_progress.style.width = "100%"
     setTimeout(_ => {
@@ -241,3 +242,27 @@ window.addEventListener("popstate", (e, _) => {
     e.preventDefault()
     update_info()
 })
+
+
+{
+    let cloud_table = document.querySelector(".cloud-files")
+    let sidebar = document.querySelector(".cloud-sidebar")
+    document.querySelector(".cloud-sidebar-toggle").addEventListener("click", _ => {
+        cloud_table.classList.toggle("invisible")
+        sidebar.classList.toggle("closed")
+    })
+    function resized() {
+        if (window.outerWidth < 1300) {
+            sidebar.classList.add("should-close")
+            sidebar.classList.add("closed")
+            cloud_table.classList.add("mobile-view")
+        } else {
+            sidebar.classList.remove("should-close")
+            sidebar.classList.remove("closed")
+            cloud_table.classList.remove("mobile-view")
+        }
+    }
+
+    window.addEventListener("resize", resized)
+    resized()
+}
