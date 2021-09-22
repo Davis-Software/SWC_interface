@@ -140,12 +140,18 @@ class Modal{
         this._AppendElement(span, footer)
         return span
     }
-    Custom(html){
-        this.wrapper_body.innerHTML += html;
-        return this
+    Custom(html, tag="div", footer=false){
+        let elem = document.createElement(tag)
+        elem.id = Math.random().toString()
+        elem.innerHTML = html
+        this._AppendElement(elem, footer)
+        return elem
     }
     show(){
         this._GetInstance().show()
+    }
+    on(event, callback){
+        this.wrapper.addEventListener(`${event}.bs.modal`, callback)
     }
     hide(){
         this._GetInstance().hide()

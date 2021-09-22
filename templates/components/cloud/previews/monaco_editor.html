@@ -50,31 +50,33 @@
         editor.renderer.setOption("theme", "ace/theme/tomorrow_night")
 
         editor.addEventListener("change", _ => {
-            info.innerHTML = "* Unsaved Changes * || <a href='#'>Save</a>"
+            info.innerHTML = "* Unsaved Changes * || <a onclick='save(editor)' href='#'>Save</a>"
         })
+
+        async function save(editor){
+            info.innerHTML = "Saving..."
+            let data = editor.session.getValue()
+
+            let form = new FormData()
+            form.append("data", data)
+            form.append("type", "TEXT")
+            form.append("mode", "save")
+
+            let response = await fetch("?post-set", {
+                method: "POST",
+                body: form
+            })
+            if(response.ok){
+                info.innerHTML = "File Saved"
+            }else{
+                info.innerHTML = "Error saving file: " + response.statusText
+            }
+        }
 
         editor.commands.addCommand({
             name: "save",
             bindKey: {win: "Ctrl-s", mac: "Command-s"},
-            exec: async (editor) => {
-                info.innerHTML = "Saving..."
-                let data = editor.session.getValue()
-
-                let form = new FormData()
-                form.append("data", data)
-                form.append("type", "TEXT")
-                form.append("mode", "save")
-
-                let response = await fetch("?post-set", {
-                    method: "POST",
-                    body: form
-                })
-                if(response.ok){
-                    info.innerHTML = "File Saved"
-                }else{
-                    info.innerHTML = "Error saving file: " + response.statusText
-                }
-            }
+            exec: save
         })
     </script>
 </body>

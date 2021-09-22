@@ -6,7 +6,7 @@
 * 
 
 ### Bugs
-* 
+* limit number of description characters
 
 
 ### Suggestions

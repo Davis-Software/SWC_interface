@@ -9,7 +9,7 @@ from utils import api_utils
 @auth_required
 def route_cloud(cloud_path):
     if request.args or request.form:
-        ret = request_handler.handle_arguments(request.args, request.form, cloud_path, False)
+        ret = request_handler.handle_arguments(request.args, request.form, request.files, cloud_path, False)
         return ret or api_utils.empty_success()
 
     return render_template("pages/cloud.html", personal=False)
@@ -20,7 +20,7 @@ def route_cloud(cloud_path):
 @auth_required
 def route_personal_cloud(cloud_path):
     if request.args or request.form:
-        ret = request_handler.handle_arguments(request.args, request.form, cloud_path, True)
+        ret = request_handler.handle_arguments(request.args, request.form, request.files, cloud_path, True)
         return ret or api_utils.empty_success()
 
     return render_template("pages/cloud.html", personal=True)

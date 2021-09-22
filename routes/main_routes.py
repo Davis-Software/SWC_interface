@@ -1,4 +1,5 @@
 from __init__ import *
+from utils.request_code import RequestCode
 from user_data.user_auth import auth_required, is_admin
 
 
@@ -15,9 +16,9 @@ def dashboard():
 
 @app.route("/server")
 def server():
-    return render_template()
+    abort(RequestCode.ServerError.NotImplemented)
 
 
 @app.route("/tools")
 def tools():
-    return render_template()
+    abort(RequestCode.ServerError.NotImplemented)

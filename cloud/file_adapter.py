@@ -113,6 +113,18 @@ def download_file(path: str, personal: bool, user: str):
     return send_file(location), RequestCode.Success.OK
 
 
+def upload_files(path: str, personal: bool, user: str, files):
+    location = file_utils.make_cloud_path(
+        join(user, path) if personal else path,
+        personal
+    )
+    for file in files:
+        file = files.get(file)
+        file.save(
+            join(location, file.filename)
+        )
+
+
 def expose_cloud_file(location):
     print(
         temp_db.data["exposed_cloud_files_positions"],
@@ -148,6 +160,16 @@ class FileOperation:
             join(user, path) if personal else path,
             personal
         )
+
+    def new_file(self, name: str):
+        with open(join(self.location, name), "w") as f:
+            f.write("")
+
+    def new_folder(self, name: str):
+        os.mkdir(join(
+            self.location,
+            name
+        ))
 
     def save(self, data: str):
         with open(self.location, "w") as f:

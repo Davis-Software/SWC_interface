@@ -68,6 +68,7 @@ function load_files(){
 
     function apply_functionality(elem, file){
         let link = elem.querySelector("td:first-child a")
+        let option_download = elem.querySelector("button[data-action=download]")
 
         link.href = `${location.pathname}/${file.name}`
         if(quick_loading_mode){
@@ -80,11 +81,18 @@ function load_files(){
                 update_info()
             })
         }
+
+        option_download.addEventListener("click", _ => {
+            if(file.directory){
+
+            }else{
+                download_file(`${location.pathname}/${file.name}`, file.name)
+            }
+        })
     }
     function generate_file_list(files){
         cloud_main.classList.remove("file-loaded")
-        // preview_frame.contentDocument.documentElement.innerHTML = ""
-        preview_frame.innerHTML = ""
+        preview_frame.contentDocument.documentElement.innerHTML = ""
 
         if(!files){
             show_error("Unknown Error (more info in console)")
