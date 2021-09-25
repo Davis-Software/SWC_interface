@@ -1,15 +1,14 @@
-let quick_loading_mode = true
+let mobile = window.outerWidth < 1300
 
+let sidebar = document.querySelector(".cloud-sidebar")
 let cloud_main = document.querySelector(".cloud-main")
 let path_view = document.querySelector(".path-view")
 let load_progress = path_view.querySelector(".progress .progress-bar")
 let path_view_list = document.querySelector(".path-view")
 let cloud_refresh = document.querySelector(".path-refresh")
 
-let cloud_file_template = document.querySelector("#template-cloud-file")
-// let cloud_file_trash_template = document.querySelector("#template-cloud-file-trash")
-let cloud_folder_template = document.querySelector("#template-cloud-folder")
-// let cloud_folder_trash_template = document.querySelector("#template-cloud-folder-trash")
+let cloud_file_template = document.querySelector("#template-cloud-desktop")
+let cloud_file_mobile_template = document.querySelector("#template-cloud-mobile")
 
 let cloud_list = document.querySelector(".cloud-files tbody")
 let preview_frame = document.querySelector("iframe")
@@ -40,58 +39,14 @@ async function apply_path_view(){
         path_view_list.appendChild(elem)
     }
 }
-function show_error(error){
-    cloud_list.innerHTML = `
-    <tr>
-        <td><span class="text-danger">${error}</span></td>
-        <td><span class="text-danger">-</span></td>
-        <td><span class="text-danger">-</span></td>
-        <td><span class="text-danger">-</span></td>
-        <td><span class="text-danger">-</span></td>
-    </tr>
-    `
-}
-function show_info(info){
-    cloud_list.innerHTML = `
-    <tr>
-        <td>${info}</td>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
-    </tr>
-    `
-}
+
 function load_files(){
     path_view.classList.add("load")
     load_progress.style.width = "10%"
 
-    function apply_functionality(elem, file){
-        let link = elem.querySelector("td:first-child a")
-        let option_download = elem.querySelector("button[data-action=download]")
-
-        link.href = `${location.pathname}/${file.name}`
-        if(quick_loading_mode){
-            link.addEventListener("click", e => {
-                e.preventDefault()
-                history.pushState({
-                    html: document.body.innerHTML,
-                    pageTitle: document.title
-                }, "cloud-navigation", link.href)
-                update_info()
-            })
-        }
-
-        option_download.addEventListener("click", _ => {
-            if(file.directory){
-
-            }else{
-                download_file(`${location.pathname}/${file.name}`, file.name)
-            }
-        })
-    }
     function generate_file_list(files){
         cloud_main.classList.remove("file-loaded")
+        sidebar.classList.remove("preview-mode")
         preview_frame.contentDocument.documentElement.innerHTML = ""
 
         if(!files){
@@ -102,33 +57,130 @@ function load_files(){
         if(files.length === 0){
             show_info("Empty Directory")
         }
+
+        function apply_navigation(elem, file){
+            elem = elem.querySelector(".cloud-item-name")
+            let file_name = file.directory ? file.name + "/" : file.name
+            let link = document.createElement("a")
+            link.innerHTML = `
+                <i class="material-icons text-white">${file.icon}</i>
+                ${file_name}
+            `
+            link.href = `${location.pathname}/${file.name}`
+            link.addEventListener("click", e => {
+                e.preventDefault()
+                navigate_path(link.href, false)
+            })
+            elem.appendChild(link)
+        }
+        function populate_options(elem, file){
+            elem = elem.querySelector(".cloud-item-options")
+            if(file.directory){
+                new QuickButton(elem)
+                    .class("text-info")
+                    .title("Download Folder as ZIP")
+                    .icon("archive")
+                    .onClick(_ => {
+                        console.log(`${location.pathname}/${file.name}`, file.name)
+                    })
+                    .spawn()
+            }else{
+                new QuickButton(elem)
+                    .class("text-info")
+                    .title("Download File")
+                    .icon("file_download")
+                    .onClick(_ => {
+                        download_file(`${location.pathname}/${file.name}`, file.name)
+                    })
+                    .spawn()
+            }
+            new QuickButton(elem)
+                .class("blue")
+                .title("Share link")
+                .icon("share")
+                .onClick(_ => {})
+                .spawn()
+        }
+        function populate_operations(elem, file){
+            elem = elem.querySelector(".cloud-item-ops")
+            let file_or_folder = file.directory ? "Folder" : "File"
+            new QuickButton(elem)
+                .class("blue")
+                .title(`Cut ${file_or_folder}`)
+                .icon("content_cut")
+                .onClick()
+                .spawn()
+            new QuickButton(elem)
+                .class("blue")
+                .title(`Copy ${file_or_folder}`)
+                .icon("content_copy")
+                .onClick()
+                .spawn()
+            new QuickButton(elem)
+                .class("green")
+                .title(`Move ${file_or_folder}`)
+                .icon("drive_file_move")
+                .onClick()
+                .spawn()
+            new QuickButton(elem)
+                .class("yellow")
+                .title(`Rename ${file_or_folder}`)
+                .icon("edit")
+                .onClick()
+                .spawn()
+
+            let to_trash = new QuickButton(elem)
+                .class("orange")
+                .title(`Move ${file_or_folder} to trash`)
+                .icon("delete")
+                .onClick()
+                .spawn()
+                .return()
+            let remove = new QuickButton(elem)
+                .class("red")
+                .attr({hidden: null})
+                .title(`Delete ${file_or_folder}`)
+                .icon("delete_forever")
+                .onClick()
+                .spawn()
+                .return()
+            {
+                document.addEventListener("keydown", e => {
+                    if(e.key !== "x"){return}
+                    to_trash.hidden = true
+                    remove.hidden = false
+                })
+                document.addEventListener("keyup", e => {
+                    if(e.key !== "x"){return}
+                    to_trash.hidden = false
+                    remove.hidden = true
+                })
+            }
+        }
+
+        function create_apply_and_populate(file){
+            let elem = document.createElement("tr")
+            elem.innerHTML = (mobile ? cloud_file_mobile_template : cloud_file_template).innerHTML
+            apply_navigation(elem, file)
+            populate_options(elem, file)
+            elem.querySelector(".cloud-item-type").innerText = file.type
+            elem.querySelector(".cloud-item-size").innerText = file.size
+            populate_operations(elem, file)
+            cloud_list.appendChild(elem)
+        }
         for(let folder of files){
             if(!folder.directory){continue}
             if(folder.name === "trash"){continue}
-
-            let elem = document.createElement("tr")
-            elem.innerHTML = cloud_folder_template.innerHTML
-                .replace("var_folder_name", folder.name)
-                .replace("var_folder_size", folder.size)
-            apply_functionality(elem, folder)
-
-            cloud_list.appendChild(elem)
+            create_apply_and_populate(folder)
         }
         for(let file of files){
             if(file.directory){continue}
-
-            let elem = document.createElement("tr")
-            elem.innerHTML = cloud_file_template.innerHTML
-                .replace("var_file_name", file.name)
-                .replace("var_file_size", file.size)
-                .replace("var_file_type", file.type)
-            apply_functionality(elem, file)
-
-            cloud_list.appendChild(elem)
+            create_apply_and_populate(file)
         }
     }
     function start_file_preview(){
         cloud_main.classList.add("file-loaded")
+        sidebar.classList.add("preview-mode")
         preview_frame.src = location.href + "?preview"
     }
 
@@ -254,12 +306,12 @@ window.addEventListener("popstate", (e, _) => {
 
 {
     let cloud_table = document.querySelector(".cloud-files")
-    let sidebar = document.querySelector(".cloud-sidebar")
     document.querySelector(".cloud-sidebar-toggle").addEventListener("click", _ => {
-        cloud_table.classList.toggle("invisible")
+        cloud_table.classList.toggle("invis")
         sidebar.classList.toggle("closed")
     })
     function resized() {
+        mobile = window.outerWidth < 1300
         if (window.outerWidth < 1300) {
             sidebar.classList.add("should-close")
             sidebar.classList.add("closed")

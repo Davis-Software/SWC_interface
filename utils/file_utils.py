@@ -12,9 +12,10 @@ class FileIdentifier:
         file_type = file_name.split(".")[-1] if "." in file_name else ""
 
         self.file_name = file_name
-        self.file_type = self.identify(file_type)
-        self.file_extension = file_type
-        self.file_type_desc = self.file_type_description(self.file_type)
+        self.file_type = "Directory" if isdir(file) else self.identify(file_type)
+        self.file_extension = "Directory" if isdir(file) else file_type
+        self.file_type_desc = "Directory" if isdir(file) else self.file_type_description(self.file_type)
+        self.file_type_icon = "folder" if isdir(file) else self.file_type_icon_image(self.file_type)
 
     @staticmethod
     def identify(typ):
@@ -27,6 +28,10 @@ class FileIdentifier:
     @staticmethod
     def file_type_description(dict_key):
         return configuration.CloudFileTypes.DESCRIPTORS.get(dict_key)
+
+    @staticmethod
+    def file_type_icon_image(dict_key):
+        return configuration.CloudFileTypes.ICONS.get(dict_key)
 
 
 def make_cloud_path(path: str, personal: bool):

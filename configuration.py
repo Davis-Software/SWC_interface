@@ -65,6 +65,7 @@ class CloudFileTypes:
     PDF = "pdf"
 
     ALL = [k for k in locals().keys() if not k.startswith('_')]
+
     DESCRIPTORS = {     # Descriptions for file types; if none present variable name will be used but converted to lowercase and capitalized
         "FILE": "File",
         "TEXT": "Text File",
@@ -77,6 +78,20 @@ class CloudFileTypes:
         "VIDEO": "Video File",
         "PDF": "Portable Document"
     }
+
+    ICONS = {     # Icons for file types; if none present "insert_drive_file" will be used. Icons: https://material.io/resources/icons/
+        "TEXT": "text_snippet",
+        "ARCHIVE": "inventory_2",
+        "OFFICE_DOCUMENT": "article",
+        "OPEN_DOCUMENT": "article",
+        "XHTML": "code",
+        "MARKDOWN": "integration_instructions",
+        "IMAGE": "image",
+        "AUDIO": "audiotrack",
+        "VIDEO": "movie",
+        "PDF": "picture_as_pdf"
+    }
+
     for file_type in ALL:
         if file_type in DESCRIPTORS:
             continue

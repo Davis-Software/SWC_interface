@@ -98,6 +98,9 @@
   width: 60px !important;
   min-width: 60px !important;
 }
+.cloud-wrapper .cloud-sidebar.closed.preview-mode {
+  display: none !important;
+}
 .cloud-wrapper .cloud-sidebar.closed .cloud-sidebar-toggle {
   display: block !important;
 }
@@ -115,6 +118,9 @@
 }
 .cloud-wrapper .cloud-sidebar.closed .sidebar-switch {
   visibility: hidden !important;
+}
+.cloud-wrapper .cloud-sidebar.preview-mode ul div {
+  display: none !important;
 }
 .cloud-wrapper .cloud-main {
   flex-grow: 1;
@@ -248,10 +254,10 @@
 .cloud-wrapper .cloud-main table tbody tr td button.material-icons.inactive {
   display: none;
 }
-.cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(:first-child), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(:first-child) {
+.cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(:first-child, :nth-child(2)), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(:first-child, :nth-child(2)) {
   display: none;
 }
-.cloud-wrapper .cloud-main table.invisible {
+.cloud-wrapper .cloud-main table.invis tbody tr td:not(:first-child), .cloud-wrapper .cloud-main table.invis thead tr th:not(:first-child) {
   display: none !important;
 }
 .cloud-wrapper .cloud-main .file-preview {

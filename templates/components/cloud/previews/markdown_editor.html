@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>markdown preview</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+    <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
+    <link rel="stylesheet" href="/static/cloud_previews/css/markdown_editor.css">
+    <script src="/static/js/modules/highlight.min.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ace.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ext-error_marker.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ext-language_tools.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ext-modelist.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ext-searchbox.js"></script>
+    <script src="/static/cloud_previews/ace_editor/ext-spellcheck.js"></script>
+    <script>
+        ace.require("ace/ext/error_marker")
+        ace.require("ace/ext/language_tools")
+        ace.require("ace/ext/searchbox")
+        ace.require("ace/ext/spellcheck")
+        let mode_list = ace.require("ace/ext/modelist")
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="editor"></div>
+        <div class="markdown-container">{{ markdown|safe }}</div>
+        <div class="bottom-bar">
+            <div class="spacer"></div>
+            <div class="content">
+                <span id="file-info">File Saved</span>
+                <div id="view-switcher">
+                    <span data-mode="0">Preview</span>
+                    <span data-mode="1">Edit and view</span>
+                    <span data-mode="2">Editor</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        hljs.highlightAll()
+        document.querySelectorAll("*[href]").forEach(elem => {
+            elem.addEventListener("click", e => {
+                e.preventDefault()
+                window.open(
+                    elem.href,
+                    "_blank"
+                )
+            })
+        })
+
+        let editor = ace.edit("editor")
+        let preview = document.querySelector(".markdown-container")
+        let info = document.querySelector("#file-info")
+        let editor_wrapper = document.querySelector("#editor")
+        let editor_frame = document.querySelector(".ace_scrollbar")
+        let view_switcher = document.querySelector("#view-switcher")
+
+        editor_frame.addEventListener("scroll", _ => {
+            preview.scrollTo(0, editor_frame.scrollTop)
+        })
+        function switch_task(mode){
+            switch(mode){
+                case 0:
+                    editor_wrapper.classList.add("hide")
+                    preview.classList.remove("hide")
+                    preview.style.width = "100%"
+                    break
+                case 1:
+                    editor_wrapper.classList.remove("hide")
+                    preview.classList.remove("hide")
+                    editor_wrapper.style.width = "50%"
+                    preview.style.width = "50%"
+                    break
+                case 2:
+                    editor_wrapper.classList.remove("hide")
+                    preview.classList.add("hide")
+                    editor_wrapper.style.width = "100%"
+            }
+            localStorage.setItem("md_preview_mode", mode)
+        }
+        view_switcher.querySelectorAll("span").forEach(elem => {
+            elem.addEventListener("click", _ => {
+                view_switcher.querySelectorAll("span").forEach(elem => {elem.classList.remove("active")})
+                elem.classList.add("active")
+                switch_task(Number(elem.getAttribute("data-mode")))
+            })
+        })
+        view_switcher.querySelectorAll("span")[localStorage.getItem("md_preview_mode") || 0].click()
+
+        editor.session.setMode(
+            mode_list.getModeForPath("{{ file_name }}").mode
+        )
+        editor.insert(`{{ file_content|safe }}`.replaceAll("%---anf---%", "`"))
+
+        editor.setOption("cursorStyle", "smooth")
+        editor.setOption("behavioursEnabled", true)
+        editor.setOption("showPrintMargin", false)
+        editor.setOption("copyWithEmptySelection", true)
+        editor.setOption("enableBasicAutocompletion", true)
+        editor.setOption("enableLiveAutocompletion", true)
+
+        editor.renderer.setOption("animatedScroll", true)
+        editor.renderer.setOption("fadeFoldWidgets", true)
+        editor.renderer.setOption("scrollPastEnd", 1)
+        editor.renderer.setOption("theme", "ace/theme/tomorrow_night")
+
+        editor.addEventListener("change", _ => {
+            info.innerHTML = "* Unsaved Changes * || <a onclick='save(editor)' href='#'>Save</a>"
+        })
+
+        async function save(editor){
+            info.innerHTML = "Saving..."
+            let data = editor.session.getValue()
+
+            let form = new FormData()
+            form.append("data", data)
+            form.append("type", "TEXT")
+            form.append("mode", "save")
+
+            let response = await fetch("?post-set", {
+                method: "POST",
+                body: form
+            })
+            if(response.ok){
+                info.innerHTML = "File Saved"
+                location.reload()
+            }else{
+                info.innerHTML = "Error saving file: " + response.statusText
+            }
+        }
+
+        editor.commands.addCommand({
+            name: "save",
+            bindKey: {win: "Ctrl-s", mac: "Command-s"},
+            exec: save
+        })
+    </script>
+</body>
+</html>

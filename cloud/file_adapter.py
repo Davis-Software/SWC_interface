@@ -1,8 +1,10 @@
 import os
 
 import uuid
+import markdown
+from functools import wraps
 from datetime import datetime
-from __init__ import RequestCode, send_file, render_template, temp_db
+from __init__ import RequestCode, send_file, render_template, temp_db, request, make_response
 from utils import file_utils
 from os.path import join, isdir, exists
 
@@ -24,7 +26,8 @@ def file_getter(path: str, personal: bool, user: str):
                 "name": file,
                 "directory": isdir(full),
                 "size": file_utils.get_file_size(full),
-                "type": file_utils.FileIdentifier(full).file_type_desc
+                "type": file_utils.FileIdentifier(full).file_type_desc,
+                "icon": file_utils.FileIdentifier(full).file_type_icon
             })
         return file_list, RequestCode.Success.OK
 
@@ -33,6 +36,28 @@ def file_getter(path: str, personal: bool, user: str):
     }, RequestCode.Success.OK
 
 
+def check_for_accepted_preview(func):
+    @wraps(func)
+    def check(*args, **kwargs):
+        def returner():
+            if args != () or kwargs is not {}:
+                return func(*args, **kwargs)
+            return func()
+
+        if request.cookies.get("accepted-preview-warning"):
+            if request.cookies.get("accepted-preview-warning") == "forever":
+                return returner()
+            resp = make_response(returner())
+            resp.delete_cookie("accepted-preview-warning")
+            return resp
+        return render_template(
+            "components/cloud/previews/expose_warning.html"
+        )
+
+    return check
+
+
+@check_for_accepted_preview
 def load_file_preview(path: str, personal: bool, user: str):
     location = file_utils.make_cloud_path(
         join(user, path) if personal else path,
@@ -42,7 +67,7 @@ def load_file_preview(path: str, personal: bool, user: str):
     file_type = file_utils.FileIdentifier(location).file_type
 
     if file_type == "TEXT":
-        with open(location, "r") as f:
+        with open(location, "r", encoding="utf-8") as f:
             data = f.read()
         return render_template(
             "components/cloud/previews/monaco_editor.html",
@@ -60,7 +85,7 @@ def load_file_preview(path: str, personal: bool, user: str):
         )
 
     elif file_type == "XHTML":      # must add feature to view html and rendered
-        with open(location, "r") as f:
+        with open(location, "r", encoding="utf-8") as f:
             data = f.read()
         return render_template(
             "components/cloud/previews/monaco_editor.html",
@@ -69,12 +94,22 @@ def load_file_preview(path: str, personal: bool, user: str):
         )
 
     elif file_type == "MARKDOWN":
-        with open(location, "r") as f:  # same as above
+        with open(location, "r", encoding="utf-8") as f:  # same as above
             data = f.read()
         return render_template(
-            "components/cloud/previews/monaco_editor.html",
+            # "components/cloud/previews/markdown_preview.html",
+            "components/cloud/previews/markdown_editor.html",
             file_name=path,
-            file_content=data
+            file_content=data.replace("`", "%---anf---%"),
+            markdown=markdown.markdown(
+                data,
+                extensions=[
+                    "extra", "abbr", "attr_list", "def_list", "fenced_code", "footnotes", "md_in_html", "tables",
+                    "admonition",
+                    "codehilite", "legacy_attrs", "legacy_attrs", "meta", "nl2br", "sane_lists", "smarty", "toc",
+                    "wikilinks"
+                ]
+            )
         )
 
     elif file_type == "IMAGE":
@@ -97,7 +132,8 @@ def load_file_preview(path: str, personal: bool, user: str):
 
     elif file_type == "PDF":
         return render_template(
-            "components/cloud/previews/pdf.html"
+            "components/cloud/previews/g_docs.html",
+            position=expose_cloud_file(location)
         )
 
 
@@ -162,7 +198,7 @@ class FileOperation:
         )
 
     def new_file(self, name: str):
-        with open(join(self.location, name), "w") as f:
+        with open(join(self.location, name), "w", encoding="utf-8") as f:
             f.write("")
 
     def new_folder(self, name: str):
@@ -172,5 +208,5 @@ class FileOperation:
         ))
 
     def save(self, data: str):
-        with open(self.location, "w") as f:
+        with open(self.location, "w", encoding="utf-8") as f:
             f.write(data)

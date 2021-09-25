@@ -101,6 +101,9 @@ $min-cloud-width: 200px;
             }
         }
         &.closed{
+            &.preview-mode{
+                display: none !important;
+            }
             width: 60px !important;
             min-width: 60px !important;
 
@@ -122,6 +125,9 @@ $min-cloud-width: 200px;
             .sidebar-switch{
                 visibility: hidden !important;
             }
+        }
+        &.preview-mode ul div{
+            display: none !important;
         }
     }
 
@@ -259,12 +265,14 @@ $min-cloud-width: 200px;
                 }
             }
             &.mobile-view{
-                tbody tr td:not(:first-child), thead tr th:not(:first-child){
+                tbody tr td:not(:first-child , :nth-child(2)), thead tr th:not(:first-child , :nth-child(2)){
                     display: none;
                 }
             }
-            &.invisible{
-                display: none !important;
+            &.invis{
+                tbody tr td:not(:first-child), thead tr th:not(:first-child){
+                    display: none !important;
+                }
             }
         }
         .file-preview{

@@ -1,68 +1,22 @@
-<template id="template-cloud-file">
-    <td>
-        <a>var_file_name</a>
-    </td>
-    <td>
-        <button class="material-icons text-info ripple" title="Download file" data-action="download">file_download</button>
-        <button class="material-icons blue ripple" title="Share file link or direct download">share</button>
-    </td>
-    <td>var_file_type</td>
-    <td>var_file_size</td>
-    <td>
-        <button class="material-icons blue ripple" title="Cut file">content_cut</button>
-        <button class="material-icons blue ripple" title="Copy file">content_copy</button>
-        <button class="material-icons green ripple" title="Move file">drive_file_move</button>
-        <button class="material-icons yellow ripple" title="Rename folder">edit</button>
-        <button class="material-icons orange ripple" title="Move file to Trash">delete</button>
-        <button class="material-icons orange  ripple inactive" title="Delete file">delete_forever</button>
-    </td>
-</template>
-<template id="template-cloud-file-trash">
-    <td>
-        <a>var_file_name</a>
-    </td>
-    <td>
-        <button class="material-icons text-info" title="Download file" data-action="download">file_download</button>
-    </td>
-    <td>var_file_type</td>
-    <td>var_file_size</td>
-    <td>
-        <button class="material-icons green" title="Restore file from Trash">restore_from_trash</button>
-        <button class="material-icons orange inactive" title="Delete file">delete_forever</button>
-    </td>
+<template id="template-cloud-desktop">
+    <td class="cloud-item-name"></td>
+    <td class="cloud-item-options"></td>
+    <td class="cloud-item-type"></td>
+    <td class="cloud-item-size"></td>
+    <td class="cloud-item-ops"></td>
 </template>
 
-
-<template id="template-cloud-folder">
-    <td>
-        <a>var_folder_name/</a>
-    </td>
-    <td>
-        <button class="material-icons text-info" title="Download folder as ZIP" data-action="download">archive</button>
-        <button class="material-icons blue" title="Share folder link or direct download">share</button>
-    </td>
-    <td>Directory</td>
-    <td>var_folder_size</td>
-    <td>
-        <button class="material-icons blue" title="Cut file">content_cut</button>
-        <button class="material-icons blue" title="Copy file">content_copy</button>
-        <button class="material-icons green" title="Move file">drive_file_move</button>
-        <button class="material-icons yellow" title="Rename folder">edit</button>
-        <button class="material-icons orange" title="Move file to Trash">delete</button>
-        <button class="material-icons orange inactive" title="Delete file">delete_forever</button>
-    </td>
-</template>
-<template id="template-cloud-folder-trash">
-    <td>
-        <a>var_folder_name/</a>
-    </td>
-    <td>
-        <button class="material-icons text-info" title="Download folder as ZIP" data-action="download">file_download</button>
-    </td>
-    <td>var_file_type</td>
-    <td>var_file_size</td>
-    <td>
-        <button class="material-icons green" title="Restore folder from Trash">restore_from_trash</button>
-        <button class="material-icons orange inactive" title="Delete folder">delete_forever</button>
+<template id="template-cloud-mobile">
+    <td class="cloud-item-name"></td>
+    <td class="dropdown">
+        <button class="material-icons text-white ripple" data-bs-toggle="dropdown">
+            more_horiz
+        </button>
+        <ul class="dropdown-menu">
+            <li class="cloud-item-options"></li>
+            <li><span class="dropdown-item cloud-item-type"></span></li>
+            <li><span class="dropdown-item cloud-item-size"></span></li>
+            <li class="cloud-item-ops"></li>
+        </ul>
     </td>
 </template>
