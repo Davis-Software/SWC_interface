@@ -6,20 +6,9 @@
     <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
     <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
     <script src="/static/js/modules/highlight.min.js"></script>
+    <script src="/static/cloud_previews/js/markdown_preview.js" defer></script>
 </head>
 <body>
     <div class="container markdown-container">{{ markdown|safe }}</div>
-    <script>
-        hljs.highlightAll()
-        document.querySelectorAll("*[href]").forEach(elem => {
-            elem.addEventListener("click", e => {
-                e.preventDefault()
-                window.open(
-                    elem.href,
-                    "_blank"
-                )
-            })
-        })
-    </script>
 </body>
 </html>

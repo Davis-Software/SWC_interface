@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>markdown preview</title>
+    <title>html preview</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
     <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
-    <link rel="stylesheet" href="/static/cloud_previews/css/markdown_editor.css">
-    <script src="/static/js/modules/highlight.min.js"></script>
+    <link rel="stylesheet" href="/static/cloud_previews/css/html_editor.css">
     <script src="/static/cloud_previews/ace_editor/ace.js"></script>
     <script src="/static/cloud_previews/ace_editor/ext-error_marker.js"></script>
     <script src="/static/cloud_previews/ace_editor/ext-language_tools.js"></script>
@@ -21,12 +20,12 @@
         ace.require("ace/ext/spellcheck")
         let mode_list = ace.require("ace/ext/modelist")
     </script>
-    <script src="/static/cloud_previews/js/markdown_editor.js" defer></script>
+    <script src="/static/cloud_previews/js/html_preview.js" defer></script>
 </head>
 <body>
     <div id="wrapper">
         <div id="editor"></div>
-        <div class="markdown-container"></div>
+        <iframe class="html-container"></iframe>
         <div class="bottom-bar">
             <div class="spacer"></div>
             <div class="content">

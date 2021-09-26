@@ -17,6 +17,7 @@
         ace.require("ace/ext/spellcheck")
         let mode_list = ace.require("ace/ext/modelist")
     </script>
+    <script src="/static/cloud_previews/js/monaco_editor.js" defer></script>
 </head>
 <body>
     <div>
@@ -28,56 +29,5 @@
             </div>
         </div>
     </div>
-    <script>
-        let editor = ace.edit("editor")
-        let info = document.querySelector("#file-info")
-
-        editor.session.setMode(
-            mode_list.getModeForPath("{{ file_name }}").mode
-        )
-        editor.insert(`{{ file_content|safe }}`)
-
-        editor.setOption("cursorStyle", "smooth")
-        editor.setOption("behavioursEnabled", true)
-        editor.setOption("showPrintMargin", false)
-        editor.setOption("copyWithEmptySelection", true)
-        editor.setOption("enableBasicAutocompletion", true)
-        editor.setOption("enableLiveAutocompletion", true)
-
-        editor.renderer.setOption("animatedScroll", true)
-        editor.renderer.setOption("fadeFoldWidgets", true)
-        editor.renderer.setOption("scrollPastEnd", 1)
-        editor.renderer.setOption("theme", "ace/theme/tomorrow_night")
-
-        editor.addEventListener("change", _ => {
-            info.innerHTML = "* Unsaved Changes * || <a onclick='save(editor)' href='#'>Save</a>"
-        })
-
-        async function save(editor){
-            info.innerHTML = "Saving..."
-            let data = editor.session.getValue()
-
-            let form = new FormData()
-            form.append("data", data)
-            form.append("type", "TEXT")
-            form.append("mode", "save")
-
-            let response = await fetch("?post-set", {
-                method: "POST",
-                body: form
-            })
-            if(response.ok){
-                info.innerHTML = "File Saved"
-            }else{
-                info.innerHTML = "Error saving file: " + response.statusText
-            }
-        }
-
-        editor.commands.addCommand({
-            name: "save",
-            bindKey: {win: "Ctrl-s", mac: "Command-s"},
-            exec: save
-        })
-    </script>
 </body>
 </html>

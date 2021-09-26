@@ -5,7 +5,7 @@ import markdown
 from functools import wraps
 from datetime import datetime
 from __init__ import RequestCode, send_file, render_template, temp_db, request, make_response
-from utils import file_utils
+from utils import file_utils, api_utils
 from os.path import join, isdir, exists
 
 
@@ -69,11 +69,9 @@ def load_file_preview(path: str, personal: bool, user: str):
     if file_type == "TEXT":
         with open(location, "r", encoding="utf-8") as f:
             data = f.read()
-        return render_template(
-            "components/cloud/previews/monaco_editor.html",
-            file_name=path,
-            file_content=data
-        )
+        if request.args.get("raw"):
+            return api_utils.craft_response([data, path], RequestCode.Success.OK)
+        return render_template("components/cloud/previews/monaco_editor.html")
 
     elif file_type == "ARCHIVE":
         pass
@@ -84,33 +82,31 @@ def load_file_preview(path: str, personal: bool, user: str):
             position=expose_cloud_file(location)
         )
 
-    elif file_type == "XHTML":      # must add feature to view html and rendered
+    elif file_type == "XHTML":
         with open(location, "r", encoding="utf-8") as f:
             data = f.read()
-        return render_template(
-            "components/cloud/previews/monaco_editor.html",
-            file_name=path,
-            file_content=data
-        )
+        if request.args.get("raw"):
+            return api_utils.craft_response([data, path], RequestCode.Success.OK)
+        return render_template("components/cloud/previews/html_editor.html")
 
     elif file_type == "MARKDOWN":
-        with open(location, "r", encoding="utf-8") as f:  # same as above
+        with open(location, "r", encoding="utf-8") as f:
             data = f.read()
-        return render_template(
-            # "components/cloud/previews/markdown_preview.html",
-            "components/cloud/previews/markdown_editor.html",
-            file_name=path,
-            file_content=data.replace("`", "%---anf---%"),
-            markdown=markdown.markdown(
+        if request.args.get("raw"):
+            return api_utils.craft_response([
                 data,
-                extensions=[
-                    "extra", "abbr", "attr_list", "def_list", "fenced_code", "footnotes", "md_in_html", "tables",
-                    "admonition",
-                    "codehilite", "legacy_attrs", "legacy_attrs", "meta", "nl2br", "sane_lists", "smarty", "toc",
-                    "wikilinks"
-                ]
-            )
-        )
+                path,
+                markdown.markdown(
+                    data,
+                    extensions=[
+                        "extra", "abbr", "attr_list", "def_list", "fenced_code", "footnotes", "md_in_html", "tables",
+                        "admonition",
+                        "codehilite", "legacy_attrs", "legacy_attrs", "meta", "nl2br", "sane_lists", "smarty", "toc",
+                        "wikilinks"
+                    ]
+                )
+            ], RequestCode.Success.OK)
+        return render_template("components/cloud/previews/markdown_editor.html")
 
     elif file_type == "IMAGE":
         return render_template(
