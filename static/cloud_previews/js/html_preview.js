@@ -22,7 +22,7 @@ function switch_task(mode){
             preview.classList.add("hide")
             editor_wrapper.style.width = "100%"
     }
-    localStorage.setItem("md_preview_mode", mode)
+    localStorage.setItem("html_preview_mode", mode)
 }
 view_switcher.querySelectorAll("span").forEach(elem => {
     elem.addEventListener("click", _ => {
@@ -31,7 +31,7 @@ view_switcher.querySelectorAll("span").forEach(elem => {
         switch_task(Number(elem.getAttribute("data-mode")))
     })
 })
-view_switcher.querySelectorAll("span")[localStorage.getItem("md_preview_mode") || 0].click()
+view_switcher.querySelectorAll("span")[localStorage.getItem("html_preview_mode") || 0].click()
 
 editor.insert("loading...")
 preview.contentDocument.documentElement.innerText = "loading..."
@@ -65,7 +65,6 @@ editor.setOption("enableLiveAutocompletion", true)
 
 editor.renderer.setOption("animatedScroll", true)
 editor.renderer.setOption("fadeFoldWidgets", true)
-// editor.renderer.setOption("scrollPastEnd", 1)
 editor.renderer.setOption("theme", "ace/theme/tomorrow_night")
 
 async function update_md(text){

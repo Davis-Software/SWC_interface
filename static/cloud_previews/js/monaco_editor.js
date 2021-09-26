@@ -31,7 +31,7 @@ editor.setOption("enableLiveAutocompletion", true)
 
 editor.renderer.setOption("animatedScroll", true)
 editor.renderer.setOption("fadeFoldWidgets", true)
-editor.renderer.setOption("scrollPastEnd", 1)
+// editor.renderer.setOption("scrollPastEnd", 1)
 editor.renderer.setOption("theme", "ace/theme/tomorrow_night")
 
 async function save(editor){

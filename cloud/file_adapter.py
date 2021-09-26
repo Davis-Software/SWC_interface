@@ -92,6 +92,7 @@ def load_file_preview(path: str, personal: bool, user: str):
     elif file_type == "MARKDOWN":
         with open(location, "r", encoding="utf-8") as f:
             data = f.read()
+            print(data)
         if request.args.get("raw"):
             return api_utils.craft_response([
                 data,
