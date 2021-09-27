@@ -1,14 +1,15 @@
 <template id="template-cloud-desktop">
     <td class="cloud-item-name"></td>
-    <td class="cloud-item-options"></td>
+    <td class="cloud-content-f cloud-item-options"></td>
     <td class="cloud-item-type"></td>
     <td class="cloud-item-size"></td>
     <td class="cloud-item-ops"></td>
+    <td class="checkbox"><label><input type="checkbox"></label></td>
 </template>
 
 <template id="template-cloud-mobile">
     <td class="cloud-item-name"></td>
-    <td class="dropdown">
+    <td class="dropdown cloud-content-f">
         <button class="material-icons text-white ripple" data-bs-toggle="dropdown">
             more_horiz
         </button>
@@ -19,4 +20,5 @@
             <li class="cloud-item-ops"></li>
         </ul>
     </td>
+    <td class="checkbox"><label><input type="checkbox"></label></td>
 </template>

@@ -30,7 +30,7 @@
     overflow: hidden !important;
     transform: translate3d(0, 0, 0);
     user-select: none;
-    border-radius: 50%;
+    border-radius: 25px;
     transition: background-color .2s;
 }
 .ripple:hover{

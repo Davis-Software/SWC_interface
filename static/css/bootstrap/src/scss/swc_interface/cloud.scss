@@ -225,7 +225,7 @@ $min-cloud-width: 200px;
             thead tr th{
                 border-bottom-color: #444 !important;
             }
-            tbody tr td:first-child{
+            tbody tr td.cloud-item-name{
                 font-size: 0.9375rem;
                 a{
                     text-decoration: none;
@@ -234,7 +234,16 @@ $min-cloud-width: 200px;
                     }
                 }
             }
+            tbody.selection-mode tr{
+                .ripple{
+                    border-radius: 0 !important;
+                    cursor: pointer;
+                }
+            }
             tbody tr td{
+                &.checkbox{
+                    display: none;
+                }
                 button.material-icons{
                     cursor: pointer;
                     text-align: center;
@@ -265,12 +274,12 @@ $min-cloud-width: 200px;
                 }
             }
             &.mobile-view{
-                tbody tr td:not(:first-child , :nth-child(2)), thead tr th:not(:first-child , :nth-child(2)){
+                tbody tr td:not(.cloud-item-name , .cloud-content-f), thead tr th:not(.cloud-item-name , .cloud-content-f){
                     display: none;
                 }
             }
             &.invis{
-                tbody tr td:not(:first-child), thead tr th:not(:first-child){
+                tbody tr td:not(.cloud-item-name), thead tr th:not(.cloud-item-name){
                     display: none !important;
                 }
             }

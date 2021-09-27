@@ -218,14 +218,21 @@
 .cloud-wrapper .cloud-main table thead tr th {
   border-bottom-color: #444 !important;
 }
-.cloud-wrapper .cloud-main table tbody tr td:first-child {
+.cloud-wrapper .cloud-main table tbody tr td.cloud-item-name {
   font-size: 0.9375rem;
 }
-.cloud-wrapper .cloud-main table tbody tr td:first-child a {
+.cloud-wrapper .cloud-main table tbody tr td.cloud-item-name a {
   text-decoration: none;
 }
-.cloud-wrapper .cloud-main table tbody tr td:first-child a:hover {
+.cloud-wrapper .cloud-main table tbody tr td.cloud-item-name a:hover {
   color: white;
+}
+.cloud-wrapper .cloud-main table tbody.selection-mode tr .ripple {
+  border-radius: 0 !important;
+  cursor: pointer;
+}
+.cloud-wrapper .cloud-main table tbody tr td.checkbox {
+  display: none;
 }
 .cloud-wrapper .cloud-main table tbody tr td button.material-icons {
   cursor: pointer;
@@ -254,10 +261,10 @@
 .cloud-wrapper .cloud-main table tbody tr td button.material-icons.inactive {
   display: none;
 }
-.cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(:first-child, :nth-child(2)), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(:first-child, :nth-child(2)) {
+.cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(.cloud-item-name, .cloud-content-f), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(.cloud-item-name, .cloud-content-f) {
   display: none;
 }
-.cloud-wrapper .cloud-main table.invis tbody tr td:not(:first-child), .cloud-wrapper .cloud-main table.invis thead tr th:not(:first-child) {
+.cloud-wrapper .cloud-main table.invis tbody tr td:not(.cloud-item-name), .cloud-wrapper .cloud-main table.invis thead tr th:not(.cloud-item-name) {
   display: none !important;
 }
 .cloud-wrapper .cloud-main .file-preview {
