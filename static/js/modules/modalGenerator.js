@@ -40,6 +40,11 @@ class Modal{
             let btn = document.createElement("button")
             btn.setAttribute("class", "btn btn-danger")
             btn.setAttribute("data-bs-dismiss", "modal")
+            if(typeof this.close_button === "string"){
+                btn.innerHTML = this.close_button
+            }else{
+                btn.innerText = "Close"
+            }
             this.wrapper_footer.appendChild(btn)
             this.close_button = btn
         }
@@ -62,6 +67,7 @@ class Modal{
             case "normal": break
             case "large": this.wrapper_config.classList.add("modal-lg"); break
             case "huge": this.wrapper_config.classList.add("modal-xl"); break
+            case "max": this.wrapper_config.classList.add("modal-xxl"); break
             default: this.wrapper_config.classList.add(size); break
         }
     }
@@ -79,6 +85,7 @@ class Modal{
                 }
             }
         }
+        return this
     }
 
     _AppendElement(elem, footer){

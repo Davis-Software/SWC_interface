@@ -26,6 +26,14 @@ def route_personal_cloud(cloud_path):
     return render_template("pages/cloud.html", personal=True)
 
 
+@app.route("/cloud-help")
+@auth_required
+def route_cloud_help():
+    return render_template(
+        "components/cloud/cloud_help.html"
+    )
+
+
 @app.route("/exposed-cloud/<string:position>")
 def route_exposed_cloud(position):
     return request_handler.handle_exposition(

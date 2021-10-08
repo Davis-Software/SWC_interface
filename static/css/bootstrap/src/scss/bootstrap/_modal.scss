@@ -174,6 +174,10 @@
   .modal-xl { max-width: $modal-xl; }
 }
 
+@include media-breakpoint-up(xxl){
+  .modal-xxl { max-width: 96vw; }
+}
+
 // scss-docs-start modal-fullscreen-loop
 @each $breakpoint in map-keys($grid-breakpoints) {
   $infix: breakpoint-infix($breakpoint, $grid-breakpoints);

@@ -237,6 +237,16 @@
 .cloud-wrapper .cloud-main ul.path-view li.progress .progress-bar {
   transition: all 0.1s !important;
 }
+.cloud-wrapper .cloud-main ul.path-view li.path-help {
+  position: absolute;
+  right: 100px;
+  cursor: pointer;
+}
+.cloud-wrapper .cloud-main ul.path-view li.path-help span {
+  font-size: 22px;
+  text-align: center;
+  margin: 5px 10px;
+}
 .cloud-wrapper .cloud-main ul.path-view li.path-options {
   position: absolute;
   right: 55px;
@@ -307,8 +317,8 @@
 }
 .cloud-wrapper .cloud-main div.path-options ul li.options-search input {
   height: 28px;
-  background-color: white;
-  color: black;
+  background-color: #303030;
+  color: white;
 }
 .cloud-wrapper .cloud-main .table-scroller {
   max-height: calc(100% - 46px);
@@ -559,6 +569,40 @@
 
 [class*=mad-button-].mad-ico-right i.material-icons {
   margin: 0 -4px 0 8px;
+}
+
+button.swc-btn.material-icons {
+  border-radius: 25px;
+  transition: all 0.3s;
+  margin: 0 2px;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  background-color: transparent;
+  border: none;
+  padding: 0.375rem 0.75rem;
+  color: white;
+}
+button.swc-btn.material-icons:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+button.swc-btn.material-icons.blue {
+  color: #0070ac;
+}
+button.swc-btn.material-icons.green {
+  color: #1e8d02;
+}
+button.swc-btn.material-icons.yellow {
+  color: #ffd650;
+}
+button.swc-btn.material-icons.orange {
+  color: #df6603;
+}
+button.swc-btn.material-icons.red {
+  color: #bb0000;
+}
+button.swc-btn.material-icons.inactive {
+  display: none;
 }
 
 /*# sourceMappingURL=root.css.map */

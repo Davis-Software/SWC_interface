@@ -6,6 +6,7 @@ let path_view = document.querySelector(".path-view")
 let load_progress = path_view.querySelector(".progress .progress-bar")
 let path_view_list = document.querySelector(".path-view")
 let cloud_opt_btn = document.querySelector(".path-options")
+let cloud_help_btn = document.querySelector(".path-help")
 let cloud_options = document.querySelector("div.path-options")
 let cloud_opt_collapse = new bootstrap.Collapse(cloud_options)
 let cloud_refresh = document.querySelector(".path-refresh")
@@ -47,18 +48,21 @@ function load_files(){
     path_view.classList.add("load")
     load_progress.style.width = "10%"
 
+    let cloud_clipboard = sessionStorage.getItem("cloud_file_clipboard") ? JSON.parse(sessionStorage.getItem("cloud_file_clipboard")) : null
+
     function generate_file_list(files){
         cloud_main.classList.remove("file-loaded")
         sidebar.classList.remove("preview-mode")
+        cloud_opt_btn.hidden = false
         preview_frame.contentDocument.documentElement.innerHTML = ""
+
+
         let context_menu = new ContextMenu([
-            {
-                text: "<b>Download in a ZIP file</b>"
-            },{
-                "type": ContextMenu.DIVIDER
-            },{
-                text: "Download in a ZIP file"
-            }
+            new ContextButton("content_cut", "Cut").OnClick(file_operations).Classes("swc-btn").Mode("cut").get(),
+            new ContextButton("content_copy", "Copy").OnClick(file_operations).Classes("swc-btn").Mode("copy").get(),
+            new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn").Mode("paste").get(),
+            new ContextButton("edit", "Rename").OnClick(file_operations).Classes("swc-btn").Mode("rename").get(),
+            new ContextButton("delete", "Move to Trash").OnClick(file_operations).Classes("swc-btn").Mode("trash").get(),
         ])
 
         if(!files){
@@ -70,24 +74,111 @@ function load_files(){
             show_info("Empty Directory")
         }
 
+        function file_operations(btn, _){
+            let items = btn.classList.contains("swc-btn") ? Array.from(cloud_list.querySelectorAll("tr.selected")) : [btn.parentElement.parentElement]
+            let latest = btn.classList.contains("swc-btn") ? cloud_list.querySelector("tr.selected-most-recently") : items[0]
+            let mode = btn.getAttribute("mode")
+            let files = items.map(item => {
+                return {
+                    path: item.querySelector(".cloud-item-name a").getAttribute("href"),
+                    name: item.querySelector(".cloud-item-name a").getAttribute("name"),
+                    directory: item.querySelector(".cloud-item-name a").getAttribute("data-directory") === "true"
+                }
+            })
+            let latest_file = {
+                path: latest.querySelector(".cloud-item-name a").getAttribute("href"),
+                name: latest.querySelector(".cloud-item-name a").getAttribute("name"),
+                directory: latest.querySelector(".cloud-item-name a").getAttribute("data-directory") === "true"
+            }
+
+            function info_modal(message, callback){
+                let modal = new Modal("#modal-wrapper", {close_button: "OK", title: "Cloud Info"})
+                modal.FastText(message)
+                modal.show()
+                modal.on("hide", callback)
+            }
+
+            switch (mode){
+                case "cut":
+                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files}))
+                    info_modal(`Cut ${files.length} ${files.length > 1 ? "elements" : "element"} to the clipboard.`, update_info)
+                    break
+                case "copy":
+                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files}))
+                    info_modal(`Copied ${files.length} ${files.length > 1 ? "elements" : "element"} to the clipboard.`, update_info)
+                    break
+                case "paste":
+                    if(cloud_clipboard){
+                        if(cloud_clipboard.mode === "cut"){
+                            sessionStorage.setItem("cloud_file_clipboard", null)
+                        }
+                        info_modal(`Pasted ${cloud_clipboard.files.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"} from the clipboard.`, update_info)
+                    }else{
+                        info_modal("Nothing to paste.")
+                    }
+                    break
+                case "rename":
+                    let modal = new Modal("#modal-wrapper", {
+                        title: "Rename",
+                        static_backdrop: true,
+                        close_button: "Cancel"
+                    })
+                    modal.wrapper_body.setAttribute("style", "display:flex;")
+                    let file_name = modal.Input("rename-file-name", "text", latest_file.directory ? "" : "w-50", {placeholder: latest_file.directory ? "Folder" : "File"}, false)
+                    let file_extension = {}
+                    if(!latest_file.directory){
+                        modal.FastText(".", {
+                            style: "font-size:25px;padding:0 5px;"
+                        })
+                        file_extension = modal.Input("rename-file-ext", "text", "w-25", {placeholder: "txt"}, false)
+                    }
+
+                    file_name.value = latest_file.directory ? latest_file.name : latest_file.name.split(".").slice(0, -1).join(".")
+                    file_extension.value = latest_file.name.split(".").pop()
+
+                    modal.Button(
+                        "rename-submit-btn",
+                        "Rename",
+                        "btn-warning",
+                        {},
+                        true
+                    ).addEventListener("click", e => {
+                        if(file_name.value !== ""){
+                           let file = ""
+                        }
+                    })
+                    modal.show()
+                    break
+                default:
+                    info_modal(`Unknown operation mode ${mode}.`)
+                    break
+            }
+        }
         function apply_navigation(elem, file){
             let nav = elem.querySelector(".cloud-item-name")
             let file_name = file.directory ? file.name + "/" : file.name
+            let cut_files = cloud_clipboard && cloud_clipboard.mode === "cut" ? cloud_clipboard.files.map(item => {return item.path}) : []
 
             elem.addEventListener("click", e => {
+                cloud_list.querySelectorAll("tr").forEach(elem_all => {
+                    elem_all.classList.remove("selected-most-recently")
+                })
                 if(!e.ctrlKey || (e.target.parentNode !== elem)) {
                     cloud_list.querySelectorAll("tr").forEach(elem_all => {
                         elem_all.classList.remove("selected")
                     })
                 }
                 elem.classList.toggle("selected")
+                elem.classList.add("selected-most-recently")
             })
             elem.addEventListener("contextmenu", e => {
                 e.preventDefault()
                 if(e.target.parentNode !== elem){return}
-                if(!elem.classList.contains("selected")){
-                    elem.classList.add("selected")
-                }
+                cloud_list.querySelectorAll("tr").forEach(elem_all => {
+                    elem_all.classList.remove("selected-most-recently")
+                })
+                elem.classList.add("selected")
+                elem.classList.add("selected-most-recently")
                 context_menu.display(e)
             })
 
@@ -98,14 +189,20 @@ function load_files(){
                 ${file_name}
             `
             link.href = `${location.pathname}/${file.name}`
+            link.setAttribute("name", file.name)
+            link.setAttribute("data-directory", file.directory)
             link.addEventListener("click", e => {
                 e.preventDefault()
                 navigate_path(link.href, false)
             })
+            if(cut_files.includes(link.getAttribute("href"))){
+                link.classList.add("text-secondary")
+            }
             nav.appendChild(link)
         }
         function populate_options(elem, file){
             elem = elem.querySelector(".cloud-item-options")
+            if(!elem){return}
             if(file.directory){
                 new QuickButton(elem)
                     .class("text-info")
@@ -134,45 +231,45 @@ function load_files(){
         }
         function populate_operations(elem, file){
             elem = elem.querySelector(".cloud-item-ops")
+            if(!elem){return}
             let file_or_folder = file.directory ? "Folder" : "File"
             new QuickButton(elem)
                 .class("blue")
                 .title(`Cut ${file_or_folder}`)
                 .icon("content_cut")
-                .onClick()
+                .attr({mode: "cut"})
+                .onClick(file_operations)
                 .spawn()
             new QuickButton(elem)
                 .class("blue")
                 .title(`Copy ${file_or_folder}`)
                 .icon("content_copy")
-                .onClick()
-                .spawn()
-            new QuickButton(elem)
-                .class("green")
-                .title(`Move ${file_or_folder}`)
-                .icon("drive_file_move")
-                .onClick()
+                .attr({mode: "copy"})
+                .onClick(file_operations)
                 .spawn()
             new QuickButton(elem)
                 .class("yellow")
                 .title(`Rename ${file_or_folder}`)
                 .icon("edit")
-                .onClick()
+                .attr({mode: "rename"})
+                .onClick(file_operations)
                 .spawn()
 
             let to_trash = new QuickButton(elem)
                 .class("orange")
                 .title(`Move ${file_or_folder} to trash`)
                 .icon("delete")
-                .onClick()
+                .attr({mode: "trash"})
+                .onClick(file_operations)
                 .spawn()
                 .return()
             let remove = new QuickButton(elem)
                 .class("red")
-                .attr({hidden: null})
+                .attr({hidden: true})
                 .title(`Delete ${file_or_folder}`)
                 .icon("delete_forever")
-                .onClick()
+                .attr({mode: "delete"})
+                .onClick(file_operations)
                 .spawn()
                 .return()
             {
@@ -221,6 +318,7 @@ function load_files(){
         cloud_main.classList.add("file-loaded")
         sidebar.classList.add("preview-mode")
         preview_frame.src = location.href + "?preview"
+        cloud_opt_btn.hidden = true
     }
 
     let xhr = new XMLHttpRequest()
@@ -305,7 +403,18 @@ function update_info(){
     load_files()
 }
 
+cloud_list.addEventListener("keydown", e => {
+    if(e.key === "a" && e.ctrlKey){
+        e.preventDefault()
+        cloud_list.querySelectorAll("tr").forEach(elem => {
+            elem.classList.add("selected")
+        })
+    }
+})
 
+cloud_help_btn.addEventListener("click", _ => {
+    show_help()
+})
 cloud_opt_btn.addEventListener("click", _ => {
     cloud_opt_collapse.toggle()
 }, {capture: false})

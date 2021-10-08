@@ -1,1 +1,279 @@
-function ContextMenu(a,b){function c(h){var j=document.createElement("ul");return h.forEach(function(k){var l=document.createElement("li");if(l.menu=f,"undefined"==typeof k.type){var m=document.createElement("span");m.className="cm_icon_span",m.innerHTML=""==ContextUtil.getProperty(k,"icon","")?ContextUtil.getProperty(b,"default_icon",""):ContextUtil.getProperty(k,"icon","");var n=document.createElement("span");n.className="cm_text",n.innerHTML=""==ContextUtil.getProperty(k,"text","")?ContextUtil.getProperty(b,"default_text","item"):ContextUtil.getProperty(k,"text","");var o=document.createElement("span");if(o.className="cm_sub_span","undefined"!=typeof k.sub&&(""==ContextUtil.getProperty(b,"sub_icon","")?o.innerHTML="&#155;":o.innerHTML=ContextUtil.getProperty(b,"sub_icon","")),l.appendChild(m),l.appendChild(n),l.appendChild(o),!ContextUtil.getProperty(k,"enabled",!0))l.setAttribute("disabled","");else{if("object"==typeof k.events)for(var p=Object.keys(k.events),q=0;q<p.length;q++)l.addEventListener(p[q],k.events[p[q]]);"undefined"!=typeof k.sub&&l.appendChild(c(k.sub))}}else k.type==ContextMenu.DIVIDER&&(l.className="cm_divider");j.appendChild(l)}),j}function d(){f.hide()}var f=this,g=ContextMenu.count++;if(this.menu=a,this.contextTarget=null,!(a instanceof Array))throw new Error("Parameter 1 must be of type Array");if("undefined"==typeof b)b={};else if("object"!=typeof b)throw new Error("Parameter 2 must be of type object");window.addEventListener("resize",function(){ContextUtil.getProperty(b,"close_on_resize",!0)&&f.hide()}),this.setOptions=function(h){if("object"==typeof h)b=h;else throw new Error("Parameter 1 must be of type object")},this.changeOption=function(h,j){if("string"!=typeof h)throw new Error("Parameter 1 must be of type string");else if("undefined"!=typeof j)b[h]=j;else throw new Error("Parameter 2 must be set")},this.getOptions=function(){return b},this.reload=function(){if(null==document.getElementById("cm_"+g)){var h=document.createElement("div");h.className="cm_container",h.id="cm_"+g,document.body.appendChild(h)}var j=document.getElementById("cm_"+g);j.innerHTML="",j.appendChild(c(a))},this.display=function(h,j){f.contextTarget="undefined"==typeof j?h.target:j;var k=document.getElementById("cm_"+g),l={x:h.clientX,y:h.clientY},m=l.x,n=l.y,o=k.offsetWidth+4,p=k.offsetHeight+4,q=window.innerWidth,r=window.innerHeight,s=parseInt(ContextUtil.getProperty(b,"mouse_offset",2));k.style.left=q-m<o?q-o+"px":m+s+"px",k.style.top=r-n<p?r-p+"px":n+s+"px";var t=ContextUtil.getSizes(k);q-m<t.width?k.classList.add("cm_border_right"):k.classList.remove("cm_border_right"),r-n<t.height?k.classList.add("cm_border_bottom"):k.classList.remove("cm_border_bottom"),k.classList.add("display"),ContextUtil.getProperty(b,"close_on_click",!0)&&window.addEventListener("click",d),h.preventDefault()},this.hide=function(){document.getElementById("cm_"+g).classList.remove("display"),window.removeEventListener("click",d)},this.reload()}ContextMenu.count=0,ContextMenu.DIVIDER="cm_divider";const ContextUtil={getProperty:function(a,b,c){return"undefined"==typeof a[b]?c:a[b]},getSizes:function(a){for(var g,b=a.getElementsByTagName("li"),c=0,d=0,f=0;f<b.length;f++)g=b[f],g.offsetWidth>c&&(c=g.offsetWidth),g.offsetHeight>d&&(d=g.offsetHeight);for(var h=c,j=d,f=0;f<b.length;f++){var g=b[f],k=g.getElementsByTagName("ul");if("undefined"!=typeof k[0]){var l=ContextUtil.getSizes(k[0]);c+l.width>h&&(h=c+l.width),d+l.height>j&&(j=d+l.height)}}return{width:h,height:j}}};
+function ContextMenu(menu, options){
+	let self = this;
+	let num = ContextMenu.count++;
+
+	this.menu = menu;
+	this.contextTarget = null;
+
+	if(!(menu instanceof Array)){
+		throw new Error("Parameter 1 must be of type Array");
+	}
+
+	if(typeof options !== "undefined"){
+		if(typeof options !== "object"){
+			throw new Error("Parameter 2 must be of type object");
+		}
+	}else{
+		options = {};
+	}
+
+	window.addEventListener("resize", function(){
+		if(ContextUtil.getProperty(options, "close_on_resize", true)){
+			self.hide();
+		}
+	});
+
+	this.setOptions = function(_options){
+		if(typeof _options === "object"){
+			options = _options;
+		}else{
+			throw new Error("Parameter 1 must be of type object")
+		}
+	}
+
+	this.changeOption = function(option, value){
+		if(typeof option === "string"){
+			if(typeof value !== "undefined"){
+				options[option] = value;
+			}else{
+				throw new Error("Parameter 2 must be set");
+			}
+		}else{
+			throw new Error("Parameter 1 must be of type string");
+		}
+	}
+
+	this.getOptions = function(){
+		return options;
+	}
+
+	this.reload = function(){
+		if(document.getElementById('cm_' + num) == null){
+			let cnt = document.createElement("div");
+			cnt.className = "cm_container";
+			cnt.id = "cm_" + num;
+
+			document.body.appendChild(cnt);
+		}
+
+		let container = document.getElementById('cm_' + num);
+		container.innerHTML = "";
+
+		container.appendChild(renderLevel(menu));
+	}
+
+	function renderLevel(level){
+		let ul_outer = document.createElement("ul");
+
+		level.forEach(function(item){
+			let li = document.createElement("li");
+			li.menu = self;
+
+			if(typeof item.type === "undefined"){
+				let icon_span = document.createElement("span");
+				icon_span.className = 'cm_icon_span';
+				icon_span.classList.add("material-icons")
+
+				if(ContextUtil.getProperty(item, "icon", "") !== ""){
+					icon_span.innerHTML = ContextUtil.getProperty(item, "icon", "");
+				}else{
+					icon_span.innerHTML = ContextUtil.getProperty(options, "default_icon", "");
+				}
+
+				let text_span = document.createElement("span");
+				text_span.className = 'cm_text';
+
+				if(ContextUtil.getProperty(item, "text", "") !== ""){
+					text_span.innerHTML = ContextUtil.getProperty(item, "text", "");
+				}else{
+					text_span.innerHTML = ContextUtil.getProperty(options, "default_text", "item");
+				}
+
+				let sub_span = document.createElement("span");
+				sub_span.className = 'cm_sub_span';
+
+				if(typeof item.sub !== "undefined"){
+					if(ContextUtil.getProperty(options, "sub_icon", "") !== ""){
+						sub_span.innerHTML = ContextUtil.getProperty(options, "sub_icon", "");
+					}else{
+						sub_span.innerHTML = '&#155;';
+					}
+				}
+
+				for(let item of ContextUtil.getProperty(options, "classes", "dropdown-item").split(" ")){
+					li.classList.add(item)
+				}
+
+				li.appendChild(icon_span);
+				li.appendChild(text_span);
+				li.appendChild(sub_span);
+
+				if(!ContextUtil.getProperty(item, "enabled", true)){
+					li.setAttribute("disabled", "");
+				}else{
+					if(typeof item.events === "object"){
+						let keys = Object.keys(item.events);
+
+						for(let i = 0; i < keys.length; i++){
+							li.addEventListener(keys[i], item.events[keys[i]]);
+						}
+					}
+
+					if(typeof item.sub !== "undefined"){
+						li.appendChild(renderLevel(item.sub));
+					}
+				}
+			}else if(item.type === "xml"){
+                let html_wrap = document.createElement("div")
+                li.classList.add("cm_html")
+
+                if(ContextUtil.getProperty(item, "html", "") !== ""){
+					html_wrap.innerHTML = ContextUtil.getProperty(item, "html", "");
+				}else{
+					html_wrap.innerHTML = ContextUtil.getProperty(options, "default_text", "item");
+				}
+
+                li.appendChild(html_wrap)
+            }else{
+				if(item.type === ContextMenu.DIVIDER){
+					li.className = "cm_divider";
+				}
+			}
+			ul_outer.appendChild(li);
+		});
+
+		return ul_outer;
+	}
+
+	this.display = function(e, target){
+		if(typeof target !== "undefined"){
+			self.contextTarget = target;
+		}else{
+			self.contextTarget = e ? e.target : document;
+		}
+
+		let menu = document.getElementById('cm_' + num);
+
+		let clickCoords = {x: e ? e.clientX : 0, y: e ? e.clientY : 0};
+		let clickCoordsX = clickCoords.x;
+		let clickCoordsY = clickCoords.y;
+
+		let menuWidth = menu.offsetWidth + 4;
+		let menuHeight = menu.offsetHeight + 4;
+
+		let windowWidth = window.innerWidth;
+		let windowHeight = window.innerHeight;
+
+		let mouseOffset = parseInt(ContextUtil.getProperty(options, "mouse_offset", 2));
+
+		if((windowWidth - clickCoordsX) < menuWidth){
+			menu.style.left = windowWidth - menuWidth + "px";
+		}else{
+			menu.style.left = (clickCoordsX + mouseOffset) + "px";
+		}
+
+		if((windowHeight - clickCoordsY) < menuHeight){
+			menu.style.top = windowHeight - menuHeight + "px";
+		}else{
+			menu.style.top = (clickCoordsY + mouseOffset) + "px";
+		}
+
+		let sizes = ContextUtil.getSizes(menu);
+
+		if((windowWidth - clickCoordsX) < sizes.width){
+			menu.classList.add("cm_border_right");
+		}else{
+			menu.classList.remove("cm_border_right");
+		}
+
+		if((windowHeight - clickCoordsY) < sizes.height){
+			menu.classList.add("cm_border_bottom");
+		}else{
+			menu.classList.remove("cm_border_bottom");
+		}
+
+		menu.classList.add("display");
+
+		if(ContextUtil.getProperty(options, "close_on_click", true)){
+			window.addEventListener("click", documentClick);
+			window.addEventListener("keydown", e => {
+				if(e.key === "Escape"){
+					documentClick(e)
+				}
+			})
+		}
+
+		if(e) {
+			e.preventDefault();
+		}
+	}
+
+	this.hide = function(){
+		document.getElementById('cm_' + num).classList.remove("display");
+		window.removeEventListener("click", documentClick);
+		window.removeEventListener("keydown", documentClick);
+	}
+
+	function documentClick(){
+		self.hide();
+	}
+
+	this.reload();
+}
+
+ContextMenu.count = 0;
+ContextMenu.DIVIDER = "cm_divider";
+
+const ContextUtil = {
+	getProperty: function(options, opt, def){
+		if(typeof options[opt] !== "undefined"){
+			return options[opt];
+		}else{
+			return def;
+		}
+	},
+
+	getSizes: function(obj){
+		let lis = obj.getElementsByTagName('li');
+
+		let width_def = 0;
+		let height_def = 0;
+
+		for(let i = 0; i < lis.length; i++){
+			let li = lis[i];
+
+			if(li.offsetWidth > width_def){
+				width_def = li.offsetWidth;
+			}
+
+			if(li.offsetHeight > height_def){
+				height_def = li.offsetHeight;
+			}
+		}
+
+		let width = width_def;
+		let height = height_def;
+
+		for(let i = 0; i < lis.length; i++){
+			let li = lis[i];
+
+			let ul = li.getElementsByTagName('ul');
+			if(typeof ul[0] !== "undefined"){
+				let ul_size = ContextUtil.getSizes(ul[0]);
+
+				if(width_def + ul_size.width > width){
+					width = width_def + ul_size.width;
+				}
+
+				if(height_def + ul_size.height > height){
+					height = height_def + ul_size.height;
+				}
+			}
+		}
+
+		return {
+			"width": width,
+			"height": height
+		};
+	}
+};

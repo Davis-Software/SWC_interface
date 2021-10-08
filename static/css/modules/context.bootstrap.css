@@ -14,9 +14,6 @@
 .cm_container, .cm_container *{
     box-sizing: border-box;
 }
-.cm_container *{
-    position: relative;
-}
 .cm_container ul{
     list-style-type: none;
     min-width: 10rem;
@@ -46,6 +43,11 @@
 }
 .cm_container li:hover, .cm_container li:active, .cm_container li:focus{
     background-color: #444;
+}
+.cm_container  li.cm_html{
+    cursor: default !important;
+    background-color: transparent !important;
+    padding: 0;
 }
 .cm_container li .cm_icon_span{
     vertical-align: bottom;
