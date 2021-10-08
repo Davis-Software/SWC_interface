@@ -10,19 +10,19 @@
     <ul class="opt-list">
         <br><h6>Navigation</h6>
         <li>
-            <button class="opt-btn" onclick="navigate_back()">
+            <button class="opt-btn ripple" onclick="navigate_back()">
                 <i class="material-icons btn" aria-hidden="true">arrow_back</i>
                 <span class="folderclick">Back</span>
             </button>
         </li>
         <li>
-            <button class="opt-btn" onclick="navigate_home()">
+            <button class="opt-btn ripple" onclick="navigate_home()">
                 <i class="material-icons btn" aria-hidden="true">folder_open</i>
                 <span class="folderclick">Main Cloud</span>
             </button>
         </li>
         <li>
-            <button class="opt-btn" onclick="navigate_path('trash')">
+            <button class="opt-btn ripple" onclick="navigate_path('trash')">
                 <i class="material-icons btn" aria-hidden="true">delete</i>
                 <span class="folderclick">Trash</span>
             </button>
@@ -32,19 +32,19 @@
         <div>
             <h6>Operations</h6>
             <li>
-                <button class="opt-btn" onclick="new_file()">
+                <button class="opt-btn ripple" onclick="new_file()">
                     <i class="material-icons btn" aria-hidden="true">note_add</i>
                     <span class="folderclick">New File</span>
                 </button>
             </li>
             <li>
-                <button class="opt-btn" onclick="new_folder()">
+                <button class="opt-btn ripple" onclick="new_folder()">
                     <i class="material-icons btn" aria-hidden="true">create_new_folder</i>
                     <span class="folderclick">New Folder</span>
                 </button>
             </li>
             <li>
-                <button class="opt-btn" onclick="upload()">
+                <button class="opt-btn ripple" onclick="upload()">
                     <i class="material-icons btn" aria-hidden="true">cloud_upload</i>
                     <span class="folderclick">Upload</span>
                 </button>
@@ -53,10 +53,10 @@
     </ul>
     <ul class="nav nav-pills sidebar-switch">
         <li class="nav-item">
-            <a class="nav-link {{ "active" if personal }}" {{ "href=/personal-cloud" if not personal }}>My Cloud</a>
+            <a class="nav-link ripple {{ "active" if personal }}" {{ "href=/personal-cloud" if not personal }}>My Cloud</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ "active" if not personal }}" {{ "href=/cloud" if personal }}>Public Cloud</a>
+            <a class="nav-link ripple {{ "active" if not personal }}" {{ "href=/cloud" if personal }}>Public Cloud</a>
         </li>
     </ul>
 </div>

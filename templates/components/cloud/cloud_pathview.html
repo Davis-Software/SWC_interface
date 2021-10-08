@@ -1,13 +1,26 @@
 <ul class="path-view">
-    <li>
+    <li class="ripple">
         <a href="/{{ request.path.split("/")[1] }}">
             <span>{{ "My Cloud" if personal else "Public Cloud" }} ></span>
         </a>
     </li>
-    <li class="path-refresh">
+    <li class="path-options ripple" title="Options dropdown">
+        <span class="material-icons">arrow_drop_down</span>
+    </li>
+    <li class="path-refresh ripple" title="Refresh files">
         <span class="material-icons">refresh</span>
     </li>
     <li class="progress">
         <div class="progress-bar progress-bar-animated" style="width: 2%;"></div>
     </li>
 </ul>
+<div class="collapse collapsed path-options" hidden>
+    <ul class="list-unstyled">
+        <li class="options-search">
+            <input type="search" class="form-control" placeholder="Search...">
+        </li>
+        <li>
+
+        </li>
+    </ul>
+</div>

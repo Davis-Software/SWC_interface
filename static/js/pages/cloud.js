@@ -5,6 +5,9 @@ let cloud_main = document.querySelector(".cloud-main")
 let path_view = document.querySelector(".path-view")
 let load_progress = path_view.querySelector(".progress .progress-bar")
 let path_view_list = document.querySelector(".path-view")
+let cloud_opt_btn = document.querySelector(".path-options")
+let cloud_options = document.querySelector("div.path-options")
+let cloud_opt_collapse = new bootstrap.Collapse(cloud_options)
 let cloud_refresh = document.querySelector(".path-refresh")
 
 let cloud_file_template = document.querySelector("#template-cloud-desktop")
@@ -23,7 +26,7 @@ async function apply_path_view(){
     for(let id in path){
         let step = path[id]
         let elem = document.createElement("li")
-        elem.classList.add("path-part")
+        elem.classList.add("path-part", "ripple", "mad-ripple")
         elem.innerHTML = `
             <a><span>${step.replaceAll("%20", " ")}${Number(id)+1 !== path.length ? " >" : ""}</span></a>
         `
@@ -48,6 +51,15 @@ function load_files(){
         cloud_main.classList.remove("file-loaded")
         sidebar.classList.remove("preview-mode")
         preview_frame.contentDocument.documentElement.innerHTML = ""
+        let context_menu = new ContextMenu([
+            {
+                text: "<b>Download in a ZIP file</b>"
+            },{
+                "type": ContextMenu.DIVIDER
+            },{
+                text: "Download in a ZIP file"
+            }
+        ])
 
         if(!files){
             show_error("Unknown Error (more info in console)")
@@ -59,8 +71,27 @@ function load_files(){
         }
 
         function apply_navigation(elem, file){
-            elem = elem.querySelector(".cloud-item-name")
+            let nav = elem.querySelector(".cloud-item-name")
             let file_name = file.directory ? file.name + "/" : file.name
+
+            elem.addEventListener("click", e => {
+                if(!e.ctrlKey || (e.target.parentNode !== elem)) {
+                    cloud_list.querySelectorAll("tr").forEach(elem_all => {
+                        elem_all.classList.remove("selected")
+                    })
+                }
+                elem.classList.toggle("selected")
+            })
+            elem.addEventListener("contextmenu", e => {
+                e.preventDefault()
+                if(e.target.parentNode !== elem){return}
+                if(!elem.classList.contains("selected")){
+                    elem.classList.add("selected")
+                }
+                context_menu.display(e)
+            })
+
+
             let link = document.createElement("a")
             link.innerHTML = `
                 <i class="material-icons text-white">${file.icon}</i>
@@ -71,7 +102,7 @@ function load_files(){
                 e.preventDefault()
                 navigate_path(link.href, false)
             })
-            elem.appendChild(link)
+            nav.appendChild(link)
         }
         function populate_options(elem, file){
             elem = elem.querySelector(".cloud-item-options")
@@ -146,12 +177,12 @@ function load_files(){
                 .return()
             {
                 document.addEventListener("keydown", e => {
-                    if(e.key !== "x"){return}
+                    if(e.key !== "Control"){return}
                     to_trash.hidden = true
                     remove.hidden = false
                 })
                 document.addEventListener("keyup", e => {
-                    if(e.key !== "x"){return}
+                    if(e.key !== "Control"){return}
                     to_trash.hidden = false
                     remove.hidden = true
                 })
@@ -161,6 +192,7 @@ function load_files(){
         function create_apply_and_populate(file){
             let elem = document.createElement("tr")
             elem.innerHTML = (mobile ? cloud_file_mobile_template : cloud_file_template).innerHTML
+            elem.classList.add("ripple", "mad-ripple")
             apply_navigation(elem, file)
             populate_options(elem, file)
             elem.querySelector(".cloud-item-type").innerText = file.type
@@ -177,6 +209,13 @@ function load_files(){
             if(file.directory){continue}
             create_apply_and_populate(file)
         }
+        document.addEventListener("keydown", e => {
+            if(e.key === "Escape"){
+                cloud_list.querySelectorAll("tr").forEach(elem_all => {
+                    elem_all.classList.remove("selected")
+                })
+            }
+        })
     }
     function start_file_preview(){
         cloud_main.classList.add("file-loaded")
@@ -265,6 +304,35 @@ function update_info(){
     apply_path_view().then()
     load_files()
 }
+
+
+cloud_opt_btn.addEventListener("click", _ => {
+    cloud_opt_collapse.toggle()
+}, {capture: false})
+document.addEventListener("keydown", e => {
+    if(e.key === "f" && e.ctrlKey){
+        e.preventDefault()
+        cloud_opt_collapse.show()
+        cloud_options.querySelector("input").focus()
+    }
+})
+cloud_options.querySelector("input").addEventListener("keydown", e => {
+    if(e.key === "Escape"){
+        cloud_opt_collapse.hide()
+    }
+})
+cloud_options.addEventListener("show.bs.collapse", _ => {
+    cloud_opt_btn.firstElementChild.innerHTML = "arrow_drop_down"
+    cloud_opt_btn.classList.add("reverse")
+})
+cloud_options.addEventListener("hide.bs.collapse", _ => {
+    cloud_opt_btn.firstElementChild.innerHTML = "search"
+    cloud_opt_btn.classList.remove("reverse")
+})
+setTimeout(_ => {
+    cloud_opt_collapse.hide()
+    cloud_options.hidden = false
+}, 500)
 cloud_refresh.addEventListener("click", _ => {
     update_info()
     cloud_refresh.classList.add("spin")
@@ -272,6 +340,7 @@ cloud_refresh.addEventListener("click", _ => {
         cloud_refresh.classList.remove("spin")
     }, 1010)
 }, {capture: false})
+
 
 function navigate_back(){
     if(location.pathname.split("/").length === 2){return}

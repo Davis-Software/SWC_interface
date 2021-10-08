@@ -2,7 +2,7 @@ class QuickButton{
     constructor(elem=null) {
         this.elem = elem
         this.button = document.createElement("button")
-        this.button.classList.add("material-icons", "ripple")
+        this.button.classList.add("material-icons", "ripple", "mad-ripple")
     }
     title(title){
         this.button.title = title
