@@ -62,6 +62,10 @@ class ContextButton{
         this.mode = mode
         return this
     }
+    Display(bool){
+        this.data.hidden = !bool
+        return this
+    }
     getAttribute(key){
         return this[key]
     }
@@ -106,7 +110,7 @@ function show_error(error){
         <td><span class="text-danger">-</span></td>
         <td><span class="text-danger">-</span></td>
         <td><span class="text-danger">-</span></td>
-        <td><span class="text-danger">-</span></td>
+<!--        <td><span class="text-danger">-</span></td>-->
     </tr>
     `
 }
@@ -117,7 +121,7 @@ function show_info(info){
         <td>-</td>
         <td>-</td>
         <td>-</td>
-        <td>-</td>
+<!--        <td>-</td>-->
     </tr>
     `
 }

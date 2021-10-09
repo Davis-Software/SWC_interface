@@ -1,34 +1,36 @@
-button.swc-btn.material-icons {
-  border-radius: 25px;
+.swc-btn {
   transition: all 0.3s;
-  margin: 0 2px;
   cursor: pointer;
-  text-align: center;
-  vertical-align: middle;
   background-color: transparent;
-  border: none;
-  padding: 0.375rem 0.75rem;
   color: white;
 }
-button.swc-btn.material-icons:hover {
+.swc-btnbutton {
+  border-radius: 25px;
+  margin: 0 2px;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+  padding: 0.375rem 0.75rem;
+}
+.swc-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
-button.swc-btn.material-icons.blue {
+.swc-btn.blue {
   color: #0070ac;
 }
-button.swc-btn.material-icons.green {
+.swc-btn.green {
   color: #1e8d02;
 }
-button.swc-btn.material-icons.yellow {
+.swc-btn.yellow {
   color: #ffd650;
 }
-button.swc-btn.material-icons.orange {
+.swc-btn.orange {
   color: #df6603;
 }
-button.swc-btn.material-icons.red {
+.swc-btn.red {
   color: #bb0000;
 }
-button.swc-btn.material-icons.inactive {
+.swc-btn.inactive {
   display: none;
 }
 

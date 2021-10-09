@@ -1,28 +1,44 @@
-const _basic_modal_body = `
-<div class="modal fade" id="modal_id" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">modal_title</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body"></div>
-            <div class="modal-footer"></div>
-        </div>
-    </div>
-</div>
-`
-
-
 class Modal{
+    static slim_modal_body = `
+        <div class="modal fade" id="modal_id" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">modal_title</h5>
+                    </div>
+                    <div class="modal-body"></div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+    `
+    static basic_modal_body = `
+        <div class="modal fade" id="modal_id" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">modal_title</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body"></div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+    `
     constructor(wrapper_selector, options={}, size="normal"){
-        this.root = document.querySelector(wrapper_selector)
+        if(!wrapper_selector){
+            this.root = document.createElement("div")
+            document.body.appendChild(this.root)
+        }else{
+            this.root = document.querySelector(wrapper_selector)
+        }
 
         this.id = options.id || Math.random().toString(16).substr(2, 8)
         this.title = options.title || "Modal"
         this.close_button = options.close_button || false
 
-        this.template = options.template || _basic_modal_body
+        this.template = options.template || Modal.basic_modal_body
         this.centered = options.centered || false
         this.scrollable = options.scrollable || false
         this.static_backdrop = options.static_backdrop || false
@@ -170,6 +186,9 @@ class Modal{
     }
     destroy(){
         this.hide()
-        this.root.innerHTML = ""
+        document.querySelectorAll(".modal-backdrop").forEach(e => {
+            document.removeChild(e)
+        })
+        document.removeChild(this.wrapper)
     }
 }

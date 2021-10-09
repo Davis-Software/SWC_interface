@@ -1,6 +1,7 @@
 import os
 
 import uuid
+import shutil
 import markdown
 from functools import wraps
 from datetime import datetime
@@ -9,7 +10,7 @@ from utils import file_utils, api_utils
 from os.path import join, isdir, exists
 
 
-def file_getter(path: str, personal: bool, user: str):
+def file_getter(path: str, personal: bool, user: str, filter_by: str = None):
     location = file_utils.make_cloud_path(
         join(user, path) if personal else path,
         personal
@@ -20,15 +21,28 @@ def file_getter(path: str, personal: bool, user: str):
 
     if isdir(location):
         file_list = list()
-        for file in os.listdir(location):
-            full = join(location, file)
+
+        def add_to_list(f):
+            full = join(location, f)
             file_list.append({
-                "name": file,
+                "name": f,
                 "directory": isdir(full),
                 "size": file_utils.get_file_size(full),
                 "type": file_utils.FileIdentifier(full).file_type_desc,
                 "icon": file_utils.FileIdentifier(full).file_type_icon
             })
+
+        if filter_by:
+            for path, names, files in os.walk(location):
+                for name in files:
+                    if filter_by in name:
+                        n = join(path, name).split(location)[1].replace("\\", "/")
+                        n = n[1:] if n[0] == "/" else n
+                        add_to_list(n)
+        else:
+            for file in os.listdir(location):
+                add_to_list(file)
+
         return file_list, RequestCode.Success.OK
 
     return {
@@ -189,6 +203,11 @@ def download_exposed_file(position):
 
 class FileOperation:
     def __init__(self, path: str, personal: bool, user: str):
+        self.user = user
+        self.root = file_utils.make_cloud_path(
+            user if personal else "",
+            personal
+        )
         self.location = file_utils.make_cloud_path(
             join(user, path) if personal else path,
             personal
@@ -207,3 +226,39 @@ class FileOperation:
     def save(self, data: str):
         with open(self.location, "w", encoding="utf-8") as f:
             f.write(data)
+
+    def move_or_copy(self, copy: bool, file: dict):
+        if file["path"].split("/")[1] == "personal-cloud":
+            path = file_utils.make_cloud_path(join(self.user, "/".join(file["path"].split("/")[2:])), True)
+        else:
+            path = file_utils.make_cloud_path("/".join(file["path"].split("/")[2:]), False)
+        destination = join(self.location, file["name"])
+        try:
+            if copy:
+                if isdir(path):
+                    shutil.copytree(path, destination)
+                else:
+                    shutil.copy2(path, destination)
+            else:
+                shutil.move(path, destination)
+        except shutil.SameFileError:
+            pass
+
+    def rename(self, file_name: str, new_name: str):
+        os.rename(
+            join(self.location, file_name),
+            join(self.location, new_name)
+        )
+
+    def to_trash(self, file_name: str):
+        shutil.move(
+            join(self.location, file_name),
+            join(self.root, "trash", file_name)
+        )
+
+    def delete(self, file_name: str):
+        path = join(self.location, file_name)
+        if isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)

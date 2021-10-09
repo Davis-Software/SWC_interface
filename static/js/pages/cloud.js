@@ -1,4 +1,5 @@
-let mobile = window.outerWidth < 1300
+let first_load = true
+let mobile = window.outerWidth < 1000
 
 let sidebar = document.querySelector(".cloud-sidebar")
 let cloud_main = document.querySelector(".cloud-main")
@@ -44,26 +45,65 @@ async function apply_path_view(){
     }
 }
 
-function load_files(){
+function load_files(filter){
     path_view.classList.add("load")
     load_progress.style.width = "10%"
 
-    let cloud_clipboard = sessionStorage.getItem("cloud_file_clipboard") ? JSON.parse(sessionStorage.getItem("cloud_file_clipboard")) : null
-
     function generate_file_list(files){
+        let cloud_clipboard
+        function update_clipboard(){
+            cloud_clipboard = sessionStorage.getItem("cloud_file_clipboard") ? JSON.parse(sessionStorage.getItem("cloud_file_clipboard")) : null
+        }
+        update_clipboard()
+
         cloud_main.classList.remove("file-loaded")
         sidebar.classList.remove("preview-mode")
         cloud_opt_btn.hidden = false
         preview_frame.contentDocument.documentElement.innerHTML = ""
 
-
+        if(first_load){
+            {
+                let context_menu = new ContextMenu([
+                    new ContextButton("share", "Share").OnClick().Classes("swc-btn text-info single").Mode("share").get(),
+                    {type: "divider"},
+                    new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn blue single").Mode("paste").get()
+                ])
+                document.querySelector(".table-scroller").addEventListener("contextmenu", e => {
+                    e.stopPropagation()
+                    if(e.target !== document.querySelector(".table-scroller")) {
+                        context_menu.hide()
+                        return
+                    }
+                    context_menu.display(e)
+                })
+            }
+            first_load = false
+        }
         let context_menu = new ContextMenu([
-            new ContextButton("content_cut", "Cut").OnClick(file_operations).Classes("swc-btn").Mode("cut").get(),
-            new ContextButton("content_copy", "Copy").OnClick(file_operations).Classes("swc-btn").Mode("copy").get(),
-            new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn").Mode("paste").get(),
-            new ContextButton("edit", "Rename").OnClick(file_operations).Classes("swc-btn").Mode("rename").get(),
-            new ContextButton("delete", "Move to Trash").OnClick(file_operations).Classes("swc-btn").Mode("trash").get(),
+            new ContextButton("content_cut", "Cut").OnClick(file_operations).Classes("swc-btn blue").Mode("cut").get(),
+            new ContextButton("content_copy", "Copy").OnClick(file_operations).Classes("swc-btn blue").Mode("copy").get(),
+            new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn blue").Mode("paste").get(),
+            {type: "divider"},
+            new ContextButton("edit", "Rename").OnClick(file_operations).Classes("swc-btn yellow").Mode("rename").get(),
+            new ContextButton("delete", "Move to Trash").OnClick(file_operations).Classes("swc-btn orange").Mode("trash").get(),
+            new ContextButton("delete_forever", "Delete").OnClick(file_operations).Classes("swc-btn red").Display(false).Mode("delete").get()
         ])
+        function showDelete(bool){
+            document.querySelectorAll(".cm_container.display li:nth-last-child(2)").forEach(e => {
+                e.hidden = bool
+            })
+            document.querySelectorAll(".cm_container.display li:last-child").forEach(e => {
+                e.hidden = !bool
+            })
+        }
+        document.addEventListener("keydown", e => {
+            if(e.key !== "Control"){return}
+            showDelete(true)
+        })
+        document.addEventListener("keyup", e => {
+            if(e.key !== "Control" || location.href.includes("trash")){return}
+            showDelete(false)
+        })
 
         if(!files){
             show_error("Unknown Error (more info in console)")
@@ -78,85 +118,184 @@ function load_files(){
             let items = btn.classList.contains("swc-btn") ? Array.from(cloud_list.querySelectorAll("tr.selected")) : [btn.parentElement.parentElement]
             let latest = btn.classList.contains("swc-btn") ? cloud_list.querySelector("tr.selected-most-recently") : items[0]
             let mode = btn.getAttribute("mode")
-            let files = items.map(item => {
+            let files_list = items.map(item => {
                 return {
                     path: item.querySelector(".cloud-item-name a").getAttribute("href"),
                     name: item.querySelector(".cloud-item-name a").getAttribute("name"),
                     directory: item.querySelector(".cloud-item-name a").getAttribute("data-directory") === "true"
                 }
             })
-            let latest_file = {
-                path: latest.querySelector(".cloud-item-name a").getAttribute("href"),
-                name: latest.querySelector(".cloud-item-name a").getAttribute("name"),
-                directory: latest.querySelector(".cloud-item-name a").getAttribute("data-directory") === "true"
+            let latest_file
+            if(!btn.classList.contains("single")) {
+                latest_file = {
+                    path: latest.querySelector(".cloud-item-name a").getAttribute("href"),
+                    name: latest.querySelector(".cloud-item-name a").getAttribute("name"),
+                    directory: latest.querySelector(".cloud-item-name a").getAttribute("data-directory") === "true"
+                }
             }
 
             function info_modal(message, callback){
-                let modal = new Modal("#modal-wrapper", {close_button: "OK", title: "Cloud Info"})
+                let modal = new Modal(null, {close_button: "OK", title: "Cloud Info", template: Modal.slim_modal_body})
                 modal.FastText(message)
                 modal.show()
-                modal.on("hide", callback)
+                if(callback) {
+                    modal.on("hide", callback)
+                }
+            }
+            function process_modal(multiple){
+                let modal = new Modal("#modal-wrapper", {static_backdrop: true, title: "File Operation", centered: true, template: Modal.slim_modal_body})
+                modal.Custom(`<div class='progress'><div class='progress-bar progress-bar-animated progress-bar-striped w-100'>Processing ${multiple ? "files" : "file"}</div></div>`)
+                modal.show()
+                return modal
             }
 
+            update_clipboard()
             switch (mode){
                 case "cut":
-                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files}))
-                    info_modal(`Cut ${files.length} ${files.length > 1 ? "elements" : "element"} to the clipboard.`, update_info)
+                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files: files_list}))
+                    info_modal(`Cut ${files_list.length} ${files_list.length > 1 ? "elements" : "element"} to the clipboard.`)
+                    clear_content().then(_ => {generate_file_list(files)})
                     break
                 case "copy":
-                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files}))
-                    info_modal(`Copied ${files.length} ${files.length > 1 ? "elements" : "element"} to the clipboard.`, update_info)
+                    sessionStorage.setItem("cloud_file_clipboard", JSON.stringify({mode, files: files_list}))
+                    info_modal(`Copied ${files_list.length} ${files_list.length > 1 ? "elements" : "element"} to the clipboard.`)
                     break
                 case "paste":
                     if(cloud_clipboard){
                         if(cloud_clipboard.mode === "cut"){
                             sessionStorage.setItem("cloud_file_clipboard", null)
                         }
-                        info_modal(`Pasted ${cloud_clipboard.files.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"} from the clipboard.`, update_info)
+                        let proc = process_modal(cloud_clipboard.files.length > 1)
+                        let form = new FormData()
+                        form.append("mode", mode)
+                        form.append("data", JSON.stringify(cloud_clipboard))
+                        fetch("?post-ops", {
+                            method: "POST",
+                            body: form
+                        }).then(resp => {
+                            setTimeout(_ => {
+                                proc.hide()
+                                if(resp.ok){
+                                    info_modal(`Pasted ${cloud_clipboard.files.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"} from the clipboard.`, update_info)
+                                }else{
+                                    show_error(resp.statusText)
+                                }
+                            }, 500)
+                        })
                     }else{
                         info_modal("Nothing to paste.")
                     }
                     break
                 case "rename":
-                    let modal = new Modal("#modal-wrapper", {
+                    let modal1 = new Modal(null, {
                         title: "Rename",
                         static_backdrop: true,
                         close_button: "Cancel"
                     })
-                    modal.wrapper_body.setAttribute("style", "display:flex;")
-                    let file_name = modal.Input("rename-file-name", "text", latest_file.directory ? "" : "w-50", {placeholder: latest_file.directory ? "Folder" : "File"}, false)
+                    modal1.wrapper_body.setAttribute("style", "display:flex;")
+                    let file_name = modal1.Input("rename-file-name", "text", latest_file.directory ? "" : "w-50", {placeholder: latest_file.directory ? "Folder" : "File"}, false)
                     let file_extension = {}
                     if(!latest_file.directory){
-                        modal.FastText(".", {
+                        modal1.FastText(".", {
                             style: "font-size:25px;padding:0 5px;"
                         })
-                        file_extension = modal.Input("rename-file-ext", "text", "w-25", {placeholder: "txt"}, false)
+                        file_extension = modal1.Input("rename-file-ext", "text", "w-25", {placeholder: "txt"}, false)
                     }
 
                     file_name.value = latest_file.directory ? latest_file.name : latest_file.name.split(".").slice(0, -1).join(".")
                     file_extension.value = latest_file.name.split(".").pop()
 
-                    modal.Button(
+                    let btn = modal1.Button(
                         "rename-submit-btn",
                         "Rename",
                         "btn-warning",
                         {},
                         true
-                    ).addEventListener("click", e => {
-                        if(file_name.value !== ""){
-                           let file = ""
-                        }
+                    )
+                    function check(){
+                        btn.disabled = file_name.value === "" || (latest_file.directory || file_extension.value.replaceAll(" ", "") === "" ? file_name.value : `${file_name.value}.${file_extension.value.replaceAll(" ", "")}`) === latest_file.name
+                    }
+                    check()
+                    file_name.addEventListener("input", check)
+                    if(!latest_file.directory) {
+                        file_extension.addEventListener("input", check)
+                    }
+                    btn.addEventListener("click", _ => {
+                        let new_name = latest_file.directory || file_extension.value.replaceAll(" ", "") === "" ? file_name.value : `${file_name.value}.${file_extension.value.replaceAll(" ", "")}`
+                        let form = new FormData()
+                        form.append("mode", mode)
+                        form.append("data", JSON.stringify({
+                            file: latest_file.name,
+                            new_name
+                        }))
+                        modal1.hide()
+                        fetch("?post-ops", {
+                            method: "POST",
+                            body: form
+                        }).then(resp => {
+                            if(resp.ok){
+                                update_info()
+                            }else{
+                                show_error(resp.statusText)
+                            }
+                        })
                     })
-                    modal.show()
+                    modal1.show()
+                    break
+                case "trash":
+                    let modal2 = new Modal(null, {title: "Move to trash?", close_button: "Cancel", static_backdrop: true})
+                    modal2.FastText(`Are you sure you want to move ${files_list.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"} to trash?`)
+                    modal2.Button("yes-btn", "Move to trash", "btn-warning", {}, true).addEventListener("click", _ => {
+                        let form = new FormData()
+                        form.append("mode", mode)
+                        form.append("data", JSON.stringify({
+                            files: files_list
+                        }))
+                        modal2.hide()
+                        fetch("?post-ops", {
+                            method: "POST",
+                            body: form
+                        }).then(resp => {
+                            if(resp.ok){
+                                update_info()
+                            }else{
+                                show_error(resp.statusText)
+                            }
+                        })
+                    })
+                    modal2.show()
+                    break
+                case "delete":
+                    let modal3 = new Modal(null, {title: "Delete file?", close_button: "Cancel", static_backdrop: true})
+                    modal3.FastText(`Are you sure you want to delete ${files_list.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"}?`)
+                    modal3.Button("yes-btn", "Delete", "btn-danger", {}, true).addEventListener("click", _ => {
+                        let form = new FormData()
+                        form.append("mode", mode)
+                        form.append("data", JSON.stringify({
+                            files: files_list
+                        }))
+                        modal3.hide()
+                        fetch("?post-ops", {
+                            method: "POST",
+                            body: form
+                        }).then(resp => {
+                            if(resp.ok){
+                                update_info()
+                            }else{
+                                show_error(resp.statusText)
+                            }
+                        })
+                    })
+                    modal3.show()
                     break
                 default:
-                    info_modal(`Unknown operation mode ${mode}.`)
+                    info_modal(`Unknown operation mode "${mode}".`)
                     break
             }
         }
         function apply_navigation(elem, file){
             let nav = elem.querySelector(".cloud-item-name")
-            let file_name = file.directory ? file.name + "/" : file.name
+            let file_name = file.directory ? file.name + "/" : file.name.includes("/") ? file.name.split("/").pop() + `    (${file.name})` : file.name
             let cut_files = cloud_clipboard && cloud_clipboard.mode === "cut" ? cloud_clipboard.files.map(item => {return item.path}) : []
 
             elem.addEventListener("click", e => {
@@ -177,9 +316,15 @@ function load_files(){
                 cloud_list.querySelectorAll("tr").forEach(elem_all => {
                     elem_all.classList.remove("selected-most-recently")
                 })
+                if(((!e.ctrlKey && !mobile) || (e.target.parentNode !== elem)) && !Array.from(cloud_list.querySelectorAll("tr.selected")).includes(e.target.parentNode)) {
+                    cloud_list.querySelectorAll("tr").forEach(elem_all => {
+                        elem_all.classList.remove("selected")
+                    })
+                }
                 elem.classList.add("selected")
                 elem.classList.add("selected-most-recently")
                 context_menu.display(e)
+                showDelete(location.href.includes("trash"))
             })
 
 
@@ -254,36 +399,26 @@ function load_files(){
                 .attr({mode: "rename"})
                 .onClick(file_operations)
                 .spawn()
-
-            let to_trash = new QuickButton(elem)
-                .class("orange")
-                .title(`Move ${file_or_folder} to trash`)
-                .icon("delete")
-                .attr({mode: "trash"})
-                .onClick(file_operations)
-                .spawn()
-                .return()
-            let remove = new QuickButton(elem)
-                .class("red")
-                .attr({hidden: true})
-                .title(`Delete ${file_or_folder}`)
-                .icon("delete_forever")
-                .attr({mode: "delete"})
-                .onClick(file_operations)
-                .spawn()
-                .return()
-            {
-                document.addEventListener("keydown", e => {
-                    if(e.key !== "Control"){return}
-                    to_trash.hidden = true
-                    remove.hidden = false
-                })
-                document.addEventListener("keyup", e => {
-                    if(e.key !== "Control"){return}
-                    to_trash.hidden = false
-                    remove.hidden = true
-                })
+            if(location.href.includes("/trash")){
+                new QuickButton(elem)
+                    .class("red")
+                    .title(`Delete ${file_or_folder}`)
+                    .icon("delete_forever")
+                    .attr({mode: "delete"})
+                    .onClick(file_operations)
+                    .spawn()
+                    .return()
+            }else{
+                new QuickButton(elem)
+                    .class("orange")
+                    .title(`Move ${file_or_folder} to trash`)
+                    .icon("delete")
+                    .attr({mode: "trash"})
+                    .onClick(file_operations)
+                    .spawn()
+                    .return()
             }
+
         }
 
         function create_apply_and_populate(file){
@@ -318,11 +453,12 @@ function load_files(){
         cloud_main.classList.add("file-loaded")
         sidebar.classList.add("preview-mode")
         preview_frame.src = location.href + "?preview"
+        cloud_opt_collapse.hide()
         cloud_opt_btn.hidden = true
     }
 
     let xhr = new XMLHttpRequest()
-    xhr.open('GET', "?data", true)
+    xhr.open('GET', `?data${filter ? "&filter="+filter : ""}`, true)
 
     xhr.addEventListener("loadstart", _ => {
         load_progress.style.width = "30%"
@@ -397,14 +533,22 @@ apply_path_view().then()
 load_files()
 
 
-function update_info(){
+function update_info(filter){
     clear_content().then()
     apply_path_view().then()
-    load_files()
+    load_files(typeof filter === "string" ? filter : null)
 }
 
-cloud_list.addEventListener("keydown", e => {
+let clientX
+let clientY
+document.addEventListener("mousemove", e => {
+    e.stopPropagation()
+    clientX = e.clientX
+    clientY = e.clientY
+})
+document.addEventListener("keydown", e => {
     if(e.key === "a" && e.ctrlKey){
+        if(!cloud_list.contains(document.elementFromPoint(clientX, clientY))) return
         e.preventDefault()
         cloud_list.querySelectorAll("tr").forEach(elem => {
             elem.classList.add("selected")
@@ -425,6 +569,10 @@ document.addEventListener("keydown", e => {
         cloud_options.querySelector("input").focus()
     }
 })
+cloud_options.querySelector("input").addEventListener("input", e => {
+    if(e.target.value.length < 4 && e.target.value !== "") return
+    update_info(e.target.value)
+})
 cloud_options.querySelector("input").addEventListener("keydown", e => {
     if(e.key === "Escape"){
         cloud_opt_collapse.hide()
@@ -437,6 +585,12 @@ cloud_options.addEventListener("show.bs.collapse", _ => {
 cloud_options.addEventListener("hide.bs.collapse", _ => {
     cloud_opt_btn.firstElementChild.innerHTML = "search"
     cloud_opt_btn.classList.remove("reverse")
+    if(cloud_options.querySelector("input").value !== ""){
+        cloud_options.querySelector("input").value = ""
+        if(!sidebar.classList.contains("preview-mode")){
+            update_info()
+        }
+    }
 })
 setTimeout(_ => {
     cloud_opt_collapse.hide()

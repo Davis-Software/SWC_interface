@@ -100,9 +100,10 @@ function ContextMenu(menu, options){
 					}
 				}
 
-				for(let item of ContextUtil.getProperty(options, "classes", "dropdown-item").split(" ")){
-					li.classList.add(item)
+				for(let t of ContextUtil.getProperty(item, "classes", "dropdown-item").split(" ")){
+					li.classList.add(t)
 				}
+				li.hidden = ContextUtil.getProperty(item, "hidden", false)
 
 				li.appendChild(icon_span);
 				li.appendChild(text_span);
@@ -222,7 +223,7 @@ function ContextMenu(menu, options){
 }
 
 ContextMenu.count = 0;
-ContextMenu.DIVIDER = "cm_divider";
+ContextMenu.DIVIDER = "divider";
 
 const ContextUtil = {
 	getProperty: function(options, opt, def){

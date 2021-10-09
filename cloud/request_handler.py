@@ -1,3 +1,5 @@
+import json
+
 from __init__ import session, abort, temp_db
 from cloud import file_adapter
 from utils import api_utils
@@ -28,13 +30,31 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
                 ops.save(form.get("data"))
             return api_utils.empty_success()
 
+        if "post-ops" in args:
+            ops = file_adapter.FileOperation(c_path, personal_cloud, user)
+            mode = form.get("mode")
+            data = json.loads(form.get("data"))
+            if mode == "paste":
+                for file in data["files"]:
+                    ops.move_or_copy(data["mode"], file)
+            if mode == "rename":
+                ops.rename(data["file"], data["new_name"])
+            if mode == "trash":
+                for file in data["files"]:
+                    ops.to_trash(file["name"])
+            if mode == "delete":
+                for file in data["files"]:
+                    ops.delete(file["name"])
+
+            return api_utils.empty_success()
+
         if "upload" in args:
             file_adapter.upload_files(c_path, personal_cloud, user, files)
             return api_utils.empty_success()
 
     if "data" in args:
         return api_utils.craft_response(
-            *file_adapter.file_getter(c_path, personal_cloud, user)
+            *file_adapter.file_getter(c_path, personal_cloud, user, filter_by=args.get("filter"))
         )
     if "preview" in args:
         return file_adapter.load_file_preview(c_path, personal_cloud, user)

@@ -172,19 +172,9 @@
 .cloud-wrapper .cloud-main ul.path-view li.progress .progress-bar {
   transition: all 0.1s !important;
 }
-.cloud-wrapper .cloud-main ul.path-view li.path-help {
-  position: absolute;
-  right: 100px;
-  cursor: pointer;
-}
-.cloud-wrapper .cloud-main ul.path-view li.path-help span {
-  font-size: 22px;
-  text-align: center;
-  margin: 5px 10px;
-}
 .cloud-wrapper .cloud-main ul.path-view li.path-options {
   position: absolute;
-  right: 55px;
+  right: 100px;
   cursor: pointer;
 }
 .cloud-wrapper .cloud-main ul.path-view li.path-options span {
@@ -195,6 +185,16 @@
 }
 .cloud-wrapper .cloud-main ul.path-view li.path-options.reverse span {
   transform: rotate(540deg);
+}
+.cloud-wrapper .cloud-main ul.path-view li.path-help {
+  position: absolute;
+  right: 55px;
+  cursor: pointer;
+}
+.cloud-wrapper .cloud-main ul.path-view li.path-help span {
+  font-size: 22px;
+  text-align: center;
+  margin: 5px 10px;
 }
 .cloud-wrapper .cloud-main ul.path-view li.path-refresh {
   position: absolute;
@@ -256,6 +256,7 @@
   color: white;
 }
 .cloud-wrapper .cloud-main .table-scroller {
+  height: 100%;
   max-height: calc(100% - 46px);
   overflow-x: hidden;
   overflow-y: auto;
@@ -284,7 +285,7 @@
   color: white;
 }
 .cloud-wrapper .cloud-main table tbody tr {
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 .cloud-wrapper .cloud-main table tbody tr td {
   -webkit-user-drag: none;
@@ -319,8 +320,12 @@
 .cloud-wrapper .cloud-main table tbody tr td button.material-icons.inactive {
   display: none;
 }
+.cloud-wrapper .cloud-main table tbody tr, .cloud-wrapper .cloud-main table tbody tr td:first-child {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
 .cloud-wrapper .cloud-main table tbody tr.selected {
-  background-color: #375a7f;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 .cloud-wrapper .cloud-main table.mobile-view tbody tr td:not(.cloud-item-name, .cloud-content-f), .cloud-wrapper .cloud-main table.mobile-view thead tr th:not(.cloud-item-name, .cloud-content-f) {
   display: none;

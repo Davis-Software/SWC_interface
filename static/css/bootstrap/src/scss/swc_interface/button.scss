@@ -1,17 +1,20 @@
-button.swc-btn.material-icons{
-    border-radius: 25px;
+.swc-btn{
+    &button{
+        border-radius: 25px;
+        margin: 0 2px;
+        text-align: center;
+        vertical-align: middle;
+        border: none;
+        padding: 0.375rem 0.75rem;
+    }
     transition: all .3s;
-    margin: 0 2px;
+    cursor: pointer;
+    background-color: transparent;
+    color: white;
     &:hover{
         background-color: rgba(255, 255, 255, 0.1);
     }
-    cursor: pointer;
-    text-align: center;
-    vertical-align: middle;
-    background-color: transparent;
-    border: none;
-    padding: 0.375rem 0.75rem;
-    color: white;
+
     &.blue{
         color: #0070ac;
     }
