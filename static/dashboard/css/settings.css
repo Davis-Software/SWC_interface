@@ -1,0 +1,62 @@
+.holder{
+    padding: 1rem 1.5rem 1.5rem;
+    background-color: #303030;
+    border-radius: 15px;
+}
+
+.image-preview{
+    position: relative;
+    cursor: pointer;
+    height: 30vh;
+    border-radius: 15px;
+    transition: all .3s;
+}
+.image-preview:hover{
+    transform: scale(1.01);
+}
+.image-preview img{
+    position: absolute;
+    user-select: none;
+    border-radius: 15px;
+    -webkit-user-drag: none;
+    height: 30vh;
+    object-position: center;
+    object-fit: cover;
+}
+.image-preview img.select{
+    opacity: 0;
+    transition: all .3s;
+}
+.image-preview:hover img.select{
+    opacity: 50%;
+}
+
+
+.module-holder{
+    -webkit-user-drag: none;
+    user-select: none;
+}
+.module{
+    height: 150px;
+    padding: 5px !important;
+    box-sizing: border-box;
+}
+.module div.module-inner{
+    height: 100%;
+    background-color: #444;
+    border-radius: 5px;
+    transition: all .2s;
+}
+.module.active div{
+    background-color: rgba(58, 255, 0, 0.27);
+}
+.module.active div:hover{
+    transform: scale(1.01);
+    cursor: move;
+    background-color: rgba(58, 255, 0, 0.32) !important;
+}
+.module div.module-inner:hover{
+    transform: scale(1.01);
+    cursor: move;
+    background-color: rgba(255, 255, 255, 0.2);
+}

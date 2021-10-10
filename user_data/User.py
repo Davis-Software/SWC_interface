@@ -51,6 +51,20 @@ class User(engine.Model):
         self.settings = json.dumps({})
 
 
+class SyncingSettings(engine.Model):
+    __tablename__ = "syncing_settings"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50))
+    key = Column(String(50))
+    value = Column(String(200))
+
+    def __init__(self, username, key, value):
+        self.username = username
+        self.key = key
+        self.value = value
+
+
 class UserWebQuery:
     def __init__(self, user_model: User or None):
 

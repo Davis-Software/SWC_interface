@@ -1,6 +1,4 @@
 from __init__ import *
-from utils import search_utils
-from utils import api_utils
 
 
 @app.route("/favicon")
@@ -32,24 +30,3 @@ def clear_cookies(mode):
         response.delete_cookie(cookie[0])
 
     return response
-
-
-@app.route("/search_engine")
-def search_engine():
-    sorted_return = list()
-
-    search = request.args.get("search")
-
-    if search:
-        for hit in search_utils.search_all_by_string(search):
-            sorted_return.append(hit)
-
-    if "q-search" in request.args:
-        return render_template(
-            "search_nav.html",
-            hits=sorted_return
-        )
-
-    return api_utils.craft_response(
-        sorted_return, 200
-    )

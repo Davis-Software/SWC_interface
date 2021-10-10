@@ -1,9 +1,6 @@
 from __init__ import *
 from user_data import user_repo
 
-from utils import api_utils
-import uuid
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

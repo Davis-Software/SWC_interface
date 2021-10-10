@@ -1,10 +1,7 @@
 from __init__ import *
 from user_data.user_auth import auth_required, is_admin
-
 from utils import api_utils
 from user_data import user_repo
-
-from sqlalchemy.exc import IntegrityError
 
 
 def manage_permissions(username):
@@ -46,7 +43,7 @@ def profile_settings():
         if "delete_data" in request.form:
             cmd = request.form.get("delete_data")
             if cmd == "account":
-                user_repo.delete_user(username)
+                user_repo.delete_user(session.get("username"))
                 return redirect("/logout")
 
         return api_utils.empty_success()
