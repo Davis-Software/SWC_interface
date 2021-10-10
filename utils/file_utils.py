@@ -7,15 +7,15 @@ personal_cloud_path = join(configuration.cloud_save_path, configuration.personal
 
 
 class FileIdentifier:
-    def __init__(self, file: str):
+    def __init__(self, file: str, folder: bool = None):
         file_name = file.split("/")[-1].split("/")[-1]
         file_type = file_name.split(".")[-1] if "." in file_name else ""
 
         self.file_name = file_name
-        self.file_type = "Directory" if isdir(file) else self.identify(file_type)
-        self.file_extension = "Directory" if isdir(file) else file_type
-        self.file_type_desc = "Directory" if isdir(file) else self.file_type_description(self.file_type)
-        self.file_type_icon = "folder" if isdir(file) else self.file_type_icon_image(self.file_type)
+        self.file_type = "Directory" if folder or isdir(file) else self.identify(file_type)
+        self.file_extension = "Directory" if folder or isdir(file) else file_type
+        self.file_type_desc = "Directory" if folder or isdir(file) else self.file_type_description(self.file_type)
+        self.file_type_icon = "folder" if folder or isdir(file) else self.file_type_icon_image(self.file_type)
 
     @staticmethod
     def identify(typ):
@@ -31,7 +31,7 @@ class FileIdentifier:
 
     @staticmethod
     def file_type_icon_image(dict_key):
-        return configuration.CloudFileTypes.ICONS.get(dict_key)
+        return configuration.CloudFileTypes.ICONS.get(dict_key) or configuration.CloudFileTypes.ICONS["TEXT"]
 
 
 def make_cloud_path(path: str, personal: bool):

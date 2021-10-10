@@ -9,7 +9,11 @@ function activation(act){
     track.disabled = act
     btn.disabled = act
 }
-activation(false)
+activation(true)
+video.addEventListener("loadeddata", _ => {
+    activation(false)
+    toggle_play()
+})
 
 scr.addEventListener("click", _ => {
     if(document.fullscreenElement === scr){
@@ -46,15 +50,25 @@ track.addEventListener("input", _ => {
 video.addEventListener("timeupdate", _ => {
     track.value = video.currentTime / video.duration * 100
 })
-btn.addEventListener("click", _ => {
-    if(btn.disabled){return}
-    if(video.paused){
-        video.play()
-        btn.querySelector("i").innerHTML = "pause"
-    }else{
+function toggle_play(){
+    if (video.paused) {
+        video.play().then(_ => {
+            btn.querySelector("i").innerHTML = "pause"
+        }).catch(err => {
+            alert(err)
+        })
+    } else {
         video.pause()
         btn.querySelector("i").innerHTML = "play_arrow"
     }
+}
+btn.addEventListener("click", _ => {
+    if(btn.disabled){return}
+    toggle_play()
+})
+video.addEventListener("click", _ => {
+    if(btn.disabled){return}
+    toggle_play()
 })
 video.addEventListener("ended", _ => {
     btn.querySelector("i").innerHTML = "play_arrow"

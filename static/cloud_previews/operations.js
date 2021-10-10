@@ -192,5 +192,41 @@ function download_file(url, name){
 }
 
 function download_folder(name){
-    //wbd
+    let proc = new Modal(null, {
+        static_backdrop: true,
+        title: "Compressing folder",
+        close_button: "Cancel",
+        template: Modal.slim_modal_body,
+        centered: true
+    })
+    let pr_bar = proc.Custom(`
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated w-100">Processing files</div>
+        </div>
+    `).querySelector(".progress-bar")
+    let dwn_btn = proc.Button("zip-dwn", "Download", "btn-success", {}, true)
+    fetch(`${location.pathname}/${name}?download`).then(resp => {
+        pr_bar.classList.remove("progress-bar-striped")
+        pr_bar.innerText = "Compression complete - Preparing file download..."
+        if(resp.ok){
+            pr_bar.classList.add("bg-success")
+            resp.blob().then(blob => {
+                dwn_btn.disabled = false
+                pr_bar.innerText = "Compression complete - You may download the zip file now"
+                dwn_btn.addEventListener("click", _ => {
+                    download_blob(blob, `${name}.zip`, blob.type)
+                    pr_bar.innerText = "Downloading..."
+                    pr_bar.classList.add("progress-bar-striped")
+                    dwn_btn.innerHTML = "<div class='spinner-border spinner-border-sm'></div>"
+                    dwn_btn.disabled = true
+                    setTimeout(_ => {proc.hide(); pr_bar.innerText = "Download complete"}, 2000)
+                })
+            })
+        }else{
+            pr_bar.classList.add("bg-danger")
+            pr_bar.innerText = resp.statusText
+        }
+    })
+    dwn_btn.disabled = true
+    proc.show()
 }

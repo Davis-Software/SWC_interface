@@ -186,9 +186,9 @@ class Modal{
     }
     destroy(){
         this.hide()
-        document.querySelectorAll(".modal-backdrop").forEach(e => {
-            document.removeChild(e)
-        })
-        document.removeChild(this.wrapper)
+        // document.querySelectorAll(".modal-backdrop").forEach(e => {
+        //     document.removeChild(e)
+        // })
+        // document.removeChild(this.wrapper)
     }
 }

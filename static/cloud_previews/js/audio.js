@@ -8,7 +8,11 @@ function activation(act){
     track.disabled = act
     btn.disabled = act
 }
-activation(false)
+activation(true)
+audio.addEventListener("loadeddata",_ => {
+    activation(false)
+    toggle_play()
+})
 
 function volume_change(set=true){
     document.querySelector("#vol-btn").innerHTML = vol.value === "0" ? "volume_off" : vol.value < 50 ? "volume_down" : "volume_up"
@@ -34,15 +38,21 @@ track.addEventListener("input", _ => {
 audio.addEventListener("timeupdate", _ => {
     track.value = audio.currentTime / audio.duration * 100
 })
-btn.addEventListener("click", _ => {
-    if(btn.disabled){return}
+function toggle_play(){
     if(audio.paused){
-        audio.play()
-        btn.querySelector("i").innerHTML = "pause"
+        audio.play().then(_ => {
+            btn.querySelector("i").innerHTML = "pause"
+        }).catch(err => {
+            alert(err)
+        })
     }else{
         audio.pause()
         btn.querySelector("i").innerHTML = "play_arrow"
     }
+}
+btn.addEventListener("click", _ => {
+    if(btn.disabled){return}
+    toggle_play()
 })
 audio.addEventListener("ended", _ => {
     btn.querySelector("i").innerHTML = "play_arrow"
@@ -58,9 +68,9 @@ wave.fromElement("audio-data", "visualizer", {
         "#2e2321"
     ]
 })
-wave.onFileLoad = _ => {
-    activation(true)
-}
+// wave.onFileLoad = _ => {
+//     activation(true)
+// }
 
 document.querySelector("canvas").width = window.innerWidth
 document.querySelector("canvas").height = window.innerHeight - 60

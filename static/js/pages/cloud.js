@@ -64,6 +64,16 @@ function load_files(filter){
         if(first_load){
             {
                 let context_menu = new ContextMenu([
+                    {
+                        icon: "add_circle",
+                        text: "New",
+                        classes: "swc-btn text-info position-relative",
+                        sub: [
+                            new ContextButton("note_add", "New File").OnClick(new_file).Classes("swc-btn text-info").get(),
+                            new ContextButton("create_new_folder", "New Folder").OnClick(new_folder).Classes("swc-btn text-info").get(),
+                            new ContextButton("cloud_upload", "Upload").OnClick(upload).Classes("swc-btn text-info").get(),
+                        ]
+                    },
                     new ContextButton("share", "Share").OnClick().Classes("swc-btn text-info single").Mode("share").get(),
                     {type: "divider"},
                     new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn blue single").Mode("paste").get()
@@ -80,19 +90,30 @@ function load_files(filter){
             first_load = false
         }
         let context_menu = new ContextMenu([
+            {
+                icon: "add_circle",
+                text: "New",
+                classes: "swc-btn text-info position-relative",
+                sub: [
+                    new ContextButton("note_add", "New File").OnClick(new_file).Classes("text-info").get(),
+                    new ContextButton("create_new_folder", "New Folder").OnClick(new_folder).Classes("text-info").get(),
+                    new ContextButton("cloud_upload", "Upload").OnClick(upload).Classes("text-info").get(),
+                ]
+            },
+            {type: "divider"},
             new ContextButton("content_cut", "Cut").OnClick(file_operations).Classes("swc-btn blue").Mode("cut").get(),
             new ContextButton("content_copy", "Copy").OnClick(file_operations).Classes("swc-btn blue").Mode("copy").get(),
             new ContextButton("content_paste", "Paste").OnClick(file_operations).Classes("swc-btn blue").Mode("paste").get(),
             {type: "divider"},
             new ContextButton("edit", "Rename").OnClick(file_operations).Classes("swc-btn yellow").Mode("rename").get(),
-            new ContextButton("delete", "Move to Trash").OnClick(file_operations).Classes("swc-btn orange").Mode("trash").get(),
-            new ContextButton("delete_forever", "Delete").OnClick(file_operations).Classes("swc-btn red").Display(false).Mode("delete").get()
+            new ContextButton("delete", "Move to Trash").OnClick(file_operations).Classes("switchable swc-btn orange").Mode("trash").get(),
+            new ContextButton("delete_forever", "Delete").OnClick(file_operations).Classes("switchable swc-btn red").Display(false).Mode("delete").get()
         ])
         function showDelete(bool){
-            document.querySelectorAll(".cm_container.display li:nth-last-child(2)").forEach(e => {
+            document.querySelectorAll(".cm_container.display li.switchable:nth-last-child(2)").forEach(e => {
                 e.hidden = bool
             })
-            document.querySelectorAll(".cm_container.display li:last-child").forEach(e => {
+            document.querySelectorAll(".cm_container.display li.switchable:last-child").forEach(e => {
                 e.hidden = !bool
             })
         }
@@ -244,7 +265,7 @@ function load_files(filter){
                     break
                 case "trash":
                     let modal2 = new Modal(null, {title: "Move to trash?", close_button: "Cancel", static_backdrop: true})
-                    modal2.FastText(`Are you sure you want to move ${files_list.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"} to trash?`)
+                    modal2.FastText(`Are you sure you want to move ${files_list.length} ${files_list.length > 1 ? "elements" : "element"} to trash?`)
                     modal2.Button("yes-btn", "Move to trash", "btn-warning", {}, true).addEventListener("click", _ => {
                         let form = new FormData()
                         form.append("mode", mode)
@@ -267,7 +288,7 @@ function load_files(filter){
                     break
                 case "delete":
                     let modal3 = new Modal(null, {title: "Delete file?", close_button: "Cancel", static_backdrop: true})
-                    modal3.FastText(`Are you sure you want to delete ${files_list.length} ${cloud_clipboard.files.length > 1 ? "elements" : "element"}?`)
+                    modal3.FastText(`Are you sure you want to delete ${files_list.length} ${files_list.length > 1 ? "elements" : "element"}?`)
                     modal3.Button("yes-btn", "Delete", "btn-danger", {}, true).addEventListener("click", _ => {
                         let form = new FormData()
                         form.append("mode", mode)
@@ -354,7 +375,7 @@ function load_files(filter){
                     .title("Download Folder as ZIP")
                     .icon("archive")
                     .onClick(_ => {
-                        console.log(`${location.pathname}/${file.name}`, file.name)
+                        download_folder(file.name)
                     })
                     .spawn()
             }else{

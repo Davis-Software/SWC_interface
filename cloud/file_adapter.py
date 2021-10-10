@@ -2,7 +2,10 @@ import os
 
 import uuid
 import shutil
+import zipfile
 import markdown
+import tempfile
+import configuration
 from functools import wraps
 from datetime import datetime
 from __init__ import RequestCode, send_file, render_template, temp_db, request, make_response
@@ -36,7 +39,7 @@ def file_getter(path: str, personal: bool, user: str, filter_by: str = None):
             for path, names, files in os.walk(location):
                 for name in files:
                     if filter_by in name:
-                        n = join(path, name).split(location)[1].replace("\\", "/")
+                        n = str(join(path, name).split(location)[1]).replace("\\", "/")
                         n = n[1:] if n[0] == "/" else n
                         add_to_list(n)
         else:
@@ -58,6 +61,8 @@ def check_for_accepted_preview(func):
                 return func(*args, **kwargs)
             return func()
 
+        if request.args.get("raw"):
+            return returner()
         if request.cookies.get("accepted-preview-warning"):
             if request.cookies.get("accepted-preview-warning") == "forever":
                 return returner()
@@ -88,7 +93,22 @@ def load_file_preview(path: str, personal: bool, user: str):
         return render_template("components/cloud/previews/monaco_editor.html")
 
     elif file_type == "ARCHIVE":
-        pass
+        with zipfile.ZipFile(location, "r") as zf:
+            data = zf.infolist()
+        content = list()
+        for elem in data:
+            directory = elem.filename[-1] == "/"
+            content.append({
+                "name": elem.filename,
+                "directory": directory,
+                "size": elem.file_size,
+                "type": file_utils.FileIdentifier(elem.filename, folder=directory).file_type_desc,
+                "icon": file_utils.FileIdentifier(elem.filename, folder=directory).file_type_icon
+            })
+        return render_template(
+            "components/cloud/previews/zip.html",
+            content=content
+        )
 
     elif file_type in ["OPEN_DOCUMENT", "OFFICE_DOCUMENT"]:
         return render_template(
@@ -155,7 +175,21 @@ def download_file(path: str, personal: bool, user: str):
     )
 
     if isdir(location):
-        return {}, RequestCode.ClientError.MisdirectedRequest
+        temp_loc = join(
+            tempfile.gettempdir() if not configuration.debug_mode else join(configuration.cloud_save_path, "TMP"),
+            "swc-cloud"
+        )
+
+        if not exists(temp_loc):
+            os.makedirs(temp_loc)
+        else:
+            for file in os.listdir(temp_loc):
+                os.remove(join(temp_loc, file))
+
+        temp_loc = join(temp_loc, f"{str(uuid.uuid4())}")
+        shutil.make_archive(temp_loc, "zip", location)
+
+        return send_file(f"{temp_loc}.zip"), RequestCode.Success.OK
 
     return send_file(location), RequestCode.Success.OK
 
