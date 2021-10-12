@@ -1,5 +1,6 @@
 import json
 
+import configuration
 from __init__ import session, abort, temp_db
 from route_helpers import cloud_file_adapter as file_adapter
 from utils import api_utils
@@ -64,6 +65,13 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
         )
 
     return RequestCode.ClientError.BadRequest
+
+
+def handle_info_request():
+    user = session.get("username")
+    data = file_adapter.cloud_info(user)
+    data["max"] = configuration.max_cloud_size * 1_000_000_000
+    return api_utils.craft_response(data, RequestCode.Success.OK)
 
 
 def handle_exposition(position):

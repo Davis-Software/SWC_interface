@@ -1,9 +1,86 @@
+<style>
+    .float-close-end{
+        position: absolute !important;
+        right: 15px;
+        bottom: 0;
+    }
+    .news-part{
+        padding: 20px;
+        margin: 10px auto;
+        background-color: #121212;
+        border-radius: 5px;
+    }
+    .news-part h3 {
+        margin-bottom: 0;
+    }
+    .news-part .field-label {
+        font-size: 0.75rem;
+        padding-bottom: 2vh;
+        color: gray;
+    }
+    .news-part .news-line{
+        padding-bottom: 2vh;
+        width: 90vh;
+    }
+
+</style>
+
 <div class="dashboard-element">
     <div class="dashboard-element-body">
-        <div class="col" id="News">
-            <h3>News</h3>
-            <h4 id="news-header">header</h4>
-            <div id="news-body">news</div>
+        <h3 id="news-title">
+            News -
+            <small class="loading">Interface Login Rework</small>
+        </h3>
+        <div class="mb-5 loading" id="news-section">
+            After quite some time the login system of the interface has been reworked.
+            If you now log in you no longer have your username in front of every page in your URL bar.
+            Moreover, you can now copy file links of the public cloud and share them w...
+        </div>
+        <div class="mt-4 expand-max hold-bottom loading" id="news-info">
+            <button class="btn btn-secondary">Read More</button>
+            <span class="dashboard-element-label float-close-end" id="news-date"><span>Published on some day maybe in this year</span></span>
         </div>
     </div>
 </div>
+
+<script>
+    {
+        let news_title = document.querySelector("#news-title small")
+        let news_text = document.querySelector("#news-section")
+        let news_date = document.querySelector("#news-date")
+        let all = [news_title, news_text, news_date.parentElement]
+
+        let all_news = null
+
+        function loading(bool){
+            all.map(elem => {
+                elem.classList.toggle("loading", bool)
+            })
+        }
+
+        loading(true)
+        fetch("https://api.software-city.org/app/get_news").then(resp => {
+            resp.json().then(data => {
+                all_news = data.news
+                news_title.innerText = all_news[0][0]
+                news_text.innerHTML = `${all_news[0][1].slice(0, news_text.clientWidth/2)}${all_news[0][1].length > news_text.clientWidth/2 ? "..." : ""}`
+                news_date.innerText = `published on ${all_news[0][2]}`
+                loading(false)
+            })
+        })
+
+        news_date.parentElement.querySelector("button").addEventListener("click", _ => {
+            let modal = new Modal(null, {title: "SWC News", centered: true, close_button: true}, "max")
+            for(let news of all_news){
+                modal.Custom(`
+                    <div class="news-part">
+                        <h3>${news[0]}</h3>
+                        <label class="field-label">published on ${news[2]}</label>
+                        <p class="news-line">${news[1]}</p>
+                    </div>
+                `)
+            }
+            modal.show()
+        })
+    }
+</script>

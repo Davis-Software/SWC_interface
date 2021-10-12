@@ -2,14 +2,34 @@
     <div class="dashboard-element-body">
         <h3>Cloud</h3>
         <span class="dashboard-element-label">STORED FILES</span> <br>
-        <div id="cloud-files">2815 Files in all directories</div> <br>
+        <div id="cloud-files" class="loading"><span class="data">2815</span> Files in all directories</div> <br>
         <span class="dashboard-element-label">STORAGE USAGE</span> <br>
-        <div id="cloud-usage">4.65GB / 10GB</div> <br>
+        <div id="cloud-usage" class="loading">4.65GB / 10GB</div> <br>
         <span class="dashboard-element-label">USAGE GRAPH</span> <br>
-        <div>
+        <div class="loading">
             <div class="progress">
-                <div class="progress-bar" id="cloud-usage-bar" style="width: 46%;"></div>
+                <div class="progress-bar" id="cloud-usage-bar" style="width: 0;"></div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    {
+        let files_info = document.querySelector("#cloud-files")
+        let usage_info = document.querySelector("#cloud-usage")
+        let usage_bar = document.querySelector("#cloud-usage-bar")
+        let all = [files_info, usage_info, usage_bar.parentElement.parentElement]
+        fetch("/cloud-info").then(resp => {
+            resp.json().then(data => {
+                let info = data.data
+                files_info.querySelector(".data").innerText = info.count
+                usage_info.innerText = `${(info.size / 1000000000).toFixed(2)}GB / ${(info.max / 1000000000).toFixed(2)}GB`
+                usage_bar.style.width = `${(info.size / info.max) * 100}%`
+                all.map(elem => {
+                    elem.classList.remove("loading")
+                })
+            })
+        })
+    }
+</script>

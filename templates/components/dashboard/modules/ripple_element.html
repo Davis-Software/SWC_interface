@@ -1,5 +1,104 @@
+<style>
+    #ripple-plate{
+        cursor: pointer;
+        text-align: center;
+    }
+    #ripple-plate span{
+        transition: all .6s;
+        opacity: 50%;
+        font-size: 60px;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+    #ripple-plate:hover span{
+        opacity: 0;
+    }
+</style>
+
 <div class="dashboard-element">
-    <div class="dashboard-element-body ripple">
-        Click Me
+    <div class="dashboard-element-body ripple" id="ripple-plate">
+        <span>Make me ripple</span>
     </div>
 </div>
+
+<script>
+    {
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise(resolve => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({from, to, start, end});
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let {from, to, start, end, char} = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar();
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="glitch-dud">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+        }
+
+
+        let changer = Math.random() < 0.5
+        const phrases = [
+            "Hey!",
+            `Click ${changer ? "Me" : "me and"}`,
+            `${changer ? "M" : "m"}ake me ripple!`
+        ]
+
+        const el = document.querySelector('#ripple-plate span')
+        const fx = new TextScramble(el)
+
+        let counter = 0
+        const next = _ => {
+            fx.setText(phrases[counter]).then(_ => {
+                setTimeout(next, 800)
+            })
+            counter = (counter + 1) % phrases.length
+        }
+
+        next()
+    }
+</script>

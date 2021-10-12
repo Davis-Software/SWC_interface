@@ -26,6 +26,12 @@ def route_personal_cloud(cloud_path):
     return render_template("pages/cloud.html", personal=True)
 
 
+@app.route("/cloud-info")
+@auth_required
+def route_cloud_info():
+    return request_handler.handle_info_request()
+
+
 @app.route("/cloud-help")
 @auth_required
 def route_cloud_help():

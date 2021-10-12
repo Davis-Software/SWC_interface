@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "build": "sass --source-map ./scss:./.. --style compressed",
-        "watch": "nodemon -e scss -x 'npm run build'",
+        "watch": "nodemon -e scss -x npm run build",
         "fast-watch": "nodemon -e scss -x 'npm run fast-build'",
         "fast-build": "sass ./scss:./.."
     },

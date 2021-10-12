@@ -41,37 +41,48 @@ def make_cloud_path(path: str, personal: bool):
     )
 
 
-def get_file_size(path: str, formatted: bool = True, round_to: int = 1):
-    file_size = getsize(path)
+def get_file_size(path: str, formatted: bool = True, round_to: int = 1, limit: bool = True):
+    try:
+        file_size = getsize(path)
 
-    if isdir(path):
-        cycle = 0
-        for dir_path, _, file_names in os.walk(path):
-            if cycle > 5:
-                file_size = 4069
-                break
-            for i in file_names:
-                f = join(dir_path, i)
-                file_size += getsize(f)
-                cycle += 1
+        oversize = False
+        if isdir(path):
+            cycle = 0
+            for dir_path, _, file_names in os.walk(path):
+                if cycle > 15 and limit:
+                    oversize = True
+                    break
+                for i in file_names:
+                    f = join(dir_path, i)
+                    file_size += getsize(f)
+                    cycle += 1
 
-    if not formatted:
-        return round(file_size, round_to)
+        if not formatted:
+            return round(file_size, round_to)
 
-    power = 2 ** 10
-    n = 0
-    power_labels = {
-        0: "Bytes",
-        1: "KB",
-        2: "MB",
-        3: "GB",
-        4: "TB"
-    }
-    while file_size > power:
-        file_size /= power
-        n += 1
+        power = 2 ** 10
+        n = 0
+        power_labels = {
+            0: "Bytes",
+            1: "KB",
+            2: "MB",
+            3: "GB",
+            4: "TB"
+        }
+        while file_size > power:
+            file_size /= power
+            n += 1
 
-    return f"{round(file_size, round_to)} {power_labels[n]}"
+        return f"{'> ' if oversize else ''}{round(file_size, round_to)} {power_labels[n]}"
+
+    except OSError:
+        if not formatted:
+            return -1
+        return "error"
 
 
-# def
+def count_files(path):
+    file_count = 0
+    for _, _, files in os.walk(path):
+        file_count += len(files)
+    return file_count

@@ -296,3 +296,11 @@ class FileOperation:
             shutil.rmtree(path)
         else:
             os.remove(path)
+
+
+def cloud_info(user, formatted=False):
+    path = file_utils.make_cloud_path(user, True)
+    return {
+        "size": file_utils.get_file_size(path, formatted, 2, False),
+        "count": file_utils.count_files(path)
+    }

@@ -11369,9 +11369,10 @@ table-primary, table-secondary, table-success, table-info, table-warning, table-
   margin-top: calc(var(--bs-gutter-y) * -1);
 }
 #dashboard-wrapper .dashboard-element {
-  flex: 0 0 auto;
+  flex: 1 0 0%;
   transition: all 0.3s;
-  width: 33.33333333%;
+  max-width: 100%;
+  min-width: 450px;
 }
 #dashboard-wrapper .dashboard-element .dashboard-element-body {
   position: relative;
@@ -11379,6 +11380,7 @@ table-primary, table-secondary, table-success, table-info, table-warning, table-
   margin: 10px;
   padding: 25px;
   border-radius: 5px;
+  min-height: 25vh;
   height: calc(100% - var(--dashboard-padding-value));
 }
 #dashboard-wrapper .dashboard-element .dashboard-element-body .dashboard-element-label {
@@ -11416,9 +11418,60 @@ table-primary, table-secondary, table-success, table-info, table-warning, table-
 #dashboard-wrapper .dashboard-element .dashboard-element-body .expand-max {
   width: calc(100% - var(--dashboard-padding-value) - 10px);
 }
+#dashboard-wrapper .dashboard-element .dashboard-element-body .loading {
+  position: relative;
+  background: #1b1b1b;
+  color: transparent;
+  border-radius: 15px;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .loading * {
+  visibility: hidden;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .loading, #dashboard-wrapper .dashboard-element .dashboard-element-body .loading * {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .loading::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: transparent;
+}
+#dashboard-wrapper .dashboard-element .dashboard-element-body .loading::before {
+  content: "";
+  border-radius: 15px;
+  position: absolute;
+  left: 0%;
+  top: 0;
+  height: 100%;
+  width: 50px;
+  background: linear-gradient(to right, #1b1b1b 25%, #2c2c2c 50%, #1b1b1b 100%);
+  animation-name: gradient-animation;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  filter: blur(1px);
+  transition: all 0.3s;
+}
+@keyframes gradient-animation {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  25% {
+    opacity: 100%;
+  }
+  60% {
+    opacity: 100%;
+  }
+  100% {
+    left: calc(100% - 50px);
+    opacity: 0;
+  }
+}
 
-@media (max-width: 992px) {
+@media (max-width: 800px) {
   #dashboard-wrapper .dashboard-element {
+    min-width: 100%;
     width: 100%;
   }
 }
