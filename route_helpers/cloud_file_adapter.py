@@ -190,7 +190,7 @@ def download_file(path: str, personal: bool, user: str):
 
         return send_file(f"{temp_loc}.zip"), RequestCode.Success.OK
 
-    return send_file(location), RequestCode.Success.OK
+    return send_file(location)
 
 
 def upload_files(path: str, personal: bool, user: str, files):

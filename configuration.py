@@ -48,7 +48,7 @@ temp_db_template = {
 cloud_save_path = "E:\\SWC"
 public_cloud_folder = "open_cloud"
 personal_cloud_folder = "Users"
-max_cloud_size = 10 # in gb
+max_cloud_size = 10  # in gb
 
 
 sync_settings_defaults = {

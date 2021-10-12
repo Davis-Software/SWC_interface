@@ -1,5 +1,6 @@
 SQLAlchemy
 flask
+flask_cors
 flask_sqlalchemy
 Markdown
 requests

@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import CORS
 
 from datetime import timedelta
 from utils.request_code import RequestCode
@@ -7,7 +8,7 @@ import configuration
 import os
 
 application_host = "software-city.org"
-application_url = "interface.software-city.org"
+application_url = "dev.software-city.org"
 application_name = "SWC Interface"
 application_version = "alpha-0.0.1"
 
@@ -16,6 +17,7 @@ temp_db = TempDatabase(configuration.temp_db_template)
 
 
 app = Flask(__name__)
+cors = CORS(app)
 app.secret_key = configuration.secret_key
 app.config["MAX_CONTENT_LENGTH"] = configuration.max_upload_size * 1024 * 1024
 app.permanent_session_lifetime = timedelta(days=9999)

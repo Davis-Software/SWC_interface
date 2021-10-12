@@ -60,9 +60,7 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
     if "preview" in args:
         return file_adapter.load_file_preview(c_path, personal_cloud, user)
     if "download" in args:
-        return api_utils.make_response(
-            *file_adapter.download_file(c_path, personal_cloud, user)
-        )
+        return file_adapter.download_file(c_path, personal_cloud, user)
 
     return RequestCode.ClientError.BadRequest
 
