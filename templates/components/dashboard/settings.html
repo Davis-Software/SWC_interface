@@ -1,9 +1,8 @@
 {%extends "base/main_base.html" %}
 
 {% block head %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-
     <link rel="stylesheet" href="/static/dashboard/css/settings.css">
+    <script src="/static/js/jquery/jquery-ui.min.js"></script>
     <script src="/static/dashboard/js/settings.js" defer></script>
 {% endblock %}
 
@@ -12,25 +11,27 @@
 
         <div class="holder mt-5">
             <h3>Title Image</h3>
-            <div class="image-preview ripple">
-                <img src="/static/img/backgrounds/background_mc_kelp_underwater_0.png" class="w-100" alt="">
-                <img src="/static/img/select_img.png" class="w-100 select" alt="">
-            </div>
-        </div>
-
-        <div class="holder mt-5">
-            <h3>Modules</h3>
-            <div class="row module-holder container">
-                {% for i in range(20) %}
-                <div class="module col-lg-4 col-md-6 col-sm-12 active">
-                    <div class="module-inner position-relative">
-                        <h2>{{ i }}</h2>
-                        <input type="checkbox" hidden>
-                    </div>
+            <div class="row title-img-holder container">
+                {% for img in title_img.all %}
+                <div class="image-preview ripple col-lg-3 col-md-4 col-sm-6 {{ "active" if img == title_img.active }}">
+                    <img src="/static/dashboard/img/{{ img }}" alt="" data-img-id="{{ img }}">
                 </div>
                 {% endfor %}
             </div>
         </div>
 
+        <div class="holder mt-5">
+            <h3>Modules</h3><small>(Click to toggle)</small>
+            <div class="row module-holder container">
+                {% for mod in dash_modules %}
+                <div class="module col-lg-4 col-md-6 col-sm-12 {{ "active" if mod.active }}">
+                    <div class="module-inner position-relative p-2" data-mod-id="{{ mod.id }}">
+                        <h2>{{ mod.name }}</h2>
+                        {{ mod.description }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

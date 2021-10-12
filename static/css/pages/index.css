@@ -1,5 +1,9 @@
+.jumbotron{
+    padding: 4rem 2rem;
+    background-position: center;
+}
+
 .float-close-end{
     position: absolute;
     right: 15px;
-    font-variant: var();
 }

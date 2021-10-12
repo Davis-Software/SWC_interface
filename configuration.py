@@ -50,6 +50,20 @@ public_cloud_folder = "open_cloud"
 personal_cloud_folder = "Users"
 
 
+sync_settings_defaults = {
+    "dash_title_img": "background_mc_kelp_underwater_0.png",
+    "dash_modules": "cloud_element,news_element,joke_element"
+}
+
+
+dashboard_module_description = {
+    "cloud_element": ["Cloud Info", "Shows some info about the files in your cloud"],
+    "joke_element": ["Random Joke", "Shows a random joke and lets you vote"],
+    "news_element": ["SWC News", "Shows the latest SWC news"],
+    "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"]
+}
+
+
 class CloudFileTypes:
     TEXT = ["", "txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss"]
     ARCHIVE = ["zip", "tar", "gz", "gz2", "tar2", "7z", "rar", "cgx"]

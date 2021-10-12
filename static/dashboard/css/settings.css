@@ -5,30 +5,26 @@
 }
 
 .image-preview{
-    position: relative;
     cursor: pointer;
-    height: 30vh;
     border-radius: 15px;
     transition: all .3s;
+    padding: 0.5rem;
+}
+.image-preview.active{
+    border: 5px solid var(--bs-info);
+    padding: calc(0.5rem - 5px) !important;
 }
 .image-preview:hover{
     transform: scale(1.01);
 }
 .image-preview img{
-    position: absolute;
     user-select: none;
     border-radius: 15px;
     -webkit-user-drag: none;
-    height: 30vh;
     object-position: center;
     object-fit: cover;
-}
-.image-preview img.select{
-    opacity: 0;
-    transition: all .3s;
-}
-.image-preview:hover img.select{
-    opacity: 50%;
+    width: 100%;
+    height: 100%;
 }
 
 

@@ -54,15 +54,15 @@ class User(engine.Model):
 class SyncingSettings(engine.Model):
     __tablename__ = "syncing_settings"
 
-    id = Column(Integer, primary_key=True)
+    db_setting_id = Column(Integer, primary_key=True)
     username = Column(String(50))
     key = Column(String(50))
     value = Column(String(200))
 
-    def __init__(self, username, key, value):
+    def __init__(self, username: str, key: str, value: any):
         self.username = username
         self.key = key
-        self.value = value
+        self.value = str(value)
 
 
 class UserWebQuery:

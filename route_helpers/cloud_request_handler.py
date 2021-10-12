@@ -1,7 +1,7 @@
 import json
 
 from __init__ import session, abort, temp_db
-from cloud import file_adapter
+from route_helpers import cloud_file_adapter as file_adapter
 from utils import api_utils
 from utils.request_code import RequestCode
 from user_data.user_auth import cloud_required

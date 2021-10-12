@@ -1,6 +1,6 @@
 from __init__ import *
 from user_data.user_auth import auth_required
-from cloud import request_handler
+from route_helpers import cloud_request_handler as request_handler
 from utils import api_utils
 
 

@@ -2,16 +2,21 @@
 
 {% block head %}
     <link rel="stylesheet" href="/static/css/pages/index.css">
+    <style>
+        .jumbotron{
+            background-image: url(/static/dashboard/img/{{ title_img }});
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-    <div class="bg-info h-25">
-        <h1 class="pt-5 text-center">everything still wip</h1>
+    <div class="jumbotron">
+        <h1 class="text-center">Welcome {{ session.get("username") }}</h1>
     </div>
     <div id="dashboard-wrapper">
-        {% include "components/dashboard/mods/cloud_element.html" %}
-        {% include "components/dashboard/mods/joke_element.html" %}
-        {% include "components/dashboard/mods/news_element.html" %}
+        {% for module in dash_modules %}
+            {% include "components/dashboard/modules/" + module.id + ".html" %}
+        {% endfor %}
     </div>
 
     <script src="/static/js/pages/index.js"></script>
