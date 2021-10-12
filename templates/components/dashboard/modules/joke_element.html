@@ -48,7 +48,7 @@
                     last_joke = joke.id
                     joke_info.querySelector("span.green").innerText = joke.up
                     joke_info.querySelector("span.red").innerText = joke.down
-                    joke_text.inerHTML = joke.joke
+                    joke_text.innerHTML = joke.joke
                     actions.querySelector("#joke-category span").innerText = joke.category
                     loading(false)
                 })
