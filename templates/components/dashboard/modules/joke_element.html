@@ -27,7 +27,7 @@
 </div>
 
 <script>
-    {
+    (function(){
         let joke_info = document.querySelector("#joke-votes")
         let joke_text = document.querySelector("#joke-section")
         let actions = document.querySelector("#joke-action-section")
@@ -48,7 +48,7 @@
                     last_joke = joke.id
                     joke_info.querySelector("span.green").innerText = joke.up
                     joke_info.querySelector("span.red").innerText = joke.down
-                    joke_text.innerText = joke.joke
+                    joke_text.inerHTML = joke.joke
                     actions.querySelector("#joke-category span").innerText = joke.category
                     loading(false)
                 })
@@ -66,5 +66,5 @@
         actions.querySelector("button.green").addEventListener("click", _ => {vote_joke("up")})
         actions.querySelector("button.red").addEventListener("click", _ => {vote_joke("down")})
         actions.querySelector("button.blue").addEventListener("click", _ => {load_joke()})
-    }
+    })()
 </script>

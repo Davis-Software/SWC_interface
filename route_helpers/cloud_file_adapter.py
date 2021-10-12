@@ -126,7 +126,6 @@ def load_file_preview(path: str, personal: bool, user: str):
     elif file_type == "MARKDOWN":
         with open(location, "r", encoding="utf-8") as f:
             data = f.read()
-            print(data)
         if request.args.get("raw"):
             return api_utils.craft_response([
                 data,
@@ -207,10 +206,6 @@ def upload_files(path: str, personal: bool, user: str, files):
 
 
 def expose_cloud_file(location):
-    print(
-        temp_db.data["exposed_cloud_files_positions"],
-        temp_db.data["exposed_cloud_files"]
-    )
     if location in temp_db.data["exposed_cloud_files_positions"]:
         position = temp_db.data["exposed_cloud_files_positions"][location]
         temp_db.data["exposed_cloud_files"][position] = {

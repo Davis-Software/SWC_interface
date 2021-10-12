@@ -61,7 +61,9 @@ dashboard_module_description = {
     "cloud_element": ["Cloud Info", "Shows some info about the files in your cloud"],
     "joke_element": ["Random Joke", "Shows a random joke and lets you vote"],
     "news_element": ["SWC News", "Shows the latest SWC news"],
-    "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"]
+    "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"],
+    "pp_calc_element": ["PP Calculator", "Randomize, eh I mean calculates your PP Size"],
+    "ts_info_element": ["Teamspeak Users", "Shows you all current users on the SWC Teamspeak Server"]
 }
 
 

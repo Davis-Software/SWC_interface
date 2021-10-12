@@ -1,0 +1,36 @@
+<div class="dashboard-element">
+    <div class="dashboard-element-body">
+        <h3>PP Calculator</h3>
+        <h5 class="pt-4 loading">Your PP is <span id="pp-size"></span>cm long</h5>
+        <button class="btn btn-primary w-100 mt-5" id="pp-reload">Calculate Again</button>
+    </div>
+</div>
+
+<script>
+    (function(){
+        function random(from, to, round=true){
+            if(round){
+                return Math.floor((Math.random() * to) + from);
+            }
+            return (Math.random() * to) + from;
+        }
+        let span = document.querySelector("#pp-size")
+        function calculate(callback){
+            span.parentElement.classList.add("loading")
+            span.innerText = random(-1, 100)
+            setTimeout(_ => {
+                span.parentElement.classList.remove("loading")
+                callback()
+            }, 1500)
+        }
+        document.querySelector("#pp-reload").addEventListener("click", e => {
+            e.target.disabled = true
+            e.target.innerHTML = "<div class='spinner-border spinner-border-sm'></div>"
+            calculate(_ => {
+                e.target.disabled = false
+                e.target.innerHTML = "Calculate Again"
+            })
+        })
+        calculate(_ => {})
+    })()
+</script>

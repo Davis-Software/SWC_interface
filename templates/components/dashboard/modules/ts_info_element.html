@@ -1,0 +1,91 @@
+<style>
+    .leading-icon {
+        border-radius: 100px;
+        height: 35px;
+        width: 35px;
+    }
+    .ts-user{
+        font-size: 1.2em;
+    }
+    .invisible{
+        display: none !important;
+    }
+    #ts-sync-indicator{
+        font-size: 2rem;
+        margin-top: 3px;
+        animation: ease-in-out pulsate 2s infinite;
+        user-select: none;
+        cursor: pointer;
+    }
+    @keyframes pulsate {
+        0%{
+            color: #005607;
+        }
+        30%{
+            color: #009b09;
+        }
+        100%{
+            color: #005607;
+        }
+    }
+</style>
+
+<div class="dashboard-element">
+    <div class="dashboard-element-body">
+        <h3>SWC Teamspeak <i id="ts-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i></h3>
+        <ul class="list-group list-group-flush" id="ts-list">
+            {% for i in range(3) %}
+            <li class="list-group-item border-top border-secondary bg-transparent d-flex align-items-center ts-placeholder">
+                <div class="flex-shrink-0 loading casual">
+                    <img class="leading-icon" src="" alt="">
+                </div>
+                <div class="flex-grow-1 ms-3 ts-user loading">
+                    Username that is way too long
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    (function(){
+        let ts_list = document.querySelector("#ts-list")
+        let first = true
+        function update() {
+            fetch("https://api.software-city.org/app/get_ts").then(resp => {
+                resp.json().then(data => {
+                    ts_list.querySelectorAll("li:not(.ts-placeholder)").forEach(elem => {
+                        ts_list.removeChild(elem)
+                    })
+                    for (let user of data.users) {
+                        let elem = document.createElement("li")
+                        elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                        elem.innerHTML = `
+                            <div class="flex-shrink-0">
+                                <img class="leading-icon" src="/user?avatar=${user.client_nickname}" alt="">
+                            </div>
+                            <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
+                        `
+                        ts_list.appendChild(elem)
+                    }
+                    function make_vis(){
+                        ts_list.querySelectorAll(".invisible").forEach(elem => {
+                            elem.classList.remove("invisible")
+                        })
+                        ts_list.querySelectorAll(".ts-placeholder").forEach(elem => {
+                            ts_list.removeChild(elem)
+                        })
+                    }
+                    if(first){
+                        setTimeout(make_vis, 600)
+                        first = false
+                    }
+                })
+            })
+        }
+        update()
+        setInterval(update, 10000)
+
+    })()
+</script>
