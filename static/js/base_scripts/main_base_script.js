@@ -40,7 +40,7 @@ function createRipple($, e=document) {
 }
 
 {
-    document.querySelectorAll(".btn, .dropdown-item, .card-link").forEach(elem => {
+    document.querySelectorAll(".btn, .dropdown-item, .card-header").forEach(elem => {
         elem.classList.add("ripple", "mad-ripple")
     })
     createRipple($)

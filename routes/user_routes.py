@@ -31,6 +31,11 @@ def profile_settings():
                 session.get("username"),
                 request.form.get("description")
             )
+        if "set_setting" in request.args:
+            user_repo.apply_user_settings(
+                session.get("username"),
+                request.form.get("settings")
+            )
         if "change_password" in request.form:
             return api_utils.craft_boolean_response(
                 user_repo.change_password(
@@ -94,3 +99,9 @@ def user_info():
 
     if "avatar" in request.args:
         return user_repo.get_user_query_object(request.args.get("avatar")).get_avatar(html=True)
+
+    if "ts_avatar" in request.args:
+        avatar = user_repo.get_ts_avatar(
+            request.args.get("ts_avatar")
+        )
+        return avatar

@@ -56,7 +56,6 @@ function setSetting(key, value){
     let module_holder = document.querySelector(".module-holder")
     let modules = module_holder.querySelectorAll(".module")
 
-    if(typeof $ === "undefined"){$ = e => {console.log("JQuery loading error on element:", e)}}
     $(module_holder).sortable().disableSelection()
 
     function insertAfter(referenceNode, newNode) {

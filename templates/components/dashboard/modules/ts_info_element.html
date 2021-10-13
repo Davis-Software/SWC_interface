@@ -63,9 +63,17 @@
                         elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                         elem.innerHTML = `
                             <div class="flex-shrink-0">
-                                <img class="leading-icon" src="/user?avatar=${user.client_nickname}" alt="">
+                                <img class="leading-icon" src="/user?ts_avatar=${user.client_nickname}" alt="">
                             </div>
                             <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
+                        `
+                        ts_list.appendChild(elem)
+                    }
+                    if(data.users.length === 0){
+                        let elem = document.createElement("li")
+                        elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                        elem.innerHTML = `
+                            <div class="flex-grow-1 ms-3 ts-user">No users online</div>
                         `
                         ts_list.appendChild(elem)
                     }

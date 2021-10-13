@@ -1,3 +1,5 @@
+if(typeof $ === "undefined"){$ = e => {console.log("JQuery loading error on element:", e)}}
+
 {
     document.querySelectorAll(".link-expander-card .link-expander").forEach(elem => {
         let span = document.createElement("span")

@@ -9,6 +9,7 @@ def processor():
     dictionary = dict(
         account=None,
         user=None,
+        user_settings=None,
 
         app=dict(host=application_host, name=application_name, version=application_version, url=application_url),
         py={
@@ -28,6 +29,8 @@ def processor():
         if user_repo.check_user_passwordhash(username, session[username]):
             dictionary["account"] = username
             dictionary["user"] = user_repo.get_user_query_object(username)
+            dictionary["user_settings"] = dictionary["user"].get_settings()
+            dictionary["user_settings"]["string"] = dictionary["user"].get_settings(string=True)
         else:
             return redirect("/login")
 

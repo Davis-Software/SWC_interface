@@ -7,8 +7,11 @@ such as deletion/creation of new users.
 import json
 import hashlib
 import datetime
+import os.path
+
 import configuration
 
+from __init__ import working_dir
 from .User import User, UserWebQuery
 from .user_suspend import UserSuspend
 from database.database_connection import database_engine as db
@@ -74,6 +77,18 @@ def change_description(user, description):
 def change_avatar(user, avatar):
     User.query.filter_by(username=user).first().avatar = avatar.stream.read()
     sql_utils.commit_db()
+
+
+def get_ts_avatar(ts_nickname):
+    user = User.query.filter(User.settings.ilike(f"%{ts_nickname}%")).first()
+    user_alt = User.query.filter_by(username=ts_nickname).first()
+    if user is not None:
+        return user.avatar
+    elif user_alt is not None:
+        return user_alt.avatar
+    else:
+        with open(os.path.join(working_dir, "static/img/empty_user.png"), "rb") as bf:
+            return bf.read()
 
 
 def change_password(user, old, new):

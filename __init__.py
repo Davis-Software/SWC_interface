@@ -1,5 +1,5 @@
 from flask import *
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from datetime import timedelta
 from utils.request_code import RequestCode

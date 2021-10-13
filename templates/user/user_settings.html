@@ -15,7 +15,7 @@
     <div id="accordion">
         <div class="card link-expander-card">
             <div class="card-header card-link cursor-pointer" data-bs-toggle="collapse" data-bs-target="#collapse_one">
-                <span class="card-link test link-expander">Account</span>
+                <span class="card-link link-expander">Account</span>
             </div>
             <div class="collapse show" id="collapse_one" data-bs-parent="#accordion">
                 <div class="card-body">
@@ -40,6 +40,33 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card link-expander-card">
+            <div class="card-header card-link cursor-pointer" data-bs-toggle="collapse" data-bs-target="#collapse_whatever">
+                <span class="card-link link-expander">Linked Apps</span>
+            </div>
+            <div class="collapse" id="collapse_whatever" data-bs-parent="#accordion">
+                <div class="card-body">
+                    <div class="bg-dark p-3 mb-3">
+                        <ul class="list-unstyled">
+                            <li>
+                                <h4>Teamspeak™</h4>
+                                <div class="input-group">
+                                    <span class="input-group-text">Teamspeak Nickname</span>
+                                    <input
+                                            type="text"
+                                            class="form-control bg-dark"
+                                            value="{{ user_settings.apps_ts if "apps_ts" in user_settings else account }}"
+                                            disabled
+                                    >
+                                    <button class="btn btn-warning" onclick="edit_ts_appLink(this)">Change</button>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

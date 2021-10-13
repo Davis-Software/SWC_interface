@@ -160,7 +160,9 @@ class UserWebQuery:
             return False
         return markdown.markdown(UserSuspend.query.filter_by(username=self.username).first().message)
 
-    def get_settings(self):
+    def get_settings(self, string: bool = False):
+        if string:
+            return self.settings
         return json.loads(self.settings)
 
     def get_setting(self, key: str):

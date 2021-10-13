@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     {% block pre_head %}
-{#        <title>{{ app.name }}</title>#}
         <title>{{ app.name }} {{ "- " + request.path.split("/")[1].capitalize() if request.path != "/" else "" }}</title>
     {% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +21,11 @@
 
     <script src="/static/js/modules/modalGenerator.js"></script>
     <script src="/static/js/modules/cookie_tools.js"></script>
+
+    <script>
+        const username = "{{ account }}"
+        const global_user_settings = JSON.parse(`{{ user_settings.string|safe or "{}" }}`)
+    </script>
 
     {% block base_head %}{% endblock %}
     {% block head %}{% endblock %}

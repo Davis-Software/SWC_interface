@@ -117,6 +117,33 @@ function edit_description(){
 }
 
 
+function edit_ts_appLink(btn){
+    let modal = new Modal(null, {
+        title: "Teamspeak Nickname",
+        static_backdrop: true,
+        close_button: "Cancel",
+        centered: true
+    })
+    let inp = modal.Input("ts-name", "text", "bg-dark", {
+        placeholder: "Your TS nickname on software-city.org",
+        value: global_user_settings.apps_ts || username
+    })
+    modal.Button("ts-confirm-btn", "Save", "btn-warning", {}, true).addEventListener("click", e => {
+        e.target.disabled = true
+        let form = new FormData()
+        form.append("settings", JSON.stringify({apps_ts: inp.value}))
+        fetch("?set_setting", {
+            method: "POST",
+            body: form
+        }).then(_ => {
+            btn.parentElement.querySelector("input").value = inp.value
+            modal.hide()
+        })
+    })
+    modal.show()
+}
+
+
 function change_password(){
     let modal = new Modal("#modal-wrapper", {title: "Change Password", static_backdrop: true}, "large")
     modal.Custom(`

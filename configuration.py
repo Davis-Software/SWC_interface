@@ -52,8 +52,8 @@ max_cloud_size = 10  # in gb
 
 
 sync_settings_defaults = {
-    "dash_title_img": "background_mc_kelp_underwater_0.png",
-    "dash_modules": "cloud_element,news_element,joke_element"
+    "dash_title_img": "bg1.png",
+    "dash_modules": "cloud_element,news_element,ts_indo_element"
 }
 
 
