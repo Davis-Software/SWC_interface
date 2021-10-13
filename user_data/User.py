@@ -7,11 +7,9 @@ amount of time.
 from sqlalchemy import Column, Integer, String, Boolean, Text, BLOB, DateTime
 from database.database_connection import database_engine as engine
 
-import uuid
 import json
 import base64
 import datetime
-import schedule
 import markdown
 
 from .user_suspend import UserSuspend

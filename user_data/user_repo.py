@@ -82,7 +82,7 @@ def change_avatar(user, avatar):
 def get_ts_avatar(ts_nickname):
     user = User.query.filter(User.settings.ilike(f"%{ts_nickname}%")).first()
     user_alt = User.query.filter_by(username=ts_nickname).first()
-    if user is not None:
+    if user is not None and user.avatar is not None:
         return user.avatar
     elif user_alt is not None:
         return user_alt.avatar

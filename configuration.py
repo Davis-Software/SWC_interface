@@ -68,7 +68,7 @@ dashboard_module_description = {
 
 
 class CloudFileTypes:
-    TEXT = ["", "txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss"]
+    TEXT = ["txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss"]
     ARCHIVE = ["zip", "tar", "gz", "gz2", "tar2", "7z", "rar", "cgx"]
     OPEN_DOCUMENT = ["odt", "ods", "odp"]
     OFFICE_DOCUMENT = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"]
