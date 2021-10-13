@@ -13,7 +13,7 @@
   flex: 1 0 0%;
   transition: all 0.3s;
   max-width: 100%;
-  min-width: 450px;
+  min-width: 500px;
 }
 #dashboard-wrapper .dashboard-element .dashboard-element-body {
   position: relative;

@@ -29,12 +29,12 @@ class User(engine.Model):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True)
     password = Column(String(256))
-    description = Column(Text(65000))
-    avatar = Column(BLOB)
+    description = Column(Text(65000), default=" ")
+    avatar = Column(BLOB(4000000))
     created = Column(DateTime)
-    admin = Column(Boolean)
-    cloud = Column(Boolean)
-    settings = Column(String(1000))
+    admin = Column(Boolean, default=False)
+    cloud = Column(Boolean, default=True)
+    settings = Column(String(1000), default="{}")
 
     def __init__(self, username, password, description, avatar, admin=False, cloud=False):
         self.username = username
