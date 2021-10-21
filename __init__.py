@@ -1,5 +1,6 @@
 from flask import *
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+from cryptography.fernet import Fernet
 
 from datetime import timedelta
 from utils.request_code import RequestCode
@@ -18,6 +19,10 @@ temp_db = TempDatabase(configuration.temp_db_template)
 
 app = Flask(__name__)
 cors = CORS(app)
+crypto = Fernet(
+    configuration.crypto_key
+)
+
 app.secret_key = configuration.secret_key
 app.config["MAX_CONTENT_LENGTH"] = configuration.max_upload_size * 1024 * 1024
 app.permanent_session_lifetime = timedelta(days=9999)

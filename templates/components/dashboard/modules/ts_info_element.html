@@ -15,7 +15,10 @@
         margin-top: 3px;
         animation: ease-in-out pulsate 2s infinite;
         user-select: none;
-        cursor: pointer;
+    }
+    #ts-sync-indicator.error{
+        color: darkred !important;
+        animation: none !important;
     }
     @keyframes pulsate {
         0%{
@@ -52,8 +55,26 @@
     (function(){
         let ts_list = document.querySelector("#ts-list")
         let first = true
+        let error = null
+        function make_err(){
+            document.querySelector("#ts-sync-indicator").classList.add("error")
+            document.querySelector("#ts-sync-indicator").title = "Auto-Refresh inactive - Request error."
+            ts_list.innerHTML = ""
+            let elem = document.createElement("li")
+            elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center`
+            elem.innerHTML = `
+                <div class="flex-grow-1 ms-3 ts-user">Request error</div>
+            `
+            ts_list.appendChild(elem)
+        }
         function update() {
-            fetch("https://api.software-city.org/app/get_ts").then(resp => {
+            if(error) return
+            app_fetch(`https://api.software-city.org/app/get_ts`).then(resp => {
+                error = !resp.ok
+                if(error) {
+                    make_err()
+                    return
+                }
                 resp.json().then(data => {
                     ts_list.querySelectorAll("li:not(.ts-placeholder)").forEach(elem => {
                         ts_list.removeChild(elem)
@@ -63,7 +84,7 @@
                         elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                         elem.innerHTML = `
                             <div class="flex-shrink-0">
-                                <img class="leading-icon" src="/user?ts_avatar=${user.client_nickname}" alt="">
+                                <img class="leading-icon" src="{{ query_url }}/user?ts_avatar=${user.client_nickname}" alt="">
                             </div>
                             <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
                         `
@@ -86,14 +107,13 @@
                         })
                     }
                     if(first){
-                        setTimeout(make_vis, 600)
                         first = false
+                        setTimeout(make_vis, 600)
                     }
                 })
             })
         }
         update()
         setInterval(update, 10000)
-
     })()
 </script>

@@ -16,13 +16,20 @@ def auth_required(func):
     @wraps(func)
     def check(*args, **kwargs):
         authentication = False
+        s_key = False
+        username = None
+
+        if request.cookies.get('s_key') or request.args.get("s_key"):
+            authentication = str(crypto.decrypt(bytes(request.cookies.get('s_key') or request.args.get("s_key"), "utf-8")), "utf-8") == app.secret_key
+            s_key = True
+
         if session.get("logged_in") and session.get("username") is not None:
             username = session.get("username")
             if check_user_passwordhash(username, session[username]):
                 authentication = True
 
         if authentication:
-            if not get_user_query_object(username).get_suspended():
+            if s_key or not get_user_query_object(username).get_suspended():
                 if args != () or kwargs is not {}:
                     return func(*args, **kwargs)
                 return func()

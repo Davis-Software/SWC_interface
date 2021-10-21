@@ -20,7 +20,7 @@
         let usage_info = document.querySelector("#cloud-usage")
         let usage_bar = document.querySelector("#cloud-usage-bar")
         let all = [files_info, usage_info, usage_bar.parentElement.parentElement]
-        fetch("/cloud-info").then(resp => {
+        app_fetch(`{{ query_url }}/cloud-info`).then(resp => {
             resp.json().then(data => {
                 let info = data.data
                 files_info.querySelector(".data").innerText = info.count

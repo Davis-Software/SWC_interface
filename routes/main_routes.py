@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from __init__ import *
 from utils.request_code import RequestCode
@@ -24,6 +24,22 @@ def dashboard():
             dashboard_settings_adapter.get_setting(session, request),
             RequestCode.Success.OK
         )
+    if "module" in request.args:
+        return render_template(
+            f"components/dashboard/modules/{request.args.get('module')}.html",
+            query_url=f"https://{application_url}"
+        )
+    if "title_img" in request.args:
+        if request.args.get("title_img") == "default":
+            img = configuration.sync_settings_defaults.get("dash_title_img")
+        else:
+            img = request.args.get("title_img")
+        file = os.path.join(working_dir, 'static/dashboard/img', img)
+        if os.path.isfile(file) and os.path.exists(file):
+            return send_file(file)
+        return make_response("No such file or directory", RequestCode.ClientError.NotFound)
+
+    # Pages
     if "settings" in request.args:
         return render_template(
             "components/dashboard/settings.html",

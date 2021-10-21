@@ -1,7 +1,7 @@
 import json
 
 import configuration
-from __init__ import session, abort, temp_db
+from __init__ import session, abort, temp_db, request
 from route_helpers import cloud_file_adapter as file_adapter
 from utils import api_utils
 from utils.request_code import RequestCode
@@ -66,7 +66,7 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
 
 
 def handle_info_request():
-    user = session.get("username")
+    user = session.get("username") or request.args.get("username")
     data = file_adapter.cloud_info(user)
     data["max"] = configuration.max_cloud_size * 1_000_000_000
     return api_utils.craft_response(data, RequestCode.Success.OK)

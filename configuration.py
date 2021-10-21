@@ -4,6 +4,7 @@ from database.sql_type import SQLType
 # Flask settings
 debug_mode = True                                               # flask debug-mode (ignored for apache wsgi)
 secret_key = "put-secret-key-here"                              # flask session secret key
+crypto_key = b"GDmdPMizO8_aRHVPwYSXcEFnQmvy6EHX48ytFzlsx1E="    # cryptography key for login protection (this is not the real one so don't bother trying anything)
 
 
 # The Host and Port settings for the webserver

@@ -20,7 +20,7 @@
     }
     .news-part .news-line{
         padding-bottom: 2vh;
-        width: 90vh;
+        width: 100%;
     }
 
 </style>
@@ -59,7 +59,15 @@
         }
 
         loading(true)
-        fetch("https://api.software-city.org/app/get_news").then(resp => {
+        app_fetch(`https://api.software-city.org/app/get_news`).then(resp => {
+            if(!resp.ok){
+                all_news = []
+                news_title.innerText = "Request error"
+                news_text.innerHTML = "There was an error getting the latest news"
+                news_date.innerText = ""
+                loading(false)
+                return
+            }
             resp.json().then(data => {
                 all_news = data.news
                 news_title.innerText = all_news[0][0]

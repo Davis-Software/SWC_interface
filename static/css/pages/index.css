@@ -1,4 +1,5 @@
 .jumbotron{
     padding: 4rem 2rem;
     background-position: center;
+    background-size: cover;
 }

@@ -1,3 +1,5 @@
+import datetime
+
 from __init__ import *
 from user_data import user_repo
 
@@ -19,9 +21,25 @@ def login():
             session["username"] = username
             session[username] = user_repo.get_password_hash(username)
             session.permanent = True
+
             if not user_repo.get_user_query_object(username).get_suspended():
-                return redirect(redirection)
-            return render_template("suspended.html")
+                resp = make_response(
+                    redirect(redirection)
+                )
+            else:
+                resp = make_response(
+                    render_template("suspended.html")
+                )
+
+            resp.set_cookie("s_key", str(
+                crypto.encrypt(bytes(
+                    app.secret_key,
+                    "utf-8"
+                )),
+                "utf-8"
+            ), max_age=datetime.timedelta(days=99999))
+
+            return resp
 
         return make_response(
             render_template("login.html", error="Wrong username or password"),
@@ -38,4 +56,6 @@ def logout():
         username = session["username"]
         session[username] = None
         session["username"] = None
-    return redirect("/")
+    resp = make_response(redirect("/"))
+    resp.delete_cookie("s_key")
+    return resp
