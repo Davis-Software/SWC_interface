@@ -9,7 +9,7 @@
         <div class="card bg-dark mt-5">
             <form method="POST" action="/login?goto_confirm={{ redirect }}" class="card-body">
                 <input type="text" class="form-control mb-1" placeholder="Username" name="username" pattern="[A-Za-z0-9_-]{4,}" title="at least 4 characters: A-Z a-z _ -" required>
-                <input type="password" class="form-control" placeholder="Password" name="password" pattern="[A-Za-z0-9-_+%€/]{6,}" title="at least 6 characters A-Z a-z 0-9 - _ + % € /" required>
+                <input type="password" class="form-control" placeholder="Password" name="password" pattern="[A-Za-z0-9-_+%€/.!§$&?#*><]{6,}" title="at least 6 characters A-Z a-z 0-9 - _ + % € /" required>
                 <br> <span class="text-danger" id="error">{{ error }}</span> <br>
                 <button type="submit" class="btn btn-lg btn-info w-100" >Login</button>
             </form>
