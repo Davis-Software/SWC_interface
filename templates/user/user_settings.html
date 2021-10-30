@@ -66,6 +66,19 @@
                                     <button class="btn btn-warning" onclick="edit_ts_appLink(this)">Change</button>
                                 </div>
                             </li>
+                            <li class="mt-2">
+                                <h4>Minecraft Java Edition</h4>
+                                <div class="input-group">
+                                    <span class="input-group-text">Minecraft Username</span>
+                                    <input
+                                            type="text"
+                                            class="form-control bg-dark"
+                                            value="{{ user_settings.apps_mc if "apps_mc" in user_settings else account }}"
+                                            disabled
+                                    >
+                                    <button class="btn btn-warning" onclick="edit_mc_appLink(this)">Change</button>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>

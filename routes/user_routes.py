@@ -105,3 +105,9 @@ def user_info():
             request.args.get("ts_avatar")
         )
         return avatar
+
+    if "mc_avatar" in request.args:
+        avatar = user_repo.get_ts_avatar(
+            request.args.get("mc_avatar")
+        )
+        return avatar

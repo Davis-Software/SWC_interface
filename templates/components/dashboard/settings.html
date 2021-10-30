@@ -27,7 +27,29 @@
                 <div class="module col-lg-4 col-md-6 col-sm-12 {{ "active" if mod.active }}">
                     <div class="module-inner position-relative p-2" data-mod-id="{{ mod.id }}">
                         <h2>{{ mod.name }}</h2>
-                        {{ mod.description }}
+
+                        {% if mod.options %}
+                        <div class="bg-dark p-2 pb-0 rounded module-config">
+                        {% for opt in mod.options %}
+                            <label class="mb-2">
+                            {% if opt.mode == "select" %}
+                                {{ opt.desc }}:
+                                <select class="ignore-click" id="{{ opt.id }}">
+                                    {% for val in opt.args %}
+                                        <option {{ "selected" if mod.d_conf.get(opt.id) == val[1] }} value="{{ val[1] }}">{{ val[0] }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% elif opt.mode == "some other" %}
+
+                            {% endif %}
+                            </label>
+                        {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="pt-3">
+                            {{ mod.description }}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}

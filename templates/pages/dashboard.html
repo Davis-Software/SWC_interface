@@ -1,13 +1,14 @@
 {%extends "base/main_base.html" %}
 
 {% block head %}
-    <link rel="stylesheet" href="/static/css/pages/index.css">
     <style>
         .jumbotron{
             background-image: url("/static/dashboard/img/{{ title_img }}");
         }
     </style>
-    <script src="/static/js/pages/index.js"></script>
+    <link rel="stylesheet" href="/static/css/pages/index.css">
+    <script src="/static/js/pages/dash-extensions.js"></script>
+    <script src="/static/js/pages/index.js" defer></script>
 {% endblock %}
 
 {% block body %}
@@ -16,7 +17,7 @@
     </div>
     <div id="dashboard-wrapper">
         {% for module in dash_modules %}
-            {% include "components/dashboard/modules/" + module.id + ".html" %}
+            {{ module|safe }}
         {% endfor %}
     </div>
 {% endblock %}

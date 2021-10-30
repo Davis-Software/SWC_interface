@@ -35,7 +35,7 @@
 
 <div class="dashboard-element">
     <div class="dashboard-element-body">
-        <h3>SWC Teamspeak <i id="ts-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i></h3>
+        <h3>Teamspeak Users <i id="ts-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i></h3>
         <ul class="list-group list-group-flush" id="ts-list">
             {% for i in range(3) %}
             <li class="list-group-item border-top border-secondary bg-transparent d-flex align-items-center ts-placeholder">
@@ -88,6 +88,9 @@
                             </div>
                             <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
                         `
+                        elem.querySelector(".ts-user").addEventListener("click", _ => {
+                            location.href = `https://{{ app.url }}/user/${user.client_nickname}`
+                        })
                         ts_list.appendChild(elem)
                     }
                     if(data.users.length === 0){

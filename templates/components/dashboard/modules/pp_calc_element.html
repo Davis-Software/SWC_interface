@@ -21,7 +21,7 @@
             setTimeout(_ => {
                 span.parentElement.classList.remove("loading")
                 callback()
-            }, 1500)
+            }, Math.random() * 1500)
         }
         document.querySelector("#pp-reload").addEventListener("click", e => {
             e.target.disabled = true

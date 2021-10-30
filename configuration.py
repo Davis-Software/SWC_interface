@@ -64,7 +64,15 @@ dashboard_module_description = {
     "news_element": ["SWC News", "Shows the latest SWC news"],
     "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"],
     "pp_calc_element": ["PP Calculator", "Randomize, eh I mean calculates your PP Size"],
-    "ts_info_element": ["Teamspeak Users", "Shows you all current users on the SWC Teamspeak Server"]
+    "ts_info_element": ["Teamspeak Users", "Shows you all current users on the SWC Teamspeak Server"],
+    "mc_info_element": [
+        "Minecraft Users", "Shows you all current users on the SWC Minecraft Server", [
+            {"mode": "select", "id": "port_select", "desc": "Server Port", "args": [
+                ["Main Server", ""],
+                ["Mod Server", "1337"]
+            ]}
+        ]
+    ]
 }
 
 

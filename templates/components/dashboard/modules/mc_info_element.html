@@ -1,0 +1,185 @@
+<style>
+    .leading-icon {
+        border-radius: 100px;
+        height: 35px;
+        width: 35px;
+    }
+    .mc-user{
+        font-size: 1.2em;
+    }
+    .invisible{
+        display: none !important;
+    }
+    #mc-sync-indicator{
+        font-size: 2rem;
+        margin-top: 3px;
+        animation: ease-in-out pulsate 2s infinite;
+        user-select: none;
+    }
+    #mc-ping-indicator{
+        font-size: 1.9rem;
+        margin-top: 3px;
+        margin-right: 15px;
+        user-select: none;
+    }
+    #mc-sync-indicator.error{
+        color: darkred !important;
+        animation: none !important;
+    }
+    #mc-ping-indicator.offline{
+        color: gray;
+    }
+    #mc-ping-indicator.low{
+        color: var(--bs-success);
+    }
+    #mc-ping-indicator.medium{
+        color: var(--bs-warning);
+    }
+    #mc-ping-indicator.high{
+        color: var(--bs-danger);
+    }
+    @keyframes pulsate {
+        0%{
+            color: #005607;
+        }
+        30%{
+            color: #009b09;
+        }
+        100%{
+            color: #005607;
+        }
+    }
+</style>
+
+<div class="dashboard-element">
+    <div class="dashboard-element-body">
+        <h3 id="title-sec">
+            Mc Users <span class="loading">(player count)</span>
+            <i id="mc-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i>
+            <i id="mc-ping-indicator" class="material-icons offline float-end" title="Server Ping - server offline">wifi_off</i>
+        </h3>
+        <ul class="list-group list-group-flush" id="mc-list">
+            {% for i in range(3) %}
+            <li class="list-group-item border-top border-secondary bg-transparent d-flex align-items-center mc-placeholder">
+                <div class="flex-shrink-0 loading casual">
+                    <img class="leading-icon" src="" alt="">
+                </div>
+                <div class="flex-grow-1 ms-3 mc-user loading">
+                    Username that is way too long
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    (function(){
+        let mc_list = document.querySelector("#mc-list")
+        let title_sec = document.querySelector("#title-sec")
+
+        let first = true
+        let error = null
+        function make_err(){
+            document.querySelector("#mc-sync-indicator").classList.add("error")
+            document.querySelector("#mc-sync-indicator").title = "Auto-Refresh inactive - Request error."
+            mc_list.innerHTML = ""
+            let player_count = title_sec.querySelector("span")
+            player_count.innerText = `(0 / 0)`
+            player_count.classList.remove("loading")
+            let elem = document.createElement("li")
+            elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center`
+            elem.innerHTML = `
+                <div class="flex-grow-1 ms-3 mc-user">Request error</div>
+            `
+            mc_list.appendChild(elem)
+        }
+        function update() {
+            if(error) return
+            app_fetch(`https://api.software-city.org/app/get_mc?query_mode{{ "&port="|safe + config.port_select if config.port_select else "" }}`).then(resp => {
+                error = !resp.ok
+                if(error) {
+                    make_err()
+                    return
+                }
+                resp.json().then(data => {
+                    mc_list.querySelectorAll("li:not(.mc-placeholder)").forEach(elem => {
+                        mc_list.removeChild(elem)
+                    })
+                    let player_count = title_sec.querySelector("span")
+                    player_count.innerText = `(${data.online} / ${data.max})`
+                    player_count.classList.remove("loading")
+                    if(!data.status){
+                        let elem = document.createElement("li")
+                        elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                        elem.innerHTML = `
+                            <div class="flex-grow-1 ms-3 mc-user">Server offline</div>
+                        `
+                        mc_list.appendChild(elem)
+                    }else{
+
+                        let server_info = title_sec.querySelector("i#mc-ping-indicator")
+
+                        server_info.innerHTML = "wifi"
+                        if(data.ping < 20){
+                            server_info.classList.remove("offline", "medium", "high")
+                            server_info.classList.add("low")
+                            server_info.title = `Server ping low: ${data.ping}ms`
+                        }else if(data.ping < 100){
+                            server_info.classList.remove("offline", "low", "high")
+                            server_info.classList.add("medium")
+                            server_info.title = `Server ping medium: ${data.ping}ms`
+                        }else{
+                            server_info.classList.remove("offline", "low", "medium")
+                            server_info.classList.add("high")
+                            server_info.title = `Server ping high: ${data.ping}ms`
+                        }
+
+                        if(!data.query.users){
+                            let elem = document.createElement("li")
+                            elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                            elem.innerHTML = `
+                                <div class="flex-grow-1 ms-3 mc-user">Server query disabled</div>
+                            `
+                            mc_list.appendChild(elem)
+                        }else{
+                            for (let user of data.query.users) {
+                                let elem = document.createElement("li")
+                                elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                                elem.innerHTML = `
+                                    <div class="flex-shrink-0">
+                                        <img class="leading-icon" src="{{ query_url }}/user?mc_avatar=${user}" alt="">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3 mc-user">${user}</div>
+                                `
+                                mc_list.appendChild(elem)
+                            }
+                            if(data.query.users.length === 0){
+                                let elem = document.createElement("li")
+                                elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
+                                elem.innerHTML = `
+                                    <div class="flex-grow-1 ms-3 mc-user">No users online</div>
+                                `
+                                mc_list.appendChild(elem)
+                            }
+                        }
+                    }
+                    function make_vis(){
+                        mc_list.querySelectorAll(".invisible").forEach(elem => {
+                            elem.classList.remove("invisible")
+                        })
+                        mc_list.querySelectorAll(".mc-placeholder").forEach(elem => {
+                            mc_list.removeChild(elem)
+                        })
+                    }
+                    if(first){
+                        first = false
+                        setTimeout(make_vis, 600)
+                    }
+                })
+            })
+        }
+        update()
+        setInterval(update, 10000)
+    })()
+</script>

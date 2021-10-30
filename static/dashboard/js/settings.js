@@ -70,15 +70,26 @@ function setSetting(key, value){
         let active_modules = []
         mods.forEach(elem => {
             if (!elem.classList.contains("active") || elem.classList.contains("ui-sortable-placeholder")) return
+            let module_config = {}
+            let module_config_e = elem.querySelector(".module-config")
+            if(module_config_e){
+                for(let conf of module_config_e.children){
+                    let config_obj = conf.lastElementChild
+                    module_config[config_obj.id] = config_obj.value
+                }
+            }
             active_modules.push(
-                elem.querySelector(".module-inner").getAttribute("data-mod-id")
+                `${elem.querySelector(".module-inner").getAttribute("data-mod-id")}::::${JSON.stringify(module_config)}`
             )
         })
         setSetting("dash_modules", active_modules.join(","))
     }
 
     modules.forEach(elem => {
-        elem.addEventListener("click", _ => {
+        elem.addEventListener("click", e => {
+            if(e.target.classList.contains("ignore-click")){
+                return
+            }
             elem.classList.toggle("active")
             if (!elem.classList.contains("active")) {
                 insertAfter(modules[modules.length - 1], elem)
@@ -87,6 +98,12 @@ function setSetting(key, value){
             }
             modules = document.querySelectorAll(".module")
         })
+        let config = elem.querySelector(".module-config")
+        if(config){
+            config.querySelectorAll("label").forEach(conf => {
+                conf.lastElementChild.addEventListener("input", save_modules)
+            })
+        }
     })
     observeDOM(module_holder, save_modules)
 }

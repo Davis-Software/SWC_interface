@@ -33,20 +33,20 @@
     user-select: none;
 }
 .module{
-    height: 150px;
+    min-height: 150px;
     padding: 5px !important;
     box-sizing: border-box;
 }
 .module div.module-inner{
-    height: 100%;
+    min-height: 100%;
     background-color: #444;
     border-radius: 5px;
     transition: all .2s;
 }
-.module.active div{
+.module.active div.module-inner{
     background-color: rgba(58, 255, 0, 0.27);
 }
-.module.active div:hover{
+.module.active div.module-inner:hover{
     transform: scale(1.01);
     cursor: move;
     background-color: rgba(58, 255, 0, 0.32) !important;

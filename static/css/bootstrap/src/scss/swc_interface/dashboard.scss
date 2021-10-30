@@ -101,11 +101,11 @@ $dashboard-padding-value: 25px;
                 transition: all .1s ease-in-out;
                 @keyframes gradient-animation {
                     0% {
-                        left: -10%;
+                        left: -5%;
                         opacity: 0;
                     }
                     20%{
-                        opacity: 100%;
+                        opacity: 80%;
                     }
                     60%{
                         opacity: 100%;
@@ -116,7 +116,6 @@ $dashboard-padding-value: 25px;
                     }
                 }
             }
-
         }
     }
 }

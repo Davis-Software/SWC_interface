@@ -11454,11 +11454,11 @@ table-primary, table-secondary, table-success, table-info, table-warning, table-
 }
 @keyframes gradient-animation {
   0% {
-    left: -10%;
+    left: -5%;
     opacity: 0;
   }
   20% {
-    opacity: 100%;
+    opacity: 80%;
   }
   60% {
     opacity: 100%;

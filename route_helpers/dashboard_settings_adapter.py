@@ -1,4 +1,5 @@
 import os
+import json
 
 import configuration
 from __init__ import working_dir
@@ -30,12 +31,14 @@ def get_title_img(session, only_active=False):
 
 
 def get_modules(session, only_active=False):
-    def make_module_elem(mod_id, active, description):
+    def make_module_elem(mod_id, active, description, d_config):
         return {
             "id": mod_id,
             "active": active,
             "name": description[0],
-            "description": description[1]
+            "description": description[1],
+            "options": {} if len(description) < 3 else description[2],
+            "d_conf": d_config
         }
 
     active_modules = user_settings_repo.get_setting(session.get("username"), "dash_modules").split(",")
@@ -47,23 +50,52 @@ def get_modules(session, only_active=False):
     ))
 
     module_list = list()
+    active_modules_names = list()
     for active_mod in active_modules:
+        mod = active_mod
+        conf = {}
+        if "::::" in active_mod:
+            mod = active_mod.split("::::")[0]
+            conf = json.loads(
+                active_mod.split("::::")[1]
+            )
+        active_modules_names.append(mod)
         module_list.append(make_module_elem(
-            active_mod,
+            mod,
             True,
-            configuration.dashboard_module_description[active_mod]
+            configuration.dashboard_module_description[mod],
+            conf
         ))
 
     if not only_active:
         for mod in all_modules:
-            if mod in active_modules:
+            if mod in active_modules_names:
                 continue
             module_list.append(make_module_elem(
                 mod,
                 False,
-                configuration.dashboard_module_description[mod]
+                configuration.dashboard_module_description[mod],
+                {}
             ))
 
     return module_list
 
 
+def get_module_config(session, request):
+    module = request.args.get("module")
+    user = session.get("username") or request.args.get("username")
+    active_modules = user_settings_repo.get_setting(user, "dash_modules").split(",")
+
+    for module_i in active_modules:
+        mod = module_i
+        config = {}
+        if "::::" in module_i:
+            mod = module_i.split("::::")[0]
+            config = json.loads(
+                module_i.split("::::")[1]
+            )
+
+        if mod == module:
+            return config
+
+    return {}

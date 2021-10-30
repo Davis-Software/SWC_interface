@@ -91,6 +91,18 @@ def get_ts_avatar(ts_nickname):
             return bf.read()
 
 
+def get_mc_avatar(mc_nickname):
+    user = User.query.filter(User.settings.ilike(f"%{mc_nickname}%")).first()
+    user_alt = User.query.filter_by(username=mc_nickname).first()
+    if user is not None and user.avatar is not None:
+        return user.avatar
+    elif user_alt is not None:
+        return user_alt.avatar
+    else:
+        with open(os.path.join(working_dir, "static/img/empty_user.png"), "rb") as bf:
+            return bf.read()
+
+
 def change_password(user, old, new):
     name = User.query.filter_by(username=user).first()
     if check_user_password(user, old):

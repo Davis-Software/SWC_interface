@@ -27,7 +27,8 @@ def dashboard():
     if "module" in request.args:
         return render_template(
             f"components/dashboard/modules/{request.args.get('module')}.html",
-            query_url=f"https://{application_url}"
+            query_url=f"https://{application_url}",
+            config=dashboard_settings_adapter.get_module_config(session, request)
         )
     if "title_img" in request.args:
         if request.args.get("title_img") == "default":
@@ -47,10 +48,18 @@ def dashboard():
             dash_modules=dashboard_settings_adapter.get_modules(session)
         )
 
+    modules = list()
+    for module in dashboard_settings_adapter.get_modules(session, only_active=True):
+        modules.append(
+            render_template(
+                f"components/dashboard/modules/{module['id']}.html",
+                config=dashboard_settings_adapter.get_module_config(session, module['id'])
+            )
+        )
     return render_template(
         "pages/dashboard.html",
         title_img=dashboard_settings_adapter.get_title_img(session, only_active=True),
-        dash_modules=dashboard_settings_adapter.get_modules(session, only_active=True)
+        dash_modules=modules
     )
 
 

@@ -14,6 +14,7 @@ def processor():
         app=dict(host=application_host, name=application_name, version=application_version, url=application_url),
         py={
             "len": len,
+            "type": type,
             "zip": zip,
             "enum": enumerate,
             "round": round,
