@@ -52,11 +52,11 @@
 </style>
 
 <div class="dashboard-element">
-    <div class="dashboard-element-body">
+    <div class="dashboard-element-body mc-info-element">
         <h3 id="title-sec">
             Mc Users <span class="loading">(player count)</span>
-            <i id="mc-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i>
-            <i id="mc-ping-indicator" class="material-icons offline float-end" title="Server Ping - server offline">wifi_off</i>
+            <i id="mc-sync-indicator" class="material-icons float-end" title="Auto-refresh active">sensors</i>
+            <i id="mc-ping-indicator" class="material-icons offline float-end" title="Server Ping">wifi_off</i>
         </h3>
         <ul class="list-group list-group-flush" id="mc-list">
             {% for i in range(3) %}
@@ -82,7 +82,7 @@
         let error = null
         function make_err(){
             document.querySelector("#mc-sync-indicator").classList.add("error")
-            document.querySelector("#mc-sync-indicator").title = "Auto-Refresh inactive - Request error."
+            document.querySelector("#mc-sync-indicator").title = "Auto-Refresh inactive - Request error"
             mc_list.innerHTML = ""
             let player_count = title_sec.querySelector("span")
             player_count.innerText = `(0 / 0)`
@@ -115,6 +115,7 @@
                         elem.innerHTML = `
                             <div class="flex-grow-1 ms-3 mc-user">Server offline</div>
                         `
+                        title_sec.querySelector("i#mc-ping-indicator").title = "Server offline"
                         mc_list.appendChild(elem)
                     }else{
 
@@ -148,10 +149,13 @@
                                 elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                                 elem.innerHTML = `
                                     <div class="flex-shrink-0">
-                                        <img class="leading-icon" src="{{ query_url }}/user?mc_avatar=${user}" alt="">
+                                        <img class="leading-icon" src="{{ query_url }}/user?app_avatar=${user}&app=mc" alt="">
                                     </div>
                                     <div class="flex-grow-1 ms-3 mc-user">${user}</div>
                                 `
+                                elem.querySelector(".mc-user").addEventListener("click", _ => {
+                                    window.open(`https://{{ app.url }}/user/ts/${user.client_nickname}`, "_blank")
+                                })
                                 mc_list.appendChild(elem)
                             }
                             if(data.query.users.length === 0){
@@ -181,5 +185,14 @@
         }
         update()
         setInterval(update, 10000)
+
+        document.querySelectorAll(".dashboard-element-body.mc-info-element *[title]").forEach(elem => {
+            new bootstrap.Tooltip(elem)
+            elem.addEventListener("shown.bs.tooltip", _ => {
+                if(!elem.title) return
+                document.querySelector(`#${elem.getAttribute("aria-describedby")} .tooltip-inner`).innerHTML = elem.title
+                elem.removeAttribute("title")
+            })
+        })
     })()
 </script>

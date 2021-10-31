@@ -151,9 +151,9 @@ function edit_mc_appLink(btn){
         close_button: "Cancel",
         centered: true
     })
-    let inp = modal.Input("ts-name", "text", "bg-dark", {
+    let inp = modal.Input("mc-name", "text", "bg-dark", {
         placeholder: "Your Minecraft username",
-        value: global_user_settings.apps_ts || username
+        value: global_user_settings.apps_mc || username
     })
     modal.Button("mc-confirm-btn", "Save", "btn-warning", {}, true).addEventListener("click", e => {
         e.target.disabled = true

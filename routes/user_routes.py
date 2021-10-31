@@ -68,6 +68,17 @@ def user(username):
     )
 
 
+@app.route("/user/<application>/<name>")
+def user_by_application(application, name):
+    user_obj = user_repo.get_user_by_application(
+        application, name
+    )
+    if user_obj:
+        return user(user_obj.username)
+
+    return user("None")
+
+
 @app.route("/user", methods=["GET", "POST"])
 def user_info():
     if request.method == "POST":
@@ -100,14 +111,10 @@ def user_info():
     if "avatar" in request.args:
         return user_repo.get_user_query_object(request.args.get("avatar")).get_avatar(html=True)
 
-    if "ts_avatar" in request.args:
-        avatar = user_repo.get_ts_avatar(
-            request.args.get("ts_avatar")
+    if "app_avatar" in request.args:
+        return user_repo.get_avatar_by_application(
+            request.args.get("app"),
+            request.args.get("app_avatar")
         )
-        return avatar
 
-    if "mc_avatar" in request.args:
-        avatar = user_repo.get_ts_avatar(
-            request.args.get("mc_avatar")
-        )
-        return avatar
+    return make_response({}, RequestCode.ClientError.BadRequest)

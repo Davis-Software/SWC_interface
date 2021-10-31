@@ -6,6 +6,7 @@
     }
     .ts-user{
         font-size: 1.2em;
+        cursor: pointer;
     }
     .invisible{
         display: none !important;
@@ -34,8 +35,8 @@
 </style>
 
 <div class="dashboard-element">
-    <div class="dashboard-element-body">
-        <h3>Teamspeak Users <i id="ts-sync-indicator" class="material-icons float-end" title="Auto-refresh active.">sensors</i></h3>
+    <div class="dashboard-element-body ts-info-element">
+        <h3>Teamspeak Users <i id="ts-sync-indicator" class="material-icons float-end" title="Auto-refresh active">sensors</i></h3>
         <ul class="list-group list-group-flush" id="ts-list">
             {% for i in range(3) %}
             <li class="list-group-item border-top border-secondary bg-transparent d-flex align-items-center ts-placeholder">
@@ -58,7 +59,7 @@
         let error = null
         function make_err(){
             document.querySelector("#ts-sync-indicator").classList.add("error")
-            document.querySelector("#ts-sync-indicator").title = "Auto-Refresh inactive - Request error."
+            document.querySelector("#ts-sync-indicator").title = "Auto-Refresh inactive - Request error"
             ts_list.innerHTML = ""
             let elem = document.createElement("li")
             elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center`
@@ -84,12 +85,12 @@
                         elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                         elem.innerHTML = `
                             <div class="flex-shrink-0">
-                                <img class="leading-icon" src="{{ query_url }}/user?ts_avatar=${user.client_nickname}" alt="">
+                                <img class="leading-icon" src="{{ query_url }}/user?app_avatar=${user.client_nickname}&app=ts" alt="">
                             </div>
                             <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
                         `
                         elem.querySelector(".ts-user").addEventListener("click", _ => {
-                            location.href = `https://{{ app.url }}/user/${user.client_nickname}`
+                            window.open(`https://{{ app.url }}/user/ts/${user.client_nickname}`, "_blank")
                         })
                         ts_list.appendChild(elem)
                     }
@@ -118,5 +119,14 @@
         }
         update()
         setInterval(update, 10000)
+
+        document.querySelectorAll(".dashboard-element-body.ts-info-element *[title]").forEach(elem => {
+            new bootstrap.Tooltip(elem)
+            elem.addEventListener("shown.bs.tooltip", _ => {
+                if(!elem.title) return
+                document.querySelector(`#${elem.getAttribute("aria-describedby")} .tooltip-inner`).innerHTML = elem.title
+                elem.removeAttribute("title")
+            })
+        })
     })()
 </script>

@@ -79,25 +79,25 @@ def change_avatar(user, avatar):
     sql_utils.commit_db()
 
 
-def get_ts_avatar(ts_nickname):
-    user = User.query.filter(User.settings.ilike(f"%{ts_nickname}%")).first()
-    user_alt = User.query.filter_by(username=ts_nickname).first()
-    if user is not None and user.avatar is not None:
-        return user.avatar
-    elif user_alt is not None:
-        return user_alt.avatar
+def get_user_by_application(application, nickname):
+    user = User.query.filter(User.settings.ilike(f"%{nickname}%")).first()
+    if user:
+        user_settings = json.loads(user.settings)
     else:
-        with open(os.path.join(working_dir, "static/img/empty_user.png"), "rb") as bf:
-            return bf.read()
+        user_settings = None
+
+    if f"apps_{application}" in user_settings:
+        for name in user_settings[f"apps_{application}"].split(","):
+            if name == nickname:
+                return user
+
+    return User.query.filter_by(username=nickname).first()
 
 
-def get_mc_avatar(mc_nickname):
-    user = User.query.filter(User.settings.ilike(f"%{mc_nickname}%")).first()
-    user_alt = User.query.filter_by(username=mc_nickname).first()
+def get_avatar_by_application(app, name):
+    user = get_user_by_application(app, name)
     if user is not None and user.avatar is not None:
         return user.avatar
-    elif user_alt is not None:
-        return user_alt.avatar
     else:
         with open(os.path.join(working_dir, "static/img/empty_user.png"), "rb") as bf:
             return bf.read()
@@ -106,7 +106,6 @@ def get_mc_avatar(mc_nickname):
 def change_password(user, old, new):
     name = User.query.filter_by(username=user).first()
     if check_user_password(user, old):
-        # name.password = hashlib.sha512(bytes(new, "utf-8")).hexdigest()
         name.password = secure_hash_str(new)
         db.session.commit()
         return True

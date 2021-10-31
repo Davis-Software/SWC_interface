@@ -1,17 +1,18 @@
 import os
 import json
 
+
 import configuration
-from __init__ import working_dir
+from __init__ import working_dir, request
 from user_data import user_settings_repo
 
 
-def set_setting(session, request):
-    user_settings_repo.set_setting(session.get("username"), request.args.get("key"), request.get_json().get("value"))
+def set_setting(session, req):
+    user_settings_repo.set_setting(session.get("username"), req.args.get("key"), req.get_json().get("value"))
 
 
-def get_setting(session, request):
-    return {"value": user_settings_repo.get_setting(session.get("username"), request.args.get("key"))}
+def get_setting(session, req):
+    return {"value": user_settings_repo.get_setting(session.get("username"), req.args.get("key"))}
 
 
 def get_setting_var(session, key):
@@ -81,8 +82,7 @@ def get_modules(session, only_active=False):
     return module_list
 
 
-def get_module_config(session, request):
-    module = request.args.get("module")
+def get_module_config(session, module):
     user = session.get("username") or request.args.get("username")
     active_modules = user_settings_repo.get_setting(user, "dash_modules").split(",")
 
