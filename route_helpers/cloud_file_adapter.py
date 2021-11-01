@@ -77,15 +77,37 @@ def check_for_accepted_preview(func):
 
 
 @check_for_accepted_preview
-def load_file_preview(path: str, personal: bool, user: str):
+def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str = None):
     location = file_utils.make_cloud_path(
         join(user, path) if personal else path,
         personal
     )
 
     file_type = file_utils.FileIdentifier(location).file_type
+    if alt_file_type is not None:
+        file_type = alt_file_type
 
-    if file_type == "TEXT":
+    if file_type == "FILE":
+        if request.cookies.get("set-file-type-open") is not None:
+            resp = make_response(load_file_preview(
+                path, personal, user, alt_file_type=request.cookies.get("set-file-type-file")
+            ))
+            if request.cookies.get("set-file-type-open") == "yes":
+                resp.set_cookie("set-file-type-open", "no")
+                return resp
+            else:
+                if request.args.get("raw"):
+                    return resp
+
+        return render_template(
+            "components/cloud/previews/ask_how.html",
+            file_types=[
+                configuration.CloudFileTypes.ALL,
+                configuration.CloudFileTypes.DESCRIPTORS
+            ]
+        )
+
+    elif file_type == "TEXT":
         with open(location, "r", encoding="utf-8") as f:
             data = f.read()
         if request.args.get("raw"):
@@ -165,6 +187,9 @@ def load_file_preview(path: str, personal: bool, user: str):
             "components/cloud/previews/g_docs.html",
             position=expose_cloud_file(location)
         )
+
+    else:
+        return make_response({}, RequestCode.ClientError.UnsupportedMediaType)
 
 
 def download_file(path: str, personal: bool, user: str):

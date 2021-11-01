@@ -6,6 +6,7 @@
     }
     .mc-user{
         font-size: 1.2em;
+        cursor: pointer;
     }
     .invisible{
         display: none !important;
@@ -154,7 +155,7 @@
                                     <div class="flex-grow-1 ms-3 mc-user">${user}</div>
                                 `
                                 elem.querySelector(".mc-user").addEventListener("click", _ => {
-                                    window.open(`https://{{ app.url }}/user/ts/${user.client_nickname}`, "_blank")
+                                    window.open(`https://{{ app.url }}/user/mc/${user}`, "_blank")
                                 })
                                 mc_list.appendChild(elem)
                             }

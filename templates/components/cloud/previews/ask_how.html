@@ -2,9 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>ask how</title>
+    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+    <link rel="stylesheet" href="/static/cloud_previews/css/ask_how.css">
+    <script src="/static/js/modules/cookie_tools.js"></script>
+    <script src="/static/cloud_previews/js/ask_how.js" defer></script>
 </head>
 <body>
-
+    <div class="container mt-5">
+        <div class="text-center text-info">
+            <h4>How do you want to open this file?</h4>
+        </div>
+        <div class="container mt-5">
+            <div class="list-group">
+                {% for file_type in file_types[0] %}
+                <a class="list-group-item list-group-item-action" data-type="{{ file_type }}">{{ file_types[1][file_type] }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container mt-5 position-relative">
+            <div class="float-start">
+                <button class="btn btn-warning" onclick="history.back()">< Go Back</button>
+            </div>
+            <div class="float-end end-0">
+                <button class="btn btn-primary" disabled>Continue ></button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

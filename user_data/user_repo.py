@@ -86,7 +86,7 @@ def get_user_by_application(application, nickname):
     else:
         user_settings = None
 
-    if f"apps_{application}" in user_settings:
+    if user_settings and f"apps_{application}" in user_settings:
         for name in user_settings[f"apps_{application}"].split(","):
             if name == nickname:
                 return user

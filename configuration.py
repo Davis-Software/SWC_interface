@@ -78,7 +78,7 @@ dashboard_module_description = {
 
 
 class CloudFileTypes:
-    TEXT = ["txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss"]
+    TEXT = ["txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss", "bat"]
     ARCHIVE = ["zip", "tar", "gz", "gz2", "tar2", "7z", "rar", "cgx"]
     OPEN_DOCUMENT = ["odt", "ods", "odp"]
     OFFICE_DOCUMENT = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"]
@@ -89,7 +89,7 @@ class CloudFileTypes:
     AUDIO = ["mp3", "mp2", "wav", "ogg", "webm"]
     VIDEO = ["mp4"]
 
-    PDF = "pdf"
+    PDF = ["pdf"]
 
     ALL = [k for k in locals().keys() if not k.startswith('_')]
 
