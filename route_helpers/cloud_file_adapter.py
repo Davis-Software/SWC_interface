@@ -89,9 +89,20 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
 
     if file_type == "FILE":
         if request.cookies.get("set-file-type-open") is not None:
-            resp = make_response(load_file_preview(
-                path, personal, user, alt_file_type=request.cookies.get("set-file-type-file")
-            ))
+            error = None
+            try:
+                file = load_file_preview(
+                    path, personal, user, alt_file_type=request.cookies.get("set-file-type-file")
+                )
+            except Exception as err:
+                error = err
+                file = None
+
+            if error is None:
+                resp = make_response(file)
+            else:
+                resp = make_response(str(error), 500)
+
             if request.cookies.get("set-file-type-open") == "yes":
                 resp.set_cookie("set-file-type-open", "no")
                 return resp
