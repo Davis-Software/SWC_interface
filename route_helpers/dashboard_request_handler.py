@@ -1,6 +1,6 @@
 import os
 
-import configuration
+from config import defaults
 from __init__ import RequestCode, render_template, application_url, working_dir, send_file, make_response
 from utils import api_utils
 from route_helpers import dashboard_settings_adapter
@@ -24,7 +24,7 @@ def handle_arguments(request, session):
         )
     if "title_img" in request.args:
         if request.args.get("title_img") == "default":
-            img = configuration.sync_settings_defaults.get("dash_title_img")
+            img = defaults.sync_settings_defaults.get("dash_title_img")
         else:
             img = request.args.get("title_img")
         file = os.path.join(working_dir, 'static/dashboard/img', img)

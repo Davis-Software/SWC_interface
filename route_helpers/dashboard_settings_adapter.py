@@ -2,7 +2,7 @@ import os
 import json
 
 
-import configuration
+from config import page_config
 from __init__ import working_dir, request
 from user_data import user_settings_repo
 
@@ -64,7 +64,7 @@ def get_modules(session, only_active=False):
         module_list.append(make_module_elem(
             mod,
             True,
-            configuration.dashboard_module_description[mod],
+            page_config.dashboard_module_description[mod],
             conf
         ))
 
@@ -75,7 +75,7 @@ def get_modules(session, only_active=False):
             module_list.append(make_module_elem(
                 mod,
                 False,
-                configuration.dashboard_module_description[mod],
+                page_config.dashboard_module_description[mod],
                 {}
             ))
 

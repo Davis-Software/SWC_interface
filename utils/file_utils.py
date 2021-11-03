@@ -1,5 +1,6 @@
 import configuration
 import os
+from config import page_config
 from os.path import join, getsize, isdir
 
 cloud_path = join(configuration.cloud_save_path, configuration.public_cloud_folder)
@@ -19,19 +20,19 @@ class FileIdentifier:
 
     @staticmethod
     def identify(typ):
-        for file_type in configuration.CloudFileTypes.ALL:
-            if typ in getattr(configuration.CloudFileTypes, file_type):
+        for file_type in page_config.CloudFileTypes.ALL:
+            if typ in getattr(page_config.CloudFileTypes, file_type):
                 return file_type
 
         return "FILE"
 
     @staticmethod
     def file_type_description(dict_key):
-        return configuration.CloudFileTypes.DESCRIPTORS.get(dict_key)
+        return page_config.CloudFileTypes.DESCRIPTORS.get(dict_key)
 
     @staticmethod
     def file_type_icon_image(dict_key):
-        return configuration.CloudFileTypes.ICONS.get(dict_key) or configuration.CloudFileTypes.ICONS["TEXT"]
+        return page_config.CloudFileTypes.ICONS.get(dict_key) or page_config.CloudFileTypes.ICONS["TEXT"]
 
 
 def make_cloud_path(path: str, personal: bool):

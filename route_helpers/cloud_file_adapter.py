@@ -8,6 +8,7 @@ import tempfile
 import configuration
 from functools import wraps
 from datetime import datetime
+from config import page_config
 from __init__ import RequestCode, send_file, render_template, temp_db, request, make_response
 from utils import file_utils, api_utils
 from os.path import join, isdir, exists
@@ -113,8 +114,8 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
         return render_template(
             "components/cloud/previews/ask_how.html",
             file_types=[
-                configuration.CloudFileTypes.ALL,
-                configuration.CloudFileTypes.DESCRIPTORS
+                page_config.CloudFileTypes.ALL,
+                page_config.CloudFileTypes.DESCRIPTORS
             ]
         )
 

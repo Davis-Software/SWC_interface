@@ -1,0 +1,12 @@
+{%extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pages/server.css">
+    <script src="/static/js/pages/server.js" defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <h1 class="text-center">Welcome {{ session.get("username") }}</h1>
+    </div>
+{% endblock %}

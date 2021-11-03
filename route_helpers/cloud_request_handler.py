@@ -62,7 +62,7 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
     if "download" in args:
         return file_adapter.download_file(c_path, personal_cloud, user)
 
-    return RequestCode.ClientError.BadRequest
+    abort(RequestCode.ClientError.BadRequest)
 
 
 def handle_info_request():
