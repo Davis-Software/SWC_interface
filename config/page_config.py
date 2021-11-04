@@ -18,7 +18,7 @@ dashboard_module_description = {
 
 
 server_page_modules = {
-
+    "on_time_element": ["Server OnTime Settings", "Configure when the server starts and shuts down for every DOW.", True]
 }
 
 

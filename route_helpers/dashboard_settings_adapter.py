@@ -33,6 +33,8 @@ def get_title_img(session, only_active=False):
 
 def get_modules(session, only_active=False):
     def make_module_elem(mod_id, active, description, d_config):
+        if description is None:
+            description = [mod_id, "No description - Please set one in the interface config/page_config.py file!"]
         return {
             "id": mod_id,
             "active": active,
@@ -64,7 +66,7 @@ def get_modules(session, only_active=False):
         module_list.append(make_module_elem(
             mod,
             True,
-            page_config.dashboard_module_description[mod],
+            page_config.dashboard_module_description.get(mod),
             conf
         ))
 
@@ -75,7 +77,7 @@ def get_modules(session, only_active=False):
             module_list.append(make_module_elem(
                 mod,
                 False,
-                page_config.dashboard_module_description[mod],
+                page_config.dashboard_module_description.get(mod),
                 {}
             ))
 
