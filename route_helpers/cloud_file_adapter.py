@@ -14,7 +14,15 @@ from utils import file_utils, api_utils
 from os.path import join, isdir, exists
 
 
+def check_user_folder(user):
+    path = join(configuration.cloud_save_path, configuration.personal_cloud_folder, user)
+    if not exists(path):
+        os.makedirs(path)
+
+
 def file_getter(path: str, personal: bool, user: str, filter_by: str = None):
+    check_user_folder(user)
+
     location = file_utils.make_cloud_path(
         join(user, path) if personal else path,
         personal
