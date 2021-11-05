@@ -6,7 +6,27 @@
 {% endblock %}
 
 {% block body %}
-    <div class="jumbotron">
-        <h1 class="text-center">Welcome {{ session.get("username") }}</h1>
+    <div class="progress">
+        <div class="progress-bar progress-bar-animated progress-bar-striped" style="width: 100%"></div>
+    </div>
+    <div class="container mt-4" id="selector">
+        <div class="list-group">
+            {% for module in modules %}
+            <div class="list-group-item list-group-item-action module-item ripple" onclick="load_module('{{ module.id|string }}')">
+                <h5>{{ module.name }}</h5>
+                <small class="text-info">{{ module.description }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="module-view" hidden>
+        <div class="container-fluid my-3">
+            <div class="list-group-item list-group-item-action module-item ripple" onclick="load_module(null)">
+                <h5>< Go Back</h5>
+            </div>
+        </div>
+        <div class="container holder">
+
+        </div>
     </div>
 {% endblock %}
