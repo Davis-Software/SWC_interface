@@ -7,7 +7,6 @@ sync_settings_defaults = {
 
 server_settings_defaults = {
     "auto-detect": True,
-    "holiday": False,
     "holiday-down-week": "01:00",
     "holiday-down-weekend": "01:00",
     "holiday-up-week": "07:30",
