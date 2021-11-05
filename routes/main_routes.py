@@ -17,13 +17,13 @@ def dashboard():
     return dashboard_request_handler.handle_arguments(request, session)
 
 
-@app.route("/server")
+@app.route("/server", methods=["GET", "POST"])
 @auth_required
 def server():
     return server_page_request_handler.handle_arguments(request, session)
 
 
-@app.route("/tools")
+@app.route("/tools", methods=["GET", "PUT"])
 @auth_required
 def tools():
     abort(RequestCode.ServerError.NotImplemented)

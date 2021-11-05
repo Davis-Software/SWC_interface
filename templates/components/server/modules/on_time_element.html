@@ -1,1 +1,191 @@
-test
+<style>
+    td label .form-control{
+        background-color: var(--bs-secondary);
+    }
+    td label{
+        width: 100%
+    }
+    td{
+        padding: 5px 10px;
+    }
+    input.form-control, label.form-check{
+        cursor: pointer;
+    }
+    input.form-control:disabled, label.form-check:disabled{
+        background-color: var(--bs-gray-dark);
+        cursor: default !important;
+    }
+</style>
+
+<div>
+    <h3>General</h3>
+    <hr>
+    <ul class="list-unstyled">
+        <li>
+            <label class="form-check form-switch form-check-label ripple">
+                Holiday Mode
+                <input class="server-set form-check-input" type="checkbox" name="holiday" disabled>
+            </label>
+        </li>
+        <li>
+            <label class="form-check form-switch form-check-label ripple">
+                Auto detect holidays
+                <input class="server-set form-check-input" type="checkbox" name="auto-detect" disabled>
+            </label>
+        </li>
+    </ul>
+</div>
+
+<div class="mt-5">
+    <h3>Shutdown Times</h3>
+    <hr>
+    <div class="container">
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th><h5>Normal Operation Mode</h5></th>
+                    <th><h5>Holiday Operation Mode</h5></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for mode in ["normal", "holiday"] %}
+                    <td>
+                        <label>
+                            During the Week (Sunday evening - Thursday evening)
+                            <input class="form-control server-set" type="time" name="down-week" data-mode="{{ mode }}" disabled>
+                        </label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for mode in ["normal", "holiday"] %}
+                    <td>
+                        <label>
+                            During the Weekend (Friday evening & Saturday evening)
+                            <input class="form-control server-set" type="time" name="down-weekend" data-mode="{{ mode }}" disabled>
+                        </label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Automatic holiday detection (Detects one-time/day holidays)
+                            <input class="form-control server-set" type="time" name="down-auto" data-mode="normal" disabled>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="mt-5">
+    <h3>Boot-up Times</h3>
+    <hr>
+    <div class="container">
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th><h5>Normal Operation Mode</h5></th>
+                    <th><h5>Holiday Operation Mode</h5></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for mode in ["normal", "holiday"] %}
+                    <td>
+                        <label>
+                            During the Week (Monday morning - Friday morning)
+                            <input class="form-control server-set" type="time" name="up-week" data-mode="{{ mode }}" disabled>
+                        </label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for mode in ["normal", "holiday"] %}
+                    <td>
+                        <label>
+                            During the Weekend (Saturday morning & Sunday morning)
+                            <input class="form-control server-set" type="time" name="up-weekend" data-mode="{{ mode }}" disabled>
+                        </label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            Automatic holiday detection (Detects one-time/day holidays)
+                            <input class="form-control server-set" type="time" name="up-auto" data-mode="normal" disabled>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    (function(){
+        function set_option(value, key) {
+            let form = new FormData()
+            form.append("value", value)
+            form.append("key", key.toString())
+            fetch(`?set_setting`, {
+                method: "POST",
+                body: form
+            })
+        }
+
+        function get_elem_key(elem) {
+            switch (elem.type) {
+                case "checkbox":
+                    return elem.getAttribute("name")
+                case "time":
+                    return `${elem.getAttribute("data-mode")}-${elem.getAttribute("name")}`
+                default:
+                    return null
+            }
+        }
+
+        let val_s = Array.from(document.querySelectorAll("input.server-set")).map(get_elem_key)
+        fetch(`?get_settings=${val_s.toString()}`).then(resp => {
+            if(!resp.ok){
+                return
+            }
+            resp.json().then(data => {
+                document.querySelectorAll("input.server-set").forEach(elem => {
+                    let key = get_elem_key(elem)
+                    switch (elem.type) {
+                        case "checkbox":
+                            elem.checked = data[key]
+                            break
+                        case "time":
+                            elem.value = data[key]
+                            break
+                        default:
+                            console.log("Error: Unsupported input type:", elem.type)
+                            break
+                    }
+                    elem.disabled = false
+                    elem.addEventListener("change", _ => {
+                        switch (elem.type) {
+                            case "checkbox":
+                                set_option(key, elem.checked)
+                                break
+                            case "time":
+                                set_option(key, elem.value)
+                                break
+                            default:
+                                console.log("Error: Unsupported input type:", elem.type)
+                                break
+                        }
+                    })
+                })
+            })
+        })
+
+    })()
+</script>

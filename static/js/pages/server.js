@@ -22,10 +22,15 @@ let frame = document.querySelector("#module-view")
 
 function load_module(module_id){
     if(module_id === null){
+        document.head.querySelectorAll(".server-page").forEach(elem => {
+            elem.parentElement.removeChild(elem)
+        })
+
         set_pg_bar(1)
         frame.hidden = true
         select.hidden = false
-        frame.querySelector(".holder").innerHTML = ""
+        let holder = frame.querySelector(".holder")
+        if(holder) frame.removeChild(holder)
         set_pg_bar(null)
         return
     }
@@ -47,7 +52,35 @@ function load_module(module_id){
     xhr.addEventListener("load", e => {
         let res = e.target
         if(res.status === 200){
-            frame.querySelector(".holder").innerHTML = e.target.response
+            let holder = document.createElement("div")
+            holder.classList.add("container", "holder")
+            holder.innerHTML = e.target.response
+
+            let styles = Array.from(holder.querySelectorAll("style")).map(elem => {
+                holder.removeChild(elem)
+                return elem.innerHTML
+            })
+            let scripts = Array.from(holder.querySelectorAll("script")).map(elem => {
+                holder.removeChild(elem)
+                return  elem.innerHTML
+            })
+
+            for(let style of styles){
+                let elem = document.createElement("style")
+                elem.classList.add("server-page")
+                elem.innerHTML = style
+                document.querySelector("head").appendChild(elem)
+            }
+
+            frame.appendChild(holder)
+
+            for(let script of scripts){
+                let elem = document.createElement("script")
+                elem.setAttribute("defer", "")
+                elem.classList.add("server-page")
+                elem.innerHTML = script
+                document.querySelector("head").appendChild(elem)
+            }
             select.hidden = true
             frame.hidden = false
         }else{
@@ -74,3 +107,8 @@ frame.addEventListener("progress", e => {
 frame.addEventListener("load", _ => {
     set_pg_bar(null)
 })
+
+
+
+// Dev stuff:
+load_module("on_time_element")
