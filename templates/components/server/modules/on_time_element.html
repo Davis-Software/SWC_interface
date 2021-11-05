@@ -129,10 +129,10 @@
 
 <script>
     (function(){
-        function set_option(value, key) {
+        function set_option(key, value) {
             let form = new FormData()
-            form.append("value", value)
-            form.append("key", key.toString())
+            form.append("key", key)
+            form.append("value", value.toString())
             fetch(`?set_setting`, {
                 method: "POST",
                 body: form
