@@ -160,7 +160,7 @@
                     let key = get_elem_key(elem)
                     switch (elem.type) {
                         case "checkbox":
-                            elem.checked = data[key]
+                            elem.checked = data[key] === "true"
                             break
                         case "time":
                             elem.value = data[key]

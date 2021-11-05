@@ -3,11 +3,14 @@ from utils import sql_utils
 
 
 def get_setting(key):
-    return ServerSettings.query.filter_by(key=key).first()
+    setting = ServerSettings.query.filter_by(key=key).first()
+    if setting is None:
+        return setting
+    return setting.value
 
 
 def set_setting(key, value):
-    setting = get_setting(key)
+    setting = ServerSettings.query.filter_by(key=key).first()
     if setting is not None:
         setting.value = value
     else:
