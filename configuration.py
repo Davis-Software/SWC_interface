@@ -52,3 +52,6 @@ personal_cloud_folder = "Users"
 max_cloud_size = 10  # in gb
 
 max_upload_size = 8196  # in MB
+
+
+shutdown_service_trigger_file_location = "/etc/swc/triggers"

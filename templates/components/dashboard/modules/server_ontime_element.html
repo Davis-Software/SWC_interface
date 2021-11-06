@@ -43,7 +43,6 @@
     </div>
 </div>
 
-<script src="/static/js/modules/moment.min.js"></script>
 <script>
     (function(){
         let states = document.querySelector("#time-state")
@@ -104,18 +103,11 @@
                 function make_time(time, start_date=now){
                     return new Date(`${start_date.getMonth()+1}/${start_date.getDate()}/${start_date.getFullYear()} ${time}`)
                 }
-                function format_time(time){
-                    return `${(time.getHours() < 10 ? "0" : "") + time.getHours()}`
-                }
                 let on_time_val = new Date(now - make_time(today_up))
                 let on_time_total = new Date(on_time_val - new Date(`${on_time_val.getMonth()+1}/${on_time_val.getDate() + Number(today_down.split(":")[0]) < Number(today_up.split(":")[0]) ? 2 : 1}/${on_time_val.getFullYear()} ${today_down}`).getTime())
                 on_time.querySelector(".progress-bar").style.width = `${on_time_val.getTime() / Math.abs(on_time_total.getTime()) * 100}%`
                 function set_time(){
-                    if(typeof moment !== "undefined"){
-                        on_time.querySelector(".progress-bar").innerText = moment(on_time_val).from(new Date(Math.abs(on_time_total.getTime())), true) + " remaining"
-                    }else{
-                        on_time.querySelector(".progress-bar").innerText = `${format_time(on_time_val)} / ${format_time(new Date(Math.abs(on_time_total.getTime())))} hours`
-                    }
+                    on_time.querySelector(".progress-bar").innerText = `~${on_time_val.getHours()} / ~${new Date(Math.abs(on_time_total.getTime())).getHours()} hours`
                 }
                 setTimeout(set_time, 180000)
                 set_time()
