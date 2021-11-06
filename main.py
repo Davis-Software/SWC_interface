@@ -1,4 +1,5 @@
 import threading
+
 from __init__ import app, configuration
 import database.database_connection as database
 
@@ -11,6 +12,9 @@ if database.connect_if_required():
 def run_schedulers():
     import time
     import schedule
+    from server_settings.shutdown_scheduler import set_shutdown_time
+
+    set_shutdown_time()
 
     while True:
         schedule.run_pending()

@@ -1,12 +1,136 @@
 <div class="dashboard-element">
     <div class="dashboard-element-body">
         <h3>Server On-time Info</h3>
-        coming soon
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <span class="dashboard-element-label">Status</span> <br>
+                <table id="time-state" class="table table-borderless loading">
+                    <tbody>
+                        <tr>
+                            <td>Auto - startup</td>
+                            <td><span data-name="up"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Auto - shutdown</td>
+                            <td><span data-name="down"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Holiday Mode</td>
+                            <td><span data-name="holiday"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <span class="dashboard-element-label">Today</span> <br>
+                <div id="time-today" class="loading">
+                    Online from 00:00 until 00:00
+                </div> <br>
+                <span class="dashboard-element-label">On-time</span> <br>
+                <div id="on-time" class="progress loading">
+                    <div class="progress-bar"></div>
+                </div> <br>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <span class="dashboard-element-label">Workdays</span> <br>
+                <div id="time-week" class="loading">4.65GB / 10GB</div> <br>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <span class="dashboard-element-label">Weekends</span> <br>
+                <div id="time-weekend" class="loading">4.65GB / 10GB</div> <br>
+            </div>
+        </div>
     </div>
 </div>
 
+<script src="/static/js/modules/moment.min.js"></script>
 <script>
     (function(){
+        let states = document.querySelector("#time-state")
+        let time_today = document.querySelector("#time-today")
+        let on_time = document.querySelector("#on-time")
+        let week = document.querySelector("#time-week")
+        let weekend = document.querySelector("#time-weekend")
+        let all = [
+            states,
+            time_today,
+            on_time,
+            week,
+            weekend
+        ]
 
+        let tags = [
+            "up-state",
+            "down-state",
+            "holiday",
+            "normal-up-week",
+            "normal-up-weekend",
+            "normal-up-auto",
+            "holiday-up-week",
+            "holiday-up-weekend",
+            "normal-down-week",
+            "normal-down-weekend",
+            "normal-down-auto",
+            "holiday-down-week",
+            "holiday-down-weekend"
+        ]
+        app_fetch(`{{ query_url }}/server?get_settings=${tags.join(",")}`).then(resp => {
+            resp.json().then(data => {
+                let today_up
+                let today_down
+                let now = new Date()
+                let date = now.getDay()
+
+                data.holiday = data.holiday === "true"
+
+                if([1, 2, 3, 4, 5].includes(date)){
+                    today_up = data.holiday ? data["holiday-up-week"] : data["normal-up-week"]
+                }else{
+                    today_up = data.holiday ? data["holiday-up-weekend"] : data["normal-up-weekend"]
+                }
+
+                if([0, 1, 2, 3, 4].includes(date)){
+                    today_down = data.holiday ? data["holiday-down-week"] : data["normal-down-week"]
+                }else{
+                    today_down = data.holiday ? data["holiday-down-weekend"] : data["normal-down-weekend"]
+                }
+
+                states.querySelector("span[data-name=up]").innerText = data["up-state"] === "true" ? "Active" : "Inactive"
+                states.querySelector("span[data-name=down]").innerText = data["down-state"] === "true" ? "Active" : "Inactive"
+                states.querySelector("span[data-name=holiday]").innerText = data.holiday ? "Yes" : "No"
+
+                time_today.innerText = `Online from ${today_up} until ${today_down}`
+
+                function make_time(time, start_date=now){
+                    return new Date(`${start_date.getMonth()+1}/${start_date.getDate()}/${start_date.getFullYear()} ${time}`)
+                }
+                function format_time(time){
+                    return `${(time.getHours() < 10 ? "0" : "") + time.getHours()}`
+                }
+                let on_time_val = new Date(now - make_time(today_up))
+                let on_time_total = new Date(on_time_val - new Date(`${on_time_val.getMonth()+1}/${on_time_val.getDate() + Number(today_down.split(":")[0]) < Number(today_up.split(":")[0]) ? 2 : 1}/${on_time_val.getFullYear()} ${today_down}`).getTime())
+                on_time.querySelector(".progress-bar").style.width = `${on_time_val.getTime() / Math.abs(on_time_total.getTime()) * 100}%`
+                function set_time(){
+                    if(typeof moment !== "undefined"){
+                        on_time.querySelector(".progress-bar").innerText = moment(on_time_val).from(new Date(Math.abs(on_time_total.getTime())), true) + " remaining"
+                    }else{
+                        on_time.querySelector(".progress-bar").innerText = `${format_time(on_time_val)} / ${format_time(new Date(Math.abs(on_time_total.getTime())))} hours`
+                    }
+                }
+                setTimeout(set_time, 180000)
+                set_time()
+
+                let week_up = data.holiday ? data["holiday-up-week"] : data["normal-up-week"]
+                let week_down = data.holiday ? data["holiday-down-week"] : data["normal-down-week"]
+                let weekend_up = data.holiday ? data["holiday-up-weekend"] : data["normal-up-weekend"]
+                let weekend_down = data.holiday ? data["holiday-down-weekend"] : data["normal-down-weekend"]
+                week.innerText = `Online from ${week_up} until ${week_down}`
+                weekend.innerText = `Online from ${weekend_up} until ${weekend_down}`
+
+                all.map(elem => {
+                    elem.classList.remove("loading")
+                })
+            })
+        })
     })()
 </script>

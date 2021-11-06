@@ -7,3 +7,4 @@ requests
 Werkzeug
 schedule
 cryptography
+holidays
