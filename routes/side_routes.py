@@ -8,6 +8,17 @@ def asset_favicon():
     return send_from_directory(f"{app.root_path}/static/", "favicon.png", mimetype="image/vnd.microsoft.icon")
 
 
+@app.route("/server-settings")
+def server_settings():
+    if not request.args.get("get_settings"):
+        return None
+
+    from route_helpers import server_page_module_adapter
+    return server_page_module_adapter.get_settings(
+        request.args.get("get_settings").split(",")
+    )
+
+
 @app.route("/clear-cookies", defaults={"mode": "json"})
 @app.route("/clear-cookies/<mode>")
 def clear_cookies(mode):
