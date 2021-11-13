@@ -13,4 +13,4 @@ def acp_index():
     )
 
 
-from .admin_r import acp_user_routes, acp_logs_routes
+from .admin_r import acp_user_routes, acp_console_routes, acp_logs_routes
