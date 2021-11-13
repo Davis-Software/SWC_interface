@@ -18,6 +18,7 @@ boot_up_times = defaults.start_times_default
 
 
 def startup(wait_after: int = 90):
+    print("starting...")
     GPIO.output(service_config.relay_gpio, GPIO.HIGH)
     time.sleep(0.5)
     GPIO.output(service_config.relay_gpio, GPIO.LOW)
@@ -54,6 +55,7 @@ def update_times(*_):
     if pot_new is None:
         return
 
+    print(f"Updated startup info from {boot_up_times} to {pot_new}")
     reset = False
     for val in pot_new:
         if pot_new[val] == boot_up_times[val]:
@@ -62,7 +64,9 @@ def update_times(*_):
         reset = True
 
     if reset:
+        print("resetting scheduler")
         set_scheduler()
+        print("scheduler reset")
 
 
 schedule.every(15).minutes.do(update_times)

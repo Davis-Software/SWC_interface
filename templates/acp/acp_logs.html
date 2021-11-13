@@ -1,0 +1,44 @@
+{% extends "base/acp_base.html" %}
+
+{% block body %}
+    <ul class="nav nav-tabs nav-justified" id="tab-selector">
+        <li class="nav-item">
+            <a class="nav-link text-white" data-bs-toggle="tab" href="#menu0" data-tab="output">Console Output</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link  text-white" data-bs-toggle="tab" href="#menu1" data-tab="error">Exceptions / Flask outputs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link  text-white" data-bs-toggle="tab" href="#menu2" data-tab="input">Other</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content container-fluid card">
+        <div class="tab-pane card-body fade" id="menu0"></div>
+        <div class="tab-pane card-body fade" id="menu1"></div>
+        <div class="tab-pane card-body fade" id="menu2"></div>
+    </div>
+
+    <script>
+        document.querySelectorAll("#tab-selector a").forEach(elem => {
+            elem.addEventListener("click", _ => {
+                let sel = document.querySelector(elem.getAttribute("href"))
+                sel.innerHTML = `
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                `
+                fetch(`?get_log=${elem.getAttribute("data-tab")}`).then(resp => {
+                    if(!resp.ok) return
+                    resp.text().then(text => {
+                        sel.innerText = text
+                    })
+                })
+            })
+        })
+
+    </script>
+{% endblock %}

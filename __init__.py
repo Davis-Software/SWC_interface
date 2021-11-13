@@ -1,9 +1,10 @@
 from flask import *
 from flask_cors import CORS
 from cryptography.fernet import Fernet
-
 from datetime import timedelta
+
 from utils.request_code import RequestCode
+from logger import Logger
 from database.global_temp_db import TempDatabase
 import configuration
 import os
@@ -21,6 +22,9 @@ app = Flask(__name__)
 cors = CORS(app)
 crypto = Fernet(
     configuration.crypto_key
+)
+logger = Logger(
+    catch_console=not configuration.debug_mode
 )
 
 app.secret_key = configuration.secret_key

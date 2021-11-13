@@ -7,23 +7,26 @@
     </div>
 
     <div class="row m-0">
-        <div class="col-3">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
             <div class="card h-100">
                 <div class="card-header">Stats</div>
                 <div class="card-body">
                     Users :  <br>
+                    <ul>
+                        {% for user in users %}<li>
+                        <a target="_blank" href="/user/{{ user }}">{{ user }}</a>
+                        </li>{% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="col-3">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
             <div class="card h-100">
-                <div class="card-header">Report Stats</div>
-                <div class="card-body">
-
-                </div>
+                <div class="card-header">Console Output Log</div>
+                <div class="card-body">{{ log|replace("\n", "<br>")|safe }}</div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-12 col-lg-6 p-2">
             <div class="card h-100">
                 <div class="card-header">Debug Info</div>
                 <div class="card-body">
@@ -33,12 +36,6 @@
                 </div>
             </div>
         </div>
-{#        <div class="col-12 mt-2">#}
-{#            <div class="card h-100">#}
-{#                <div class="card-header"></div>#}
-{#                <div class="card-body">{{  }}</div>#}
-{#            </div>#}
-{#        </div>#}
     </div>
 
 {% endblock %}
