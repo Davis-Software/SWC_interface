@@ -1,5 +1,7 @@
 import subprocess
 
+from __init__ import working_dir
+
 
 def exc_command(cmd: str or list, shell: bool = True):
     try:
@@ -8,12 +10,14 @@ def exc_command(cmd: str or list, shell: bool = True):
             shell=shell,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            check=False
+            check=False,
+            env={"TERM": "xterm-256color"},
+            cwd=working_dir
         )
         output = str(
             cmd_result.stdout,
-            "utf-8"
+            "UTF-8"
         )
         return cmd_result.returncode, output
     except Exception as err:
-        return 1, str(err)
+        return -420, f"Python error --- {str(err)}"
