@@ -5,6 +5,14 @@ function set_elem(elem){
 
 document.querySelector("button#exc-cmd").addEventListener("click", _ => {
     let cmd = document.querySelector("input[name=cmd]").value
+
+    if(cmd === "clear"){
+        document.querySelector("#console").innerHTML = ""
+        sessionStorage.setItem("acp-cmd-history", cmd)
+        document.querySelector("input[name=cmd]").value = ""
+        return
+    }
+
     let form = new FormData()
     form.append("exc_cmd", cmd)
     fetch("", {
@@ -23,7 +31,7 @@ document.querySelector("button#exc-cmd").addEventListener("click", _ => {
                 if(text === "\f"){
                     document.querySelector("#console").innerHTML = ""
                 }else{
-                    elem.innerText = `${text} --- ${state} ---`
+                    elem.innerText = `${text}` + (state !== 0 ? `--- ${state} ---` : "")
                     set_elem(elem)
                 }
             })
