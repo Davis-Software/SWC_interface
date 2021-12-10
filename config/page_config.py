@@ -3,15 +3,36 @@ dashboard_module_description = {
     "joke_element": ["Random Joke", "Shows a random joke and lets you vote"],
     "news_element": ["SWC News", "Shows the latest SWC news"],
     "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"],
-    "pp_calc_element": ["PP Calculator", "Randomize, eh I mean calculates your PP Size"],
     "ts_info_element": ["Teamspeak Users", "Shows you all current users on the SWC Teamspeak Server"],
     "server_ontime_element": ["Server On-Time Info", "Shows you when the server starts-up and shuts-down each day"],
     "mc_info_element": [
-        "Minecraft Users", "Shows you all current users on the SWC Minecraft Server", [
-            {"mode": "select", "id": "port_select", "desc": "Server Port", "args": [
-                ["Main Server", ""],
-                ["Mod Server", "1337"]
-            ]}
+        "Minecraft Users",
+        "Shows you all current users on the SWC Minecraft Server",
+        [
+            {
+                "mode": "select",
+                "id": "port_select",
+                "desc": "Server Port",
+                "args": [
+                    ["Main Server", ""],
+                    ["Mod Server", "1337"]
+                ]
+            }
+        ]
+    ],
+    "pp_calc_element": [
+        "PP Calculator",
+        "Randomizes..., eh I mean calculates your PP Size",
+        [
+            {
+                "mode": "select",
+                "id": "pp_mode_select",
+                "desc": "Calculation Mode (wip)",
+                "args": [
+                    ["Randomizer", "r"],
+                    ["SocialPoint Score", "sp"]
+                ]
+            }
         ]
     ]
 }
