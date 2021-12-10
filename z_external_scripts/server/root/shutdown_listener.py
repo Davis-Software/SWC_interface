@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 listen_file_location = "/etc/swc/triggers"  # Must be absolute path
 listen_file_name = "shutdown"
@@ -26,3 +27,5 @@ if __name__ == "__main__":
         if check_file():
             shutdown()
             break
+
+        sleep(30)
