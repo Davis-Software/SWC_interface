@@ -1,9 +1,9 @@
 from __init__ import *
-from utils.request_code import RequestCode
 from user_data.user_auth import auth_required
 
 from route_helpers import dashboard_request_handler
 from route_helpers import server_page_request_handler
+from route_helpers import tools_page_request_handler
 
 
 @app.route("/")
@@ -26,4 +26,4 @@ def server():
 @app.route("/tools", methods=["GET", "PUT"])
 @auth_required
 def tools():
-    abort(RequestCode.ServerError.NotImplemented)
+    return tools_page_request_handler.handle_arguments(request, session)

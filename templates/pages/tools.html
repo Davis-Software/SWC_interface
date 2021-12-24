@@ -1,0 +1,29 @@
+{%extends "base/main_base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pages/tools.css">
+    <script src="/static/js/pages/tools.js" defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="progress">
+        <div class="progress-bar progress-bar-animated progress-bar-striped" style="width: 100%"></div>
+    </div>
+    <div class="container mt-4" id="selector">
+        <div class="list-group">
+            {% for tool in tools %}
+            <div class="list-group-item list-group-item-action tool-item ripple mad-ripple" onclick="load_tool('{{ tool.id|string }}')">
+                <h5>{{ tool.name }}</h5>
+                <small class="text-info">{{ tool.description }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="tool-view" hidden>
+        <div class="container-fluid my-3">
+            <div class="list-group-item list-group-item-action tool-item ripple" onclick="load_tool(null)">
+                <h5>< Go Back</h5>
+            </div>
+        </div>
+    </div>
+{% endblock %}

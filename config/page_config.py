@@ -44,6 +44,12 @@ server_page_modules = {
 }
 
 
+tools_page_tools = {
+    "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap^.", False],
+    "sinusbot": ["Teamspeak Sinusbot Interface", "Select songs the bot should play on the ts server (requires a sinusbot account)", False]
+}
+
+
 class CloudFileTypes:
     TEXT = ["txt", "py", "css", "js", "asp", "c", "h", "cpp", "cfg", "yml", "json", "url", "lnk", "ts", "scss", "bat"]
     ARCHIVE = ["zip", "tar", "gz", "gz2", "tar2", "7z", "rar", "cgx"]

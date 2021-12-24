@@ -1,0 +1,10 @@
+.progress{
+    height: 5px;
+    border-radius: 0;
+}
+
+.tool-item{
+    cursor: pointer;
+    transition: background-color .3s;
+    user-select: none;
+}
