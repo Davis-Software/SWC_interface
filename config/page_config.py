@@ -30,7 +30,7 @@ dashboard_module_description = {
                 "desc": "Calculation Mode (wip)",
                 "args": [
                     ["Randomizer", "r"],
-                    ["SocialPoint Score", "sp"]
+                    ["Social Credit Score", "scs"]
                 ]
             }
         ]

@@ -82,7 +82,7 @@ function setSetting(key, value){
                 `${elem.querySelector(".module-inner").getAttribute("data-mod-id")}::::${JSON.stringify(module_config)}`
             )
         })
-        setSetting("dash_modules", active_modules.join(","))
+        setSetting("dash_modules", active_modules.join("|"))
     }
 
     modules.forEach(elem => {

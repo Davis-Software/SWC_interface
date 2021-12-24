@@ -44,7 +44,12 @@ def get_modules(session, only_active=False):
             "d_conf": d_config
         }
 
-    active_modules = user_settings_repo.get_setting(session.get("username"), "dash_modules").split(",")
+    active_modules_json_str = user_settings_repo.get_setting(session.get("username"), "dash_modules")
+    if "|" not in active_modules_json_str: # legacy support
+        active_modules = user_settings_repo.get_setting(session.get("username"), "dash_modules").split(",")
+    else:
+        active_modules = user_settings_repo.get_setting(session.get("username"), "dash_modules").split("|")
+
     if active_modules == [""]:
         active_modules = []
     all_modules = list(map(
@@ -86,7 +91,7 @@ def get_modules(session, only_active=False):
 
 def get_module_config(session, module):
     user = session.get("username") or request.args.get("username")
-    active_modules = user_settings_repo.get_setting(user, "dash_modules").split(",")
+    active_modules = user_settings_repo.get_setting(user, "dash_modules").split("|")
 
     for module_i in active_modules:
         mod = module_i

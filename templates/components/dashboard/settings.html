@@ -39,8 +39,9 @@
                                         <option {{ "selected" if mod.d_conf.get(opt.id) == val[1] }} value="{{ val[1] }}">{{ val[0] }}</option>
                                     {% endfor %}
                                 </select>
-                            {% elif opt.mode == "some other" %}
-
+                            {% elif opt.mode in ["text", "number"] %}
+                                {{ opt.desc }}:
+                                <input id="{{ opt.id }}" pattern="[0-9]" class="ignore-click" type="{{ opt.mode }}" {{ "value=" + (opt.args[0] if not mod.d_conf.get(opt.id) else mod.d_conf.get(opt.id)) }}>
                             {% endif %}
                             </label>
                         {% endfor %}
