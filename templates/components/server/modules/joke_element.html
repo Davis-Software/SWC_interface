@@ -1,24 +1,226 @@
-<ul>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-    <li>test</li>
-</ul>
-
-<div>
-    <ul class="pagination float-end">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-    </ul>
+<div class="input-group">
+    <input id="search-bar" type="text" class="form-control bg-dark" placeholder="Search (id or text)">
+    <button id="search" class="btn btn-primary">Search</button>
+    <button id="add" class="btn btn-info">Add Joke</button>
 </div>
+<table id="joke-table" class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Category</th>
+            <th>Joke text</th>
+            <th>Votes</th>
+            <th>Options</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<button id="load-btn" class="w-100 btn btn-primary">Load more</button>
+
 
 <script>
+    (function(){
+        let app_fetch = (url, options) => {
+            let url_extender = url.includes("?") ? "&" : "?"
+            return fetch(`${url}${url_extender}s_key=${getCookie("s_key")}`, options)
+        }
 
+        let table = document.querySelector("#joke-table tbody")
+        let btn = document.querySelector("#load-btn")
+        let inp = document.querySelector("#search-bar")
+        let search = document.querySelector("#search")
+
+        let load_location = 1
+        let amount = 50
+        let last_filter = null
+
+
+        async function add_joke() {
+            let modal = new Modal(null, {
+                title: `Create joke`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let categories = (await (await fetch("https://api.software-city.org/app/joke_api/get_categories")).json()).data
+            categories.push("CUSTOM")
+            let category_select = modal.Custom(`
+            <select class="form-select text-white">
+                ${function () {
+                let output = ""
+                for (let category of categories) output += `<option>${category}</option>`
+                return output
+            }()}
+            </select>
+        `).querySelector("select")
+            let custom_category = modal.Input("custom-cat", "text", "", {
+                hidden: true,
+                placeholder: "Custom Category name"
+            })
+            category_select.querySelector("option").setAttribute("selected", true)
+
+            category_select.addEventListener("input", _ => {
+                custom_category.hidden = category_select.value !== "CUSTOM"
+            })
+
+            modal.Custom("<br>")
+
+            let text = modal.TextArea("joke-text")
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let category = category_select.value === "CUSTOM" ? custom_category.value : category_select.value
+                let new_joke = text.value
+                let form = new FormData()
+                form.append("category", category)
+                form.append("joke", new_joke)
+                app_fetch(`https://api.software-city.org/app/joke_api/add_joke`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/add_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    reload()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        async function edit_joke(joke, elem) {
+            let modal = new Modal(null, {
+                title: `Editing joke #${joke.id}`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let categories = (await (await fetch("https://api.software-city.org/app/joke_api/get_categories")).json()).data
+            let category_select = modal.Custom(`
+            <select class="form-select text-white">
+                ${function () {
+                let output = ""
+                for (let category of categories) output += `<option ${joke.category === category ? "selected" : ""}>${category}</option>`
+                return output
+            }()}
+            </select>
+            <br>
+        `).querySelector("select")
+            let text = modal.TextArea("joke-text")
+            text.value = joke.joke
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let category = category_select.value
+                let new_joke = text.value
+                let form = new FormData()
+                form.append("id", joke.id)
+                form.append("category", category)
+                form.append("joke", new_joke)
+                app_fetch(`https://api.software-city.org/app/joke_api/edit_joke`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/edit_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.querySelectorAll("td")[1].innerHTML = category
+                    elem.querySelectorAll("td")[2].innerHTML = new_joke
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+        function delete_joke(joke, elem) {
+            let modal = new Modal(null, {
+                title: `Delete joke #${joke.id}?`,
+                close_button: "Cancel",
+                centered: true
+            }, "huge")
+
+            let text = modal.TextArea("joke-text", "bg-dark", {disabled: true})
+            text.value = joke.joke
+
+            modal.Button("save-btn", "Delete", "btn-danger", {}, true).addEventListener("click", _ => {
+                let form = new FormData()
+                form.append("id", joke.id)
+                app_fetch(`https://api.software-city.org/app/joke_api/delete_joke`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/delete_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.remove()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        function load_amount(filter = null) {
+            if (filter && filter !== last_filter) {
+                clear()
+                last_filter = filter
+            } else if (!filter && last_filter) {
+                filter = last_filter
+            }
+            fetch(`https://api.software-city.org/app/joke_api/get_joke_list?page=${load_location}&page_count=${amount}&order=rev:id${filter ? `&filter=${filter}` : ""}`).then(resp => {
+                resp.json().then(body => {
+                    for (let joke of body.data) {
+                        let tr = document.createElement("tr")
+                        tr.innerHTML = `
+                        <td>${joke.id}</td>
+                        <td>${joke.category}</td>
+                        <td>${joke.joke}</td>
+                        <td>${joke.upvotes} | ${joke.downvotes}</td>
+                        <td>
+                            <a href="#edit">Edit</a> |
+                            <a href="#delete">Delete</a>
+                        </td>
+                    `
+                        tr.querySelector("a[href='#edit']").addEventListener("click", e => {
+                            e.preventDefault();
+                            edit_joke(joke, tr)
+                        })
+                        tr.querySelector("a[href='#delete']").addEventListener("click", e => {
+                            e.preventDefault();
+                            delete_joke(joke, tr)
+                        })
+                        table.append(tr)
+                    }
+                })
+            })
+            load_location++
+        }
+
+        function search_jokes() {
+            let search_s = inp.value
+            if (search_s === "") {
+                if (last_filter) reload()
+                return
+            }
+            load_amount(search_s)
+        }
+
+        function clear() {
+            last_filter = null
+            table.innerHTML = ""
+            load_location = 1
+        }
+
+        function reload() {
+            clear()
+            load_amount()
+        }
+
+        btn.addEventListener("click", _ => {
+            load_amount()
+        })
+        inp.addEventListener("keydown", e => {
+            if (e.key !== "Enter") return
+            search_jokes()
+        })
+        search.addEventListener("click", search_jokes)
+        document.querySelector("#add").addEventListener("click", add_joke)
+
+        load_amount()
+    })()
 </script>
