@@ -73,7 +73,7 @@
             "holiday-down-week",
             "holiday-down-weekend"
         ]
-        app_fetch(`{{ query_url }}/server?get_settings=${tags.join(",")}`).then(resp => {
+        app_fetch(`{{ query_url }}/server-settings?get_settings=${tags.join(",")}`).then(resp => {
             resp.json().then(data => {
                 let today_up
                 let today_down

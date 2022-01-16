@@ -251,17 +251,17 @@ def upload_files(path: str, personal: bool, user: str, files):
 
 
 def expose_cloud_file(location):
-    if location in temp_db.data["exposed_cloud_files_positions"]:
-        position = temp_db.data["exposed_cloud_files_positions"][location]
-        temp_db.data["exposed_cloud_files"][position] = {
+    if location in temp_db["exposed_cloud_files_positions"]:
+        position = temp_db["exposed_cloud_files_positions"][location]
+        temp_db["exposed_cloud_files"][position] = {
             "target": location,
             "exposed": datetime.now()
         }
         return position
 
     position = str(uuid.uuid4())
-    temp_db.data["exposed_cloud_files_positions"][location] = position
-    temp_db.data["exposed_cloud_files"][position] = {
+    temp_db["exposed_cloud_files_positions"][location] = position
+    temp_db["exposed_cloud_files"][position] = {
         "target": location,
         "exposed": datetime.now()
     }
@@ -271,7 +271,7 @@ def expose_cloud_file(location):
 
 def download_exposed_file(position):
     return send_file(
-        temp_db.data["exposed_cloud_files"][position]["target"]
+        temp_db["exposed_cloud_files"][position]["target"]
     )
 
 

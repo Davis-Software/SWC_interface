@@ -73,8 +73,8 @@ def handle_info_request():
 
 
 def handle_exposition(position):
-    if position in temp_db.data["exposed_cloud_files"]:
-        if temp_db.data["exposed_cloud_files"][position]["exposed"] > datetime.now() + timedelta(minutes=5):
+    if position in temp_db["exposed_cloud_files"]:
+        if temp_db["exposed_cloud_files"][position]["exposed"] > datetime.now() + timedelta(minutes=5):
             abort(RequestCode.ClientError.RequestTimeout)
         return file_adapter.download_exposed_file(position)
     abort(RequestCode.ClientError.NotFound)
