@@ -4,6 +4,12 @@ from __init__ import *
 from .user_repo import *
 
 
+def is_auth():
+    def responder():
+        return True
+    return auth_required(responder)
+
+
 def is_admin(username):
     return get_user_query_object(username).get_admin()
 

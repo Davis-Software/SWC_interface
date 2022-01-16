@@ -5,7 +5,7 @@ from datetime import datetime
 
 from server_settings.server_control import PowerOptions
 from config.defaults import server_settings_defaults
-from route_helpers.server_page_module_adapter import get_settings
+from route_helpers.side_route_functions import get_settings
 
 
 scheduled = list()

@@ -1,21 +1,23 @@
-<div class="input-group">
-    <input id="search-bar" type="text" class="form-control bg-dark" placeholder="Search (id or text)">
-    <button id="search" class="btn btn-primary">Search</button>
-    <button id="add" class="btn btn-info">Add Joke</button>
+<div class="container">
+    <div class="input-group">
+        <input id="search-bar" type="text" class="form-control bg-dark" placeholder="Search (id or text)">
+        <button id="search" class="btn btn-primary">Search</button>
+        <button id="add" class="btn btn-info">Add Joke</button>
+    </div>
+    <table id="joke-table" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Category</th>
+                <th>Joke text</th>
+                <th>Votes</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="load-btn" class="w-100 btn btn-primary">Load more</button>
 </div>
-<table id="joke-table" class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Category</th>
-            <th>Joke text</th>
-            <th>Votes</th>
-            <th>Options</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-<button id="load-btn" class="w-100 btn btn-primary">Load more</button>
 
 
 <script>

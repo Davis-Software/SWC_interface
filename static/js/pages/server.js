@@ -53,7 +53,7 @@ function load_module(module_id){
         let res = e.target
         if(res.status === 200){
             let holder = document.createElement("div")
-            holder.classList.add("container", "holder")
+            holder.classList.add("holder")
             holder.innerHTML = e.target.response
 
             let styles = Array.from(holder.querySelectorAll("style")).map(elem => {

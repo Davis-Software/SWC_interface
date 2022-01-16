@@ -39,13 +39,13 @@ dashboard_module_description = {
 
 
 server_page_modules = {
-    "on_time_element": ["Server OnTime Settings", "Configure when the server starts and shuts down for every DOW.", True],
-    "joke_element": ["Joke API Settings", "Manage all jokes in the joke API.", True]
+    "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap^.", False]
 }
 
 
 tools_page_tools = {
-    "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap^.", False],
+    "on_time_element": ["Server OnTime Settings", "Configure when the server starts and shuts down for every DOW.", True],
+    "joke_element": ["Joke API Settings", "Manage all jokes in the joke API.", True],
     "sinusbot": ["Teamspeak Sinusbot Interface", "Select songs the bot should play on the ts server (requires a sinusbot account)", False]
 }
 
