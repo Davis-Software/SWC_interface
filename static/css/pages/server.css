@@ -3,8 +3,82 @@
     border-radius: 0;
 }
 
-.module-item{
-    cursor: pointer;
-    transition: background-color .3s;
+
+#back-btn div{
     user-select: none;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+
+.row{
+    margin: 0 !important;
+}
+.module-item{
+    overflow: hidden;
+    padding: 0 !important;
+    position: relative;
+    cursor: pointer;
+    background-color: var(--bs-dark);
+    user-select: none;
+    height: 300px;
+    border-radius: 25px;
+}
+.module-item, .module-item *{
+    transition: all .3s;
+}
+.module-item .header{
+    position: absolute;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    background-color: rgba(0, 0, 0, .2);
+    width: 100%;
+}
+.module-item .header .title{
+    padding: 10px 10px 0;
+}
+.module-item .description{
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .3);
+    height: 0;
+    width: 100%;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+.module-item .image-preview{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+.module-item .image-preview img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+}
+.module-item .image-preview img.loaded{
+    opacity: 100;
+}
+.module-item .description{
+    padding: 2px 10px 0;
+}
+
+.module-item:hover{
+    transform: scale(1.01);
+}
+.module-item:hover .header{
+    background-color: rgba(0, 0, 0, .4);
+}
+.module-item:hover .header .title{
+    padding: 20px 15px 0;
+}
+.module-item:hover .description{
+    background-color: rgba(0, 0, 0, .7);
+    height: 25%;
+}
+.module-item:hover .image-preview img{
+    transform: scale(1.05);
 }

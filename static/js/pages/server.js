@@ -1,3 +1,11 @@
+document.querySelectorAll(".module-item .image-preview img").forEach(elem => {
+    elem.addEventListener("load", e => {
+        elem.classList.add("loaded")
+    })
+    elem.src = elem.getAttribute("data-src")
+})
+
+
 function set_pg_bar(val){
     let pg = document.querySelector(".progress")
     if(val === null){

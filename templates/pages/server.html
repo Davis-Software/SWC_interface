@@ -9,19 +9,26 @@
     <div class="progress">
         <div class="progress-bar progress-bar-animated progress-bar-striped" style="width: 100%"></div>
     </div>
-    <div class="container mt-4" id="selector">
-        <div class="list-group">
-            {% for module in modules %}
-            <div class="list-group-item list-group-item-action module-item ripple mad-ripple" onclick="load_module('{{ module.id|string }}')">
-                <h5>{{ module.name }}</h5>
-                <small class="text-info">{{ module.description }}</small>
+    <div class="row" id="selector">
+        {% for module in modules %}
+        <div class="col-lg-3 col-md-4 col-sm-6 p-2" onclick="load_module('{{ module.id|string }}')">
+            <div class="module-item ripple mad-ripple">
+                <div class="image-preview">
+                <img src="" data-src="?get-image={{ module.id|string }}" alt="">
+                </div>
+                <div class="header">
+                    <h5 class="title">{{ module.name }}</h5>
+                </div>
+                <div class="description">
+                    <small class="text-info">{{ module.description }}</small>
+                </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
     <div id="module-view" hidden>
-        <div class="container-fluid my-3">
-            <div class="list-group-item list-group-item-action module-item ripple" onclick="load_module(null)">
+        <div id="back-btn">
+            <div class="list-group-item list-group-item-action ripple" onclick="load_module(null)">
                 <h5>< Go Back</h5>
             </div>
         </div>

@@ -1,6 +1,22 @@
 import os
 from config import page_config
-from __init__ import working_dir
+from __init__ import working_dir, send_file
+
+
+def get_image(name: str):
+    path = os.path.join(
+        working_dir,
+        "static/img/pages/server/modules",
+        f"{name}.png"
+    )
+
+    if os.path.exists(path):
+        return send_file(path, as_attachment=False)
+
+    return send_file(os.path.join(
+        working_dir,
+        "static/img/no_img.png"
+    ))
 
 
 def get_modules(admin=False):
