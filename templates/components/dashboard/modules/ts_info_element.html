@@ -1,12 +1,30 @@
 <style>
-    .leading-icon {
+    .icon-holder{
+        position: relative;
+    }
+    .icon-holder .leading-icon {
         border-radius: 100px;
         height: 35px;
         width: 35px;
     }
+    .icon-holder .icon-footer{
+        position: absolute;
+        bottom: 0;
+        right: -6px;
+        border-radius: 100px;
+        height: 16px;
+        width: 16px;
+        outline: white 1px;
+        background-color: #1c2538;
+    }
     .ts-user{
         font-size: 1.2em;
         cursor: pointer;
+    }
+    .ts-user small{
+        font-size: 8px;
+        margin-left: 5px;
+        vertical-align: top !important;
     }
     .invisible{
         display: none !important;
@@ -54,6 +72,20 @@
 
 <script>
     (function(){
+        let ts_icons = {
+            "away": "client_away.png",
+            "normal": "client_normal.png",
+            "talking": "client_talking.png",
+            "muted": "input_muted.png",
+            "hard_muted": "input_muted_hardware.png",
+            "deaf": "output_muted.png",
+            "hard_deaf": "output_muted_hardware.png"
+        }
+        for(let icon in ts_icons){
+            ts_icons[icon] = "/static/img/pages/dashboard/modules/teamspeak/" + ts_icons[icon]
+        }
+
+
         let ts_list = document.querySelector("#ts-list")
         let first = true
         let error = null
@@ -80,21 +112,53 @@
                     ts_list.querySelectorAll("li:not(.ts-placeholder)").forEach(elem => {
                         ts_list.removeChild(elem)
                     })
-                    for (let user of data.users) {
+
+                    let users = data.users
+                    users.sort((a, b) => {return a.client_talk_power - b.client_talk_power})
+                    users.reverse()
+
+                    for (let user of users) {
                         let elem = document.createElement("li")
                         elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                         elem.innerHTML = `
-                            <div class="flex-shrink-0">
+                            <div class="icon-holder flex-shrink-0">
                                 <img class="leading-icon" src="{{ query_url }}/user?app_avatar=${user.client_nickname}&app=ts" alt="">
+                                <img class="icon-footer" src="" alt="">
                             </div>
-                            <div class="flex-grow-1 ms-3 ts-user">${user.client_nickname}</div>
+                            <div class="flex-grow-1 ms-3 ts-user">
+                                ${user.client_nickname}
+                                <small class="badge bg-info">${user.client_country}</small>
+                                <small class="badge bg-secondary">v${user.client_version.split(" ")[0]}</small>
+                                ${user.client_is_recording === "1" ? '<small class="badge bg-danger">REC</small>' : ''}
+                            </div>
                         `
+                        if(user.client_is_channel_commander === "1"){
+                            elem.querySelector(".ts-user").classList.add("text-warning")
+                        }
                         elem.querySelector(".ts-user").addEventListener("click", _ => {
                             window.open(`https://{{ app.url }}/user/ts/${user.client_nickname}`, "_blank")
                         })
+
+                        let status_icon = elem.querySelector(".icon-footer")
+                        if(user.client_away === "1"){
+                            status_icon.src = ts_icons["away"]
+                        }else if(user.client_output_hardware === "0"){
+                            status_icon.src = ts_icons["hard_deaf"]
+                        }else if(user.client_input_hardware === "0"){
+                            status_icon.src = ts_icons["hard_muted"]
+                        }else if(user.client_output_muted === "1"){
+                            status_icon.src = ts_icons["deaf"]
+                        }else if(user.client_input_muted === "1"){
+                            status_icon.src = ts_icons["muted"]
+                        }else if(user.client_flag_talking === "1"){
+                            status_icon.src = ts_icons["talking"]
+                        }else{
+                            status_icon.src = ts_icons["normal"]
+                        }
+
                         ts_list.appendChild(elem)
                     }
-                    if(data.users.length === 0){
+                    if(users.length === 0){
                         let elem = document.createElement("li")
                         elem.className = `list-group-item border-top border-secondary bg-transparent d-flex align-items-center${first ? " invisible" : ""}`
                         elem.innerHTML = `
