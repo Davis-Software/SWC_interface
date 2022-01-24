@@ -58,13 +58,12 @@
     object-fit: cover;
     object-position: center;
     opacity: 0;
-    -webkit-user-drag: none;
 }
 .module-item .image-preview img.loaded{
     opacity: 100;
 }
 .module-item .description{
-    padding: 0;
+    padding: 2px 10px 0;
 }
 
 .module-item:hover{
@@ -74,8 +73,7 @@
     background-color: rgba(0, 0, 0, .4);
 }
 .module-item:hover .header .title{
-    padding: 20px 15px 5px;
-    font-weight: bold;
+    padding: 20px 15px 0;
 }
 .module-item:hover .description{
     background-color: rgba(0, 0, 0, .7);
@@ -83,7 +81,4 @@
 }
 .module-item:hover .image-preview img{
     transform: scale(1.05);
-}
-.module-item:hover .description{
-    padding: 8px 14px 0;
 }

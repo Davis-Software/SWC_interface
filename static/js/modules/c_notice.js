@@ -19,7 +19,7 @@
         let modal = new Modal(
             "#modal-wrapper",
             {
-                heading: "Cookie Info",
+                title: "Cookie Info",
                 centered: true,
                 static_backdrop: true
             },
