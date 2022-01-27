@@ -28,7 +28,8 @@ async function apply_path_view(){
     for(let id in path){
         let step = path[id]
         let elem = document.createElement("li")
-        elem.classList.add("path-part", "ripple", "mad-ripple")
+        elem.classList.add("path-part")
+        createRipple(elem)
         elem.innerHTML = `
             <a><span>${step.replaceAll("%20", " ")}${Number(id)+1 !== path.length ? " >" : ""}</span></a>
         `
@@ -445,7 +446,7 @@ function load_files(filter){
         function create_apply_and_populate(file){
             let elem = document.createElement("tr")
             elem.innerHTML = (mobile ? cloud_file_mobile_template : cloud_file_template).innerHTML
-            elem.classList.add("ripple", "mad-ripple")
+            createRipple(elem)
             apply_navigation(elem, file)
             populate_options(elem, file)
             elem.querySelector(".cloud-item-type").innerText = file.type

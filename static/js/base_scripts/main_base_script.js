@@ -1,24 +1,18 @@
-function createRipple($, e=document) {
-    $(".ripple").addClass("mad-ripple")
-    $(e).on("mousedown", ".ripple", function(e) {
-        let $self = $(this)
-        if($self.is(".btn-disabled")) {
+function createRipple(elem) {
+    if(elem.classList.contains("ripple-legacy")) return
+
+    $(elem).addClass("mad-ripple")
+    $(elem).on("mousedown", e => {
+        let $self = $(elem)
+        if($self.is(".disabled")) {
             return
         }
-        if($self.closest(".ripple")) {
-            e.stopPropagation()
-        }
 
-        let initPos = $self.css("position"),
-            offs = $self.offset(),
-            x = e.pageX - offs.left,
-            y = e.pageY - offs.top,
-            dia = Math.min(this.offsetHeight, this.offsetWidth, 100),
-            $ripple = $('<div/>', {class : "ripple-inner",appendTo : $self })
-
-        if(!initPos || initPos==="static") {
-            $self.css({position:"relative"})
-        }
+        let offs = $self.offset()
+        let x = e.pageX - offs.left
+        let y = e.pageY - offs.top
+        let dia = Math.min(elem.offsetHeight, elem.offsetWidth, 100)
+        let $ripple = $('<div/>', { class : "ripple-inner", appendTo : $self })
 
         $('<div/>', {
             class : "rippleWave",
@@ -27,12 +21,12 @@ function createRipple($, e=document) {
                 width: dia,
                 height: dia,
                 left: x - (dia/2),
-                top: y - (dia/2),
+                top: y - (dia/2)
             },
             appendTo: $ripple,
             one: {
-                animationend : function(){
-                    $ripple.remove();
+                animationend : () => {
+                    $ripple.remove()
                 }
             }
         })
@@ -40,8 +34,15 @@ function createRipple($, e=document) {
 }
 
 {
-    document.querySelectorAll(".btn, .dropdown-item, .card-header").forEach(elem => {
-        elem.classList.add("ripple", "mad-ripple")
+    document.querySelectorAll(".btn, .dropdown-item, .card-header, .ripple, .mad-ripple").forEach(elem => {
+        elem.classList.add("ripple")
+        console.log(elem)
+        createRipple(elem)
     })
-    createRipple($)
+    document.addEventListener("click", _ => {
+        document.querySelectorAll(".btn:not(.ripple), .dropdown-item:not(.ripple), .card-header:not(.ripple)").forEach(elem => {
+            elem.classList.add("ripple")
+            createRipple(elem)
+        })
+    })
 }

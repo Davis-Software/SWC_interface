@@ -33,90 +33,46 @@
 }
 
 
-
-/* MAD-RIPPLE EFFECT */
-.ripple-inner{
-  position: absolute;
-  top:0; left:0; bottom:0; right:0;
-  overflow: hidden;
-  -webkit-transform: translateZ(0); /* to contain zoomed ripple */
-  transform: translateZ(0);
-  border-radius: inherit; /* inherit from parent (rounded buttons etc) */
-  pointer-events: none; /* allow user interaction */
-          animation: ripple-shadow 0.4s forwards;
-  -webkit-animation: ripple-shadow 0.4s forwards;
-}
-.rippleWave{
-  backface-visibility: hidden;
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0.7); -webkit-transform: scale(0.7);
-  background: rgba(255,255,255, 1);
-  opacity: 0.45;
-          animation: ripple 1.5s forwards;
-  -webkit-animation: ripple 1.5s forwards;
-}
-@keyframes ripple-shadow {
-  0%   {box-shadow: 0 0 0 rgba(0,0,0,0.0);}
-  20%  {box-shadow: 0 4px 16px rgba(0,0,0,0.3);}
-  100% {box-shadow: 0 0 0 rgba(0,0,0,0.0);}
-}
-@-webkit-keyframes ripple-shadow {
-  0%   {box-shadow: 0 0 0 rgba(0,0,0,0.0);}
-  20%  {box-shadow: 0 4px 16px rgba(0,0,0,0.3);}
-  100% {box-shadow: 0 0 0 rgba(0,0,0,0.0);}
-}
-@keyframes ripple {
-  to {transform: scale(24); opacity:0;}
-}
-@-webkit-keyframes ripple {
-  to {-webkit-transform: scale(24); opacity:0;}
-}
-
-
-/* MAD-BUTTONS (demo) */
-[class*=mad-button-]{
-  display:inline-block;
-  text-align:center;
+.mad-ripple{
   position: relative;
-  margin: 0;
-  white-space: nowrap;
-  vertical-align: middle;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-decoration: none;
-  border: 0; outline: 0;
-  background: none;
-  transition: 0.3s;
-  cursor: pointer;
-  color: rgba(255,255,255, 0.82);
 }
-[class*=mad-button-] i.material-icons{
-  vertical-align:middle;
-  padding:0;
+.ripple{
+  &-inner{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    pointer-events: none; /* allow user interaction */
+    border-radius: inherit; /* inherit from parent (rounded buttons etc) */
+    transform: translateZ(0);
+    animation: ripple-shadow .4s forwards;
+  }
+  &Wave{
+    position: absolute;
+    background: rgba(255, 255, 255, .6);
+    backface-visibility: hidden;
+    border-radius: 50%;
+    opacity: .45;
+    transform: scale(.7);
+    animation: ripple 1.5s forwards;
+  }
+  @keyframes ripple-shadow {
+    0% {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+    20% {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+    }
+    100% {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+  }
+  @keyframes ripple {
+    to {
+      opacity: 0;
+      transform: scale(24);
+    }
+  }
 }
-.mad-button-raised{
-  height: 36px;
-  padding: 0px 16px;
-  line-height: 36px;
-  border-radius: 2px;
-  box-shadow: /*amb*/ 0 0   2px rgba(0,0,0,0.15),
-    /*key*/ 0 1px 3px rgba(0,0,0,0.25);
-}.mad-button-raised:hover{
-  box-shadow: /*amb*/ 0 0   2px rgba(0,0,0,0.13),
-    /*key*/ 0 2px 4px rgba(0,0,0,0.2);
-}
-.mad-button-action{
-  width: 56px; height:56px;
-  padding: 16px 0;
-  border-radius: 32px;
-  box-shadow: /*amb*/ 0 0   2px rgba(0,0,0,0.13),
-    /*key*/ 0 5px 7px rgba(0,0,0,0.2);
-}.mad-button-action:hover{
-  box-shadow: /*amb*/ 0 0   2px rgba(0,0,0,0.11),
-    /*key*/ 0 6px 9px rgba(0,0,0,0.18);
-}
-[class*=mad-button-].mad-ico-left  i.material-icons{ margin: 0 8px 0 -4px; }
-[class*=mad-button-].mad-ico-right i.material-icons{ margin: 0 -4px 0 8px; }
