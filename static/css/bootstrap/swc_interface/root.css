@@ -531,7 +531,7 @@
   border-radius: 50%;
   opacity: 0.45;
   transform: scale(0.7);
-  animation: ripple 1.5s forwards;
+  animation: ripple 1s forwards;
 }
 @keyframes ripple-shadow {
   0% {

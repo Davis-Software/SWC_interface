@@ -26,6 +26,7 @@
 }
 .module-item, .module-item *{
     transition: all .3s;
+    -webkit-user-drag: none;
 }
 .module-item .header{
     position: absolute;
