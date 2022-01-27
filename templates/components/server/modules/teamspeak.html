@@ -1,0 +1,195 @@
+<style>
+    .channel , .channel *{
+        -webkit-user-drag: none;
+    }
+    .channel.card{
+        background-color: transparent;
+        border: none;
+    }
+    .channel .card-header{
+        user-select: none;
+        cursor: pointer;
+        background-color: transparent;
+        background-image: linear-gradient(45deg, #151515, transparent, transparent);
+        border: 1px solid var(--bs-body-bg);
+        border-radius: 5px;
+        margin: 0 5px;
+        transition: all .1s;
+    }
+    .channel .card-header:hover{
+        border: 1px solid var(--bs-primary);
+    }
+    .channel .card-body{
+        padding: .5rem 1rem;
+    }
+
+
+    .channel.spacer{
+        text-align: center;
+        color: var(--bs-info);
+    }
+
+    .user-list{
+        padding: 0;
+        margin: 0;
+    }
+    .user-list li{
+        border: 1px solid var(--bs-body-bg) !important;
+        border-radius: 5px !important;
+        transition: all .1s !important;
+        cursor: pointer;
+    }
+    .user-list li:hover{
+        border: 1px solid var(--bs-primary) !important;
+        background-color: #1c2538 !important;
+    }
+
+    .icon-holder{
+        position: relative;
+    }
+    .icon-holder .leading-icon {
+        border-radius: 100px;
+        height: 35px;
+        width: 35px;
+    }
+    .icon-holder .icon-footer{
+        position: absolute;
+        bottom: 0;
+        right: -6px;
+        border-radius: 100px;
+        height: 16px;
+        width: 16px;
+        outline: white 1px;
+        background-color: #1c2538;
+    }
+    .ts-user small{
+        font-size: 8px;
+        margin-left: 5px;
+        vertical-align: top !important;
+    }
+</style>
+
+<div>
+    <div id="channel-list"></div>
+</div>
+
+<script>
+    (function(){
+        let ts_icons = {
+            "away": "client_away.png",
+            "normal": "client_normal.png",
+            "talking": "client_talking.png",
+            "muted": "input_muted.png",
+            "hard_muted": "input_muted_hardware.png",
+            "deaf": "output_muted.png",
+            "hard_deaf": "output_muted_hardware.png"
+        }
+        for(let icon in ts_icons){
+            ts_icons[icon] = "https://interface.software-city.org/static/img/pages/dashboard/modules/teamspeak/" + ts_icons[icon]
+        }
+        let chanel_list = document.querySelector("#channel-list")
+
+        function is_spacer(channel_name){
+            if(channel_name.includes("[") && channel_name.includes("]")){
+                return channel_name.split("[")[1].split("]")[0].includes("spacer")
+            }
+            return false
+        }
+
+        fetch("https://api.software-city.org/app/get_ts?detailed").then(resp => {
+            resp.json().then(json => {
+                let data = json.data
+                let elements = {}
+
+                for(let channel of data) {
+                    let channel_item
+                    if(is_spacer(channel.channel_name)){
+                        channel_item = document.createElement("div")
+                        channel_item.classList.add("channel", "spacer")
+
+                        let text = channel.channel_name.split("]")[1]
+                        switch (text){
+                            case "─":
+                                channel_item.innerHTML = "<hr>"
+                                break
+                            default:
+                                channel_item.textContent = text
+                                break
+                        }
+                    }else{
+                        channel_item = document.createElement("div")
+                        channel_item.classList.add("card", "link-expander-card", "channel")
+                        channel_item.innerHTML = `
+                            <div class="card-header card-link" data-bs-toggle="collapse" data-bs-target="#channel_collapse_${channel.cid}">
+                                <span class="card-link link-expander">${channel.channel_name}</span>
+                            </div>
+                            <div class="collapse" id="channel_collapse_${channel.cid}">
+                                <div class="card-body">
+                                    <div class="channel-inner">
+                                        <ul class="user-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        createRipple(channel_item.querySelector(".card-header"))
+                        elements[channel.cid] = channel_item
+                    }
+                    chanel_list.append(channel_item)
+                }
+                fetch(`https://api.software-city.org/app/get_ts`).then(resp => {
+                    resp.json().then(json => {
+                        let users = json.users
+                        users.sort((a, b) => {return a.client_talk_power - b.client_talk_power})
+                        users.reverse()
+                        for(let user of users){
+                            let elem = document.createElement("li")
+                            elem.className = `list-group-item bg-transparent d-flex align-items-center`
+                            elem.innerHTML = `
+                                <div class="icon-holder flex-shrink-0">
+                                    <img class="leading-icon" src="{{ query_url }}/user?app_avatar=${user.client_nickname}&app=ts" alt="">
+                                    <img class="icon-footer" src="" alt="">
+                                </div>
+                                <div class="flex-grow-1 ms-3 ts-user">
+                                    ${user.client_nickname}
+                                    <small class="badge bg-info">${user.client_country}</small>
+                                    <small class="badge bg-secondary">v${user.client_version.split(" ")[0]}</small>
+                                    ${user.client_is_recording === "1" ? '<small class="badge bg-danger">REC</small>' : ''}
+                                </div>
+                            `
+
+                        if(user.client_is_channel_commander === "1"){
+                            elem.querySelector(".ts-user").classList.add("text-warning")
+                        }
+                        elem.querySelector(".ts-user").addEventListener("click", _ => {
+                            window.open(`https://{{ app.url }}/user/ts/${user.client_nickname}`, "_blank")
+                        })
+
+                        let status_icon = elem.querySelector(".icon-footer")
+                        if(user.client_away === "1"){
+                            status_icon.src = ts_icons["away"]
+                        }else if(user.client_output_hardware === "0"){
+                            status_icon.src = ts_icons["hard_deaf"]
+                        }else if(user.client_input_hardware === "0"){
+                            status_icon.src = ts_icons["hard_muted"]
+                        }else if(user.client_output_muted === "1"){
+                            status_icon.src = ts_icons["deaf"]
+                        }else if(user.client_input_muted === "1"){
+                            status_icon.src = ts_icons["muted"]
+                        }else if(user.client_flag_talking === "1"){
+                            status_icon.src = ts_icons["talking"]
+                        }else{
+                            status_icon.src = ts_icons["normal"]
+                        }
+
+                            createRipple(elem)
+                            if(elements[user.cid]) {
+                                elements[user.cid].querySelector("ul.user-list").append(elem)
+                                elements[user.cid].querySelector(".collapse").classList.add("show")
+                            }
+                        }
+                    })
+                })
+            })
+        })
+    })()
+</script>

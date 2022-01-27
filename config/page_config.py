@@ -39,7 +39,8 @@ dashboard_module_description = {
 
 
 server_page_modules = {
-    "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap.", False]
+    "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap.", False],
+    "teamspeak": ["Teamspeak Channel Tree", "Get an overview of the software city teamspeak channels.", False]
 }
 
 
