@@ -36,7 +36,6 @@ function createRipple(elem) {
 {
     document.querySelectorAll(".btn, .dropdown-item, .card-header, .ripple, .mad-ripple").forEach(elem => {
         elem.classList.add("ripple")
-        console.log(elem)
         createRipple(elem)
     })
     document.addEventListener("click", _ => {
