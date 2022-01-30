@@ -1,9 +1,10 @@
 let editor = ace.edit("editor")
 let info = document.querySelector("#file-info")
 
-editor.insert("loading...")
-fetch(location.href + "&raw=true").then(resp => {
+info.innerHTML = "loading..."
+fetch(location.href + (location.href.includes("?") ? "&" : "?") + "raw=true").then(resp => {
     resp.json().then(data => {
+        info.innerHTML = "File Saved"
         editor.setValue(data.data[0])
         editor.session.setMode(
             mode_list.getModeForPath(data.data[1]).mode

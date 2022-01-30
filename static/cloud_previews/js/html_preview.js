@@ -35,7 +35,7 @@ view_switcher.querySelectorAll("span")[localStorage.getItem("html_preview_mode")
 
 editor.insert("loading...")
 preview.contentDocument.documentElement.innerText = "loading..."
-fetch(location.href + "&raw=true").then(resp => {
+fetch(location.href + (location.href.includes("?") ? "&" : "?") + "raw=true").then(resp => {
     resp.json().then(data => {
         editor.setValue(data.data[0])
         editor.session.setMode(
