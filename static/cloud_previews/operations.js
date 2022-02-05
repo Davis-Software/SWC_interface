@@ -278,7 +278,7 @@ function share_location(url, name){
         fetch(`${location.pathname}/${name}?share&duration=${duration}`).then(resp => {
             resp.text().then(file_id => {
                 modal.clear()
-                let file_path = `${location.host}/shared-cloud/${file_id}`
+                let file_path = `https://${location.host}/shared-cloud/${file_id}`
                 modal.Custom(`
                     <div class="input-group">
                         <input class="form-control bg-dark text-white" type="text" value="${file_path}" disabled>
