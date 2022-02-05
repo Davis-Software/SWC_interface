@@ -230,3 +230,68 @@ function download_folder(name){
     dwn_btn.disabled = true
     proc.show()
 }
+
+function share_location(url, name){
+    let modal = new Modal(null, {
+        title: `Share '${name}'`,
+        static_backdrop: true,
+        centered: true
+    }, "large")
+
+    modal.FastText("All fileshares are only valid until the server restarts!", {
+        class: "text-danger position-absolute"
+    }, true).style.left = "20px"
+
+    let div = modal.Custom(`
+        Share Duration: <br><br> share for: &nbsp;&nbsp;
+        <input id="h-inp" class="form-control d-inline w-auto" type="number" min="0" max="24" value="0"> hours and &nbsp;
+        <input id="m-inp" class="form-control  d-inline w-auto" type="number" min="-1" max="60" value="5"> minutes
+    `)
+
+    let h_inp = div.querySelector("#h-inp")
+    let m_inp = div.querySelector("#m-inp")
+
+    m_inp.addEventListener("input", _ => {
+        if(m_inp.value === "60"){
+            m_inp.value = 0
+            h_inp.value++
+        }else if(m_inp.value < 5 && h_inp.value === "0"){
+            m_inp.value = 5
+        }else if(m_inp.value < 0){
+            m_inp.value = 59
+            h_inp.value--
+        }
+    })
+    h_inp.addEventListener("input", _ => {
+        if(h_inp.value === "0" && m_inp.value < 5){
+            m_inp.value = 5
+        }
+    })
+
+    let submit_btn = modal.Button("share-btn", "Share", "btn-warning", {}, true)
+    submit_btn.addEventListener("click", _ => {
+        submit_btn.disabled = true
+        modal.clear()
+        modal.Custom(`<div class="text-center"><div class="spinner-border"></div></div>`)
+
+        let duration = parseInt(h_inp.value) * 60 + parseInt(m_inp.value)
+        fetch(`${location.pathname}/${name}?share&duration=${duration}`).then(resp => {
+            resp.text().then(file_id => {
+                modal.clear()
+                let file_path = `${location.host}/shared-cloud/${file_id}`
+                modal.Custom(`
+                    <div class="input-group">
+                        <input class="form-control bg-dark text-white" type="text" value="${file_path}" disabled>
+                        <button class="btn btn-info">Copy</button>
+                    </div>
+                `).querySelector(".btn.btn-info").addEventListener("click", e => {
+                    navigator.clipboard.writeText(file_path).then(_ => {
+                        e.target.textContent = "Copied!"
+                    })
+                })
+            })
+        })
+    })
+
+    modal.show()
+}

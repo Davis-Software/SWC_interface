@@ -1,7 +1,7 @@
 import json
 
 import configuration
-from __init__ import session, abort, temp_db, request
+from __init__ import session, abort, temp_db, request, render_template
 from route_helpers import cloud_file_adapter as file_adapter
 from utils import api_utils
 from utils.request_code import RequestCode
@@ -59,6 +59,8 @@ def handle_arguments(args, form, files, c_path: str, personal_cloud: bool):
         )
     if "preview" in args:
         return file_adapter.load_file_preview(c_path, personal_cloud, user)
+    if "share" in args:
+        return file_adapter.share_file(c_path, personal_cloud, user)
     if "download" in args:
         return file_adapter.download_file(c_path, personal_cloud, user)
 
@@ -72,9 +74,40 @@ def handle_info_request():
     return api_utils.craft_response(data, RequestCode.Success.OK)
 
 
+def handle_cloud_share(file_id):
+    if file_id in temp_db["exposed_cloud_files"]:
+        if temp_db["exposed_cloud_files"][file_id]["exposed"] + timedelta(minutes=temp_db["exposed_cloud_files"][file_id]["lifetime"]) < datetime.now():
+            del temp_db["exposed_cloud_files"][file_id]
+            abort(RequestCode.ClientError.RequestTimeout)
+        if "download" in request.args:
+            return file_adapter.download_exposed_file(file_id)
+        return file_adapter.preview_shared_file(file_id)
+    return render_template(
+        "error_page.html",
+        error_code=RequestCode.ClientError.Gone,
+        error="Expired or not found",
+        error_description="The link to the shared file may be expired or is incorrect."
+    )
+
+
+def user_shares(user, cloud: bool = False):
+    shares = list()
+
+    for share_pos in temp_db["exposed_cloud_files"]:
+        share = temp_db["exposed_cloud_files"][share_pos]
+
+        if (not cloud and (share["user"] == user and share["type"] == "cloud_user")) or (cloud and share["type"] == "cloud_public"):
+            elem = dict(share)
+            elem["id"] = share_pos
+            shares.append(elem)
+
+    return api_utils.craft_response(shares, RequestCode.Success.OK)
+
+
 def handle_exposition(position):
     if position in temp_db["exposed_cloud_files"]:
-        if temp_db["exposed_cloud_files"][position]["exposed"] > datetime.now() + timedelta(minutes=5):
+        if temp_db["exposed_cloud_files"][position]["exposed"] + timedelta(minutes=temp_db["exposed_cloud_files"][position]["lifetime"]) < datetime.now():
+            del temp_db["exposed_cloud_files"][position]
             abort(RequestCode.ClientError.RequestTimeout)
         return file_adapter.download_exposed_file(position)
     abort(RequestCode.ClientError.NotFound)

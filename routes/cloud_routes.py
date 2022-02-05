@@ -40,6 +40,17 @@ def route_cloud_help():
     )
 
 
+@app.route("/shared-cloud")
+@app.route("/shared-cloud/<string:file_id>")
+def route_shared_cloud(file_id=None):
+    if file_id is not None:
+        return request_handler.handle_cloud_share(
+            file_id
+        )
+
+    return request_handler.user_shares(session.get("username"), "public" in request.args)
+
+
 @app.route("/exposed-cloud/<string:position>")
 def route_exposed_cloud(position):
     return request_handler.handle_exposition(

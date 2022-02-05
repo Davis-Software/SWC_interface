@@ -70,6 +70,9 @@ def check_for_accepted_preview(func):
                 return func(*args, **kwargs)
             return func()
 
+        if "skip_test" in kwargs and kwargs["skip_test"]:
+            return returner()
+
         if request.args.get("raw"):
             return returner()
         if request.cookies.get("accepted-preview-warning"):
@@ -86,11 +89,14 @@ def check_for_accepted_preview(func):
 
 
 @check_for_accepted_preview
-def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str = None):
-    location = file_utils.make_cloud_path(
-        join(user, path) if personal else path,
-        personal
-    )
+def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str = None, **kwargs):
+    if "location" in kwargs and kwargs["location"] is not None:
+        location = kwargs["location"]
+    else:
+        location = file_utils.make_cloud_path(
+            join(user, path) if personal else path,
+            personal
+        )
 
     file_type = file_utils.FileIdentifier(location).file_type
     if alt_file_type is not None:
@@ -101,7 +107,7 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
             error = None
             try:
                 file = load_file_preview(
-                    path, personal, user, alt_file_type=request.cookies.get("set-file-type-file")
+                    path, personal, user, alt_file_type=request.cookies.get("set-file-type-file"), **kwargs
                 )
             except Exception as err:
                 error = err
@@ -212,6 +218,31 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
         return make_response({}, RequestCode.ClientError.UnsupportedMediaType)
 
 
+def share_file(path: str, personal: bool, user: str):
+    location = file_utils.make_cloud_path(
+        join(user, path) if personal else path,
+        personal
+    )
+
+    duration = request.args.get("duration")
+    if duration is None or not duration.isnumeric():
+        return make_response("", RequestCode.ClientError.BadRequest)
+
+    file_uuid = expose_cloud_file(
+        location,
+        user=user,
+        lifetime=int(duration),
+        exposition_type="cloud_user" if personal else "cloud_public"
+    )
+
+    return api_utils.make_response(file_uuid, RequestCode.Success.OK)
+
+
+def preview_shared_file(file_uuid: str):
+    location = get_exposed_file_location(file_uuid)
+    return load_file_preview(None, None, None, location=location, skip_test=True)
+
+
 def download_file(path: str, personal: bool, user: str):
     location = file_utils.make_cloud_path(
         join(user, path) if personal else path,
@@ -250,29 +281,33 @@ def upload_files(path: str, personal: bool, user: str, files):
         )
 
 
-def expose_cloud_file(location):
+def expose_cloud_file(location, user=None, lifetime=5, exposition_type: str = None):
+    obj = {
+        "target": location,
+        "exposed": datetime.now(),
+        "lifetime": lifetime,
+        "user": user,
+        "type": exposition_type
+    }
+
     if location in temp_db["exposed_cloud_files_positions"]:
         position = temp_db["exposed_cloud_files_positions"][location]
-        temp_db["exposed_cloud_files"][position] = {
-            "target": location,
-            "exposed": datetime.now()
-        }
+        temp_db["exposed_cloud_files"][position] = obj
         return position
 
     position = str(uuid.uuid4())
     temp_db["exposed_cloud_files_positions"][location] = position
-    temp_db["exposed_cloud_files"][position] = {
-        "target": location,
-        "exposed": datetime.now()
-    }
+    temp_db["exposed_cloud_files"][position] = obj
 
     return position
 
 
+def get_exposed_file_location(position):
+    return temp_db["exposed_cloud_files"][position]["target"]
+
+
 def download_exposed_file(position):
-    return send_file(
-        temp_db["exposed_cloud_files"][position]["target"]
-    )
+    return send_file(get_exposed_file_location(position))
 
 
 class FileOperation:

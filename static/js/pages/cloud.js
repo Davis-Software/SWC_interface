@@ -393,7 +393,9 @@ function load_files(filter){
                 .class("blue")
                 .title("Share link")
                 .icon("share")
-                .onClick(_ => {})
+                .onClick(_ => {
+                    share_location(`${location.pathname}/${file.name}`, file.name)
+                })
                 .spawn()
         }
         function populate_operations(elem, file){
@@ -652,6 +654,35 @@ function navigate_path(path, cloud_relative=true){
     }, "cloud-navigation", requested_location)
     update_info()
 }
+
+function show_shared(){
+    let modal = new Modal(null, {
+        title: "Manage shared files",
+        static_backdrop: true,
+        centered: true,
+        close_button: true
+    }, "max")
+
+    let list = modal.Custom("<ul></ul>").querySelector("ul")
+    modal.FastText("Features like deleting, editing will be implemented in the future!", {class: "text-warning"})
+
+    fetch(`/shared-cloud${location.pathname.split("/")[1] === "personal-cloud" ? "" : "?public"}`).then(resp => {
+        resp.json().then(json => {
+            let data = json.data
+            for(let share of data){
+                let elem = document.createElement("li")
+                elem.innerHTML = `
+                    "${share.target}" exposed for ${share.lifetime} minutes on ${share.exposed} <br>
+                    by ${share.user} -> <a href="/shared-cloud/${share.id}" target="_blank">${share.id}</a>
+                `
+                list.append(elem)
+            }
+        })
+    })
+
+    modal.show()
+}
+
 window.addEventListener("popstate", (e, _) => {
     e.preventDefault()
     update_info()
