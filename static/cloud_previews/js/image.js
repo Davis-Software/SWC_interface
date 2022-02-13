@@ -10,12 +10,11 @@ function set_loader(val) {
 function set_image(data) {
     img_elem.src = data
 }
+img_elem.addEventListener("load", _ => {
+    set_loader(false)
+})
 
 IJS.Image.load(img_elem.src).then(image => {
-    img_elem.addEventListener("load", _ => {
-        set_loader(false)
-    })
-
     document.querySelectorAll("button[data-action]").forEach(elem => {
         elem.addEventListener("click", async function () {
             set_loader(true)
