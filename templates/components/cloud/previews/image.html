@@ -5,10 +5,28 @@
     <title>Image preview - {{ request.path.split("/").pop() }}</title>
     <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
     <link rel="stylesheet" href="/static/cloud_previews/css/image.css">
+
+    <script src="/static/js/modules/image.min.js"></script>
+    <script src="/static/cloud_previews/utils.js"></script>
+    <script src="/static/cloud_previews/js/image.js" defer></script>
 </head>
 <body>
-    <div>
-        <img src="{{ request.path }}?download" alt="{{ file_name }}">
+    <div class="loader">
+        <div class="spinner-border"></div>
+    </div>
+    <div class="lined">
+        <img id="image" src="{{ request.path }}?download" alt="{{ file_name }}">
+        <div id="option-panel">
+            <div>
+                <button data-action="f_h" class="btn ripple"><i class="material-icons">flip</i></button>
+                <button data-action="f_v" class="btn ripple"><i class="material-icons rotated">flip</i></button>
+                <hr>
+                <button data-action="r_r" class="btn ripple"><i class="material-icons">rotate_right</i></button>
+                <button data-action="r_l" class="btn ripple"><i class="material-icons">rotate_left</i></button>
+                <hr>
+                <button data-action="dwn" class="btn ripple"><i class="material-icons">download</i></button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

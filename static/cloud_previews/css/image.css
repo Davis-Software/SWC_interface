@@ -1,7 +1,45 @@
-div{
-    overflow: auto;
+.loader{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
 }
+.loader .spinner-border{
+    width: 5rem;
+    height: 5rem;
+}
+
+.rotated{
+    transform: rotate(90deg);
+}
+.lined{
+    overflow: auto;
+    flex-direction: row;
+    display: flex;
+}
+#option-panel{
+    position: absolute;
+    right: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+#option-panel div{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, .35);
+    padding: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
 img{
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    object-fit: contain;
 }
