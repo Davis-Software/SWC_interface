@@ -23,21 +23,23 @@
             </div>
             <div class="col-md-6 col-sm-12">
                 <span class="dashboard-element-label">Today</span> <br>
-                <div id="time-today" class="loading">
+                <div id="time-today" class="w-100 d-block loading">
                     Online from 00:00 until 00:00
                 </div> <br>
                 <span class="dashboard-element-label">On-time</span> <br>
                 <div id="on-time" class="progress loading">
                     <div class="progress-bar"></div>
-                </div> <br>
+                </div>
+                <span class="w-100 mt-1 d-block loading" id="remaining-time"><span data-hour></span>h <span data-min></span>min and <span data-sec></span>s remaining</span>
+                <br>
             </div>
             <div class="col-md-6 col-sm-12">
                 <span class="dashboard-element-label">Workdays</span> <br>
-                <div id="time-week" class="loading">4.65GB / 10GB</div> <br>
+                <div id="time-week" class="w-100 d-block loading">4.65GB / 10GB</div> <br>
             </div>
             <div class="col-md-6 col-sm-12">
                 <span class="dashboard-element-label">Weekends</span> <br>
-                <div id="time-weekend" class="loading">4.65GB / 10GB</div> <br>
+                <div id="time-weekend" class="w-100 d-block loading">4.65GB / 10GB</div> <br>
             </div>
         </div>
     </div>
@@ -110,17 +112,23 @@
 
                 time_today.innerText = `Online from ${today_up} until ${today_down}`
 
-                function get_current_time(){
+                function get_current_time(seconds=false){
                     return new Date().toLocaleTimeString("de-de", {
-                        hour: "2-digit", minute: "2-digit"
+                        hour: "2-digit", minute: "2-digit", second: seconds ? "2-digit" : undefined
                     })
                 }
 
                 on_time.querySelector(".progress-bar").style.width = `${calc_time_diff(today_up, get_current_time()) / calc_time_diff(today_up, today_down) * 100}%`
                 function set_time(){
-                    on_time.querySelector(".progress-bar").innerText = `${Math.round(calc_time_diff(today_up, get_current_time())*10)/10} / ${calc_time_diff(today_up, today_down)} hours`
+                    on_time.querySelector(".progress-bar").innerText = `${Math.round(calc_time_diff(today_up, get_current_time())*100)/100} / ${calc_time_diff(today_up, today_down)} hours`
+
+                    let remainder = calc_time_diff(get_current_time(true), today_down)
+                    document.querySelector("#remaining-time span[data-hour]").textContent = Math.floor(remainder).toString()
+                    document.querySelector("#remaining-time span[data-min]").textContent = Math.round(remainder % 1 * 60).toString()
+                    document.querySelector("#remaining-time span[data-sec]").textContent = Math.round(remainder % 1 * 60 % 1 * 60).toString()
+                    document.querySelector("#remaining-time").classList.remove("loading")
                 }
-                setTimeout(set_time, 180000)
+                setInterval(set_time, 500)
                 set_time()
 
                 let week_up = data.holiday ? data["holiday-up-week"] : data["normal-up-week"]
