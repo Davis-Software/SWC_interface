@@ -73,6 +73,16 @@
             "holiday-down-week",
             "holiday-down-weekend"
         ]
+
+        function calc_time_diff(start, end) {
+            let start_day = new Date("1970-1-1 " + start)
+            let stop_day = new Date("1970-1-1 " + end)
+            if(start_day > stop_day){
+                stop_day = new Date("1970-1-2 " + end)
+            }
+            return (stop_day - start_day) / 1000 / 60 / 60
+        }
+
         app_fetch(`{{ query_url }}/server-settings?get_settings=${tags.join(",")}`).then(resp => {
             resp.json().then(data => {
                 let today_up
@@ -100,14 +110,15 @@
 
                 time_today.innerText = `Online from ${today_up} until ${today_down}`
 
-                function make_time(time, start_date=now){
-                    return new Date(`${start_date.getMonth()+1}/${start_date.getDate()}/${start_date.getFullYear()} ${time}`)
+                function get_current_time(){
+                    return new Date().toLocaleTimeString("de-de", {
+                        hour: "2-digit", minute: "2-digit"
+                    })
                 }
-                let on_time_val = new Date(now - make_time(today_up))
-                let on_time_total = new Date(on_time_val - new Date(`${on_time_val.getMonth()+1}/${on_time_val.getDate() + Number(today_down.split(":")[0]) < Number(today_up.split(":")[0]) ? 2 : 1}/${on_time_val.getFullYear()} ${today_down}`).getTime())
-                on_time.querySelector(".progress-bar").style.width = `${on_time_val.getTime() / Math.abs(on_time_total.getTime()) * 100}%`
+
+                on_time.querySelector(".progress-bar").style.width = `${calc_time_diff(today_up, get_current_time()) / calc_time_diff(today_up, today_down) * 100}%`
                 function set_time(){
-                    on_time.querySelector(".progress-bar").innerText = `~${on_time_val.getHours()} / ~${new Date(Math.abs(on_time_total.getTime())).getHours()} hours`
+                    on_time.querySelector(".progress-bar").innerText = `${Math.round(calc_time_diff(today_up, get_current_time())*10)/10} / ${calc_time_diff(today_up, today_down)} hours`
                 }
                 setTimeout(set_time, 180000)
                 set_time()
