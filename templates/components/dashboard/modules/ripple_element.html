@@ -11,7 +11,7 @@
         -webkit-user-drag: none;
     }
     #ripple-plate:hover span{
-        opacity: 0;
+        opacity: 60%;
     }
 </style>
 
@@ -92,12 +92,29 @@
         const fx = new TextScramble(el)
 
         let counter = 0
+        let interrupter = false
         const next = _ => {
+            if(interrupter) return
             fx.setText(phrases[counter]).then(_ => {
                 setTimeout(next, 800)
             })
             counter = (counter + 1) % phrases.length
         }
+
+        let click_counter = 0
+        document.querySelector("#ripple-plate").addEventListener("mouseenter", _ => {
+            interrupter = true
+            fx.setText("Click me already!")
+        })
+        document.querySelector("#ripple-plate").addEventListener("click", _ => {
+            click_counter++
+            fx.setText(`You've clicked me ${click_counter} times!`)
+        })
+        document.querySelector("#ripple-plate").addEventListener("mouseleave", _ => {
+            interrupter = false
+            click_counter = 0
+            next()
+        })
 
         next()
     })()
