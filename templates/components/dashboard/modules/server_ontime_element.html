@@ -77,10 +77,10 @@
         ]
 
         function calc_time_diff(start, end) {
-            let start_day = new Date("1970-1-1 " + start)
-            let stop_day = new Date("1970-1-1 " + end)
+            let start_day = new Date("1970/1/1 " + start)
+            let stop_day = new Date("1970/1/1 " + end)
             if(start_day > stop_day){
-                stop_day = new Date("1970-1-2 " + end)
+                stop_day = new Date("1970/1/2 " + end)
             }
             return (stop_day - start_day) / 1000 / 60 / 60
         }

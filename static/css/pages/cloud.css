@@ -4,3 +4,6 @@ body{
     max-height: 100vh;
     overflow: hidden;
 }
+.cloud-item-name{
+    cursor: pointer;
+}

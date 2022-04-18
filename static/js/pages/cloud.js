@@ -358,13 +358,13 @@ function load_files(filter){
             link.href = `${location.pathname}/${file.name}`
             link.setAttribute("name", file.name)
             link.setAttribute("data-directory", file.directory)
-            link.addEventListener("click", e => {
-                e.preventDefault()
-                navigate_path(link.href, false)
-            })
             if(cut_files.includes(link.getAttribute("href"))){
                 link.classList.add("text-secondary")
             }
+            nav.addEventListener("click", e => {
+                e.preventDefault()
+                navigate_path(link.href, false)
+            })
             nav.appendChild(link)
         }
         function populate_options(elem, file){

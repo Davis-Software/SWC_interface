@@ -55,7 +55,7 @@ class SyncingSettings(engine.Model):
     db_setting_id = Column(Integer, primary_key=True)
     username = Column(String(50))
     key = Column(String(50))
-    value = Column(String(200))
+    value = Column(String(512))
 
     def __init__(self, username: str, key: str, value: any):
         self.username = username
