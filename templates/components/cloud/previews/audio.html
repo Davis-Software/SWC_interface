@@ -10,7 +10,7 @@
 </head>
 <body>
     <div>
-        <canvas id="visualizer" width="1248"></canvas>
+        <canvas id="visualizer"></canvas>
         <div class="fixed-bottom">
             <div id="waveform"></div>
             <div id="controls">
@@ -26,6 +26,9 @@
                     </span>
                     <input type="range" id="vol-control" min="0" max="100">
                 </div>
+                <span class="ripple" id="change-visualizer">
+                    <i class="material-icons">settings</i>
+                </span>
             </div>
             <audio src="{{ request.path }}?download" id="audio-data" preload="auto"></audio>
         </div>

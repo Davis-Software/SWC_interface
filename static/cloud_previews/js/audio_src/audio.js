@@ -1,7 +1,20 @@
+import ButterChurnViz from "./butterchurn-viz";
+
 let audio = document.querySelector("audio")
 let vol = document.querySelector("#vol-control")
 let track = document.querySelector("#play-head")
 let btn = document.querySelector("#play-pause")
+let sw_btn = document.querySelector("#change-visualizer")
+
+let viz_mode = localStorage.getItem("audio-viz-mode") || "wave"
+sw_btn.addEventListener("click", () => {
+    if(viz_mode === "butterchurn"){
+        localStorage.setItem("audio-viz-mode", "wave")
+    }else{
+        localStorage.setItem("audio-viz-mode", "butterchurn")
+    }
+    window.location.reload()
+})
 
 function activation(act){
     vol.disabled = act
@@ -58,19 +71,21 @@ audio.addEventListener("ended", _ => {
     btn.querySelector("i").innerHTML = "play_arrow"
 })
 
-let wave = new Wave();
-wave.fromElement("audio-data", "visualizer", {
-    type: "shockwave",
-    colors: [
-        "#8aedec",
-        "#d4a28d",
-        "#d4dc40",
-        "#2e2321"
-    ]
-})
-// wave.onFileLoad = _ => {
-//     activation(true)
-// }
+if(viz_mode === "wave") {
+    (new Wave()).fromElement("audio-data", "visualizer", {
+        type: "shockwave",
+        colors: [
+            "#8aedec",
+            "#d4a28d",
+            "#d4dc40",
+            "#2e2321"
+        ]
+    })
+}else{
+    let butterChurn = new ButterChurnViz("#visualizer", "#audio-data")
+    butterChurn.initPlayer()
+    butterChurn.connectToAudioElement()
+}
 
 document.querySelector("canvas").width = window.innerWidth
 document.querySelector("canvas").height = window.innerHeight - 60
@@ -78,3 +93,6 @@ window.addEventListener("resize", _ => {
     document.querySelector("canvas").width = window.innerWidth
     document.querySelector("canvas").height = window.innerHeight - 60
 })
+
+
+export default toggle_play
