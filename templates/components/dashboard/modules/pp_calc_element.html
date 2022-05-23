@@ -1,27 +1,101 @@
 <div class="dashboard-element">
     <div class="dashboard-element-body">
         <h3>PP Calculator</h3>
-        <h5 class="pt-4 loading w-100">Your PP is <span id="pp-size"></span>cm long</h5>
+        <div class="row" id="pp-values">
+            <span class="loadable"><strong>Level:</strong> <span data-name="level"></span></span>
+            <br><br>
+            <div class="col-md-6 col-sm-12">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Length</td>
+                            <td><span class="loadable" data-name="length"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Radius</td>
+                            <td><span class="loadable" data-name="radius"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Deviation</td>
+                            <td><span class="loadable" data-name="deviation"></span></td>
+                        </tr>
+                        <tr>
+                            <td>V-Card</td>
+                            <td><span class="loadable" data-name="v-card"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Hardness</td>
+                            <td><span class="loadable" data-name="hardness"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Durability</td>
+                            <td><span class="loadable" data-name="durability"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Shape</td>
+                            <td><span class="loadable" data-name="shape"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <button class="btn btn-primary w-100 mt-5" id="pp-reload">Calculate Again</button>
     </div>
 </div>
 
 <script>
     (function(){
-        function random(from, to, round=true){
-            if(round){
-                return Math.floor((Math.random() * to) + from);
-            }
-            return (Math.random() * to) + from;
+        function romanize (num) {
+            if (isNaN(num))
+                return NaN;
+            let digits = String(+num).split(""),
+                key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+                       "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+                       "","I","II","III","IV","V","VI","VII","VIII","IX"],
+                roman = "",
+                i = 3
+            while (i--)
+                roman = (key[+digits.pop() + (i * 10)] || "") + roman
+            return Array(+digits.join("") + 1).join("M") + roman
         }
-        let span = document.querySelector("#pp-size")
+
+
+        let ppValues = document.querySelector("#pp-values")
+
+        function load(val){
+            ppValues.querySelectorAll(".loadable").forEach(elem => {
+                val ? elem.classList.add("loading") : elem.classList.remove("loading")
+            })
+        }
+
         function calculate(callback){
-            span.parentElement.classList.add("loading")
-            span.innerText = random(-1, 100)
-            setTimeout(_ => {
-                span.parentElement.classList.remove("loading")
-                callback()
-            }, Math.random() * 1500)
+            load(true)
+            fetch("/dashboard/module-request/pp-calc").then(resp => {
+                if(!resp.ok){
+                    if(resp.status === 403){
+                        ppValues.parentElement.textContent = "No usage permissions"
+                    }
+                    return
+                }
+                resp.json().then(json=> {
+                    ppValues.querySelector("[data-name='length']").textContent = `${json.length} cm`
+                    ppValues.querySelector("[data-name='radius']").textContent = `${json.radius} cm`
+                    ppValues.querySelector("[data-name='deviation']").textContent = `${json.deviation}°`
+                    ppValues.querySelector("[data-name='v-card']").textContent = json.v_card ? "Present" : "Lost"
+                    ppValues.querySelector("[data-name='hardness']").textContent = `${json.hardness} (Mohs scale)`
+                    ppValues.querySelector("[data-name='durability']").textContent = `${json.durability[0]} / ${json.durability[1]}`
+                    ppValues.querySelector("[data-name='shape']").textContent = `${json.shape[1]} - ${json.shape[2]}`
+                    ppValues.querySelector("[data-name='level']").textContent = romanize(json.level)
+                    load(false)
+                    callback()
+                })
+            })
         }
         document.querySelector("#pp-reload").addEventListener("click", e => {
             e.target.disabled = true

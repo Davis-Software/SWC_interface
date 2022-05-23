@@ -22,18 +22,7 @@ dashboard_module_description = {
     ],
     "pp_calc_element": [
         "PP Calculator",
-        "Randomizes..., eh I mean calculates your PP Size",
-        [
-            {
-                "mode": "select",
-                "id": "pp_mode_select",
-                "desc": "Calculation Mode (wip)",
-                "args": [
-                    ["Randomizer", "r"],
-                    ["Social Credit Score", "scs"]
-                ]
-            }
-        ]
+        "Calculates your PP Size and Level"
     ]
 }
 

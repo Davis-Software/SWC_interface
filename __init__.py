@@ -37,4 +37,5 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 
 from routes import context_processor
 from routes import main_routes, side_routes, user_routes, cloud_routes, admin_routes, auth_routes, error_routes
+from routes.pages import page_routes
 # from routes.pages import
