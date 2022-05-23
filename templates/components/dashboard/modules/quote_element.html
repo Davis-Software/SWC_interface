@@ -1,0 +1,55 @@
+<style>
+    .float-close-end{
+        position: absolute !important;
+        right: 15px;
+    }
+</style>
+
+<div class="dashboard-element">
+    <div class="dashboard-element-body quote-element">
+        <h3>Quote</h3>
+        <div class="mb-5 loading" id="quote-section">
+            Chuck Norris does not own a house. He walks into random houses and people move.
+        </div>
+        <div class="mt-4 expand-max hold-bottom loading" id="quote-action-section">
+            <button class="material-icons text-button blue" title="Next quote">arrow_forward</button>
+            <span class="dashboard-element-label float-close-end" id="quote-quotee" title="Quotee">~<span>Cheesy pick up lines</span></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        let quote_text = document.querySelector("#quote-section")
+        let actions = document.querySelector("#quote-action-section")
+        let all = [quote_text, actions]
+
+        let last_quote = null
+
+        function loading(bool){
+            all.map(elem => {
+                elem.classList.toggle("loading", bool)
+            })
+        }
+
+        function load_joke(){
+            loading(true)
+            fetch("https://api.software-city.org/app/get_quote?quotemode=random").then(resp => {
+                resp.json().then(quote => {
+                    last_quote = quote.id
+                    quote_text.textContent = quote.text
+                    actions.querySelector("#quote-quotee span").textContent = `${quote.quotee} - ` + (quote.date?
+                        new Date(quote.date).getFullYear() : "")
+                    loading(false)
+                })
+            })
+        }
+        load_joke()
+
+        actions.querySelector("button.blue").addEventListener("click", _ => {load_joke()})
+
+        document.querySelectorAll(".dashboard-element-body.joke-element *[title]").forEach(elem => {
+            new bootstrap.Tooltip(elem)
+        })
+    })()
+</script>

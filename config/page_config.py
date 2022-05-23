@@ -1,6 +1,7 @@
 dashboard_module_description = {
     "cloud_element": ["Cloud Info", "Shows some info about the files in your cloud"],
     "joke_element": ["Random Joke", "Shows a random joke and lets you vote"],
+    "quote_element": ["Random Quote", "Shows a random quote"],
     "news_element": ["SWC News", "Shows the latest SWC news"],
     "ripple_element": ["Ripple Effect", "Gives you a satisfying ripple effect when clicked"],
     "ts_info_element": ["Teamspeak Users", "Shows you all current users on the SWC Teamspeak Server"],
@@ -36,6 +37,7 @@ server_page_modules = {
 tools_page_tools = {
     "on_time_element": ["Server OnTime Settings", "Configure when the server starts and shuts down for every DOW.", True],
     "joke_element": ["Joke API Settings", "Manage all jokes in the joke API.", True],
+    "quote_element": ["Quote API Settings", "Manage all quotes in the quote API", True],
     "sinusbot": ["Teamspeak Sinusbot Interface", "Select songs the bot should play on the ts server (requires a sinusbot account)", False]
 }
 

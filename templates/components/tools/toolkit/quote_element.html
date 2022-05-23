@@ -1,0 +1,236 @@
+<div class="container">
+    <div class="input-group">
+        <input id="search-bar" type="text" class="form-control bg-dark" placeholder="Search (id, text, quotee or date)">
+        <button id="search" class="btn btn-primary">Search</button>
+        <button id="add" class="btn btn-info">Add Quote</button>
+    </div>
+    <table id="quote-table" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Quotee</th>
+                <th>Quote text</th>
+                <th>Date</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="load-btn" class="w-100 btn btn-primary">Load more</button>
+</div>
+
+
+<script>
+    (function(){
+        let app_fetch = (url, options) => {
+            let url_extender = url.includes("?") ? "&" : "?"
+            return fetch(`${url}${url_extender}s_key=${getCookie("s_key")}`, options)
+        }
+
+        let table = document.querySelector("#quote-table tbody")
+        let btn = document.querySelector("#load-btn")
+        let inp = document.querySelector("#search-bar")
+        let search = document.querySelector("#search")
+
+        let load_location = 1
+        let amount = 50
+        let last_filter = null
+
+
+        async function add_quote() {
+            let modal = new Modal(null, {
+                title: `Create quote`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let quotees = (await (await fetch("https://api.software-city.org/app/quote_api/get_quotees")).json()).data
+            quotees.push("CUSTOM")
+            let quotee_select = modal.Custom(`
+            <select class="form-select text-white">
+                ${function () {
+                let output = ""
+                for (let quotee of quotees) output += `<option>${quotee}</option>`
+                return output
+            }()}
+            </select>
+        `).querySelector("select")
+            let custom_quotee = modal.Input("custom-quotee", "text", "", {
+                hidden: true,
+                placeholder: "Custom Quotee name"
+            })
+            quotee_select.querySelector("option").setAttribute("selected", true)
+
+            quotee_select.addEventListener("input", _ => {
+                custom_quotee.hidden = quotee_select.value !== "CUSTOM"
+            })
+
+            modal.Custom("<br>")
+
+            let quote_date = modal.Input("quotee-date", "datetime-local", "form-control")
+
+            let text = modal.TextArea("quote-text")
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let quotee = quotee_select.value === "CUSTOM" ? custom_quotee.value : quotee_select.value
+                let quote_text = text.value
+                let form = new FormData()
+                form.append("quotee", quotee)
+                form.append("text", quote_text)
+                form.append("date", quote_date.value)
+                app_fetch(`https://api.software-city.org/app/quote_api/add_quote`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/add_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    reload()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        async function edit_joke(quote, elem) {
+            let modal = new Modal(null, {
+                title: `Editing quote #${quote.id}`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let quotees = (await (await fetch("https://api.software-city.org/app/quote_api/get_quotees")).json()).data
+            let quotee_select = modal.Custom(`
+            <select class="form-select text-white">
+                ${function () {
+                let output = ""
+                for (let quotee of quotees) output += `<option ${quote.quotee === quotee ? "selected" : ""}>${quotee}</option>`
+                return output
+            }()}
+            </select>
+            <br>
+        `).querySelector("select")
+            let date = modal.Input("quote-date", "datetime-local", "form-control")
+            date.value = quote.date
+            let text = modal.TextArea("quote-text")
+            text.value = quote.text
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let quotee = quotee_select.value
+                let new_quote = text.value
+                let new_date = date.value
+                let form = new FormData()
+                form.append("id", quote.id)
+                form.append("quotee", quotee)
+                form.append("text", new_quote)
+                form.append("date", new_date)
+                app_fetch(`https://api.software-city.org/app/quote_api/edit_quote`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/edit_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.querySelectorAll("td")[1].innerHTML = quotee
+                    elem.querySelectorAll("td")[2].innerHTML = new_quote
+                    elem.querySelectorAll("td")[3].innerHTML = new_date
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+        function delete_joke(quote, elem) {
+            let modal = new Modal(null, {
+                title: `Delete quote #${quote.id}?`,
+                close_button: "Cancel",
+                centered: true
+            }, "huge")
+
+            let text = modal.TextArea("quote-text", "bg-dark", {disabled: true})
+            text.value = quote.text
+
+            modal.Button("save-btn", "Delete", "btn-danger", {}, true).addEventListener("click", _ => {
+                let form = new FormData()
+                form.append("id", quote.id)
+                app_fetch(`https://api.software-city.org/app/quote_api/delete_quote`, {
+                    {#app_fetch(`http://localhost:8080/app/joke_api/delete_joke`, {#}
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.remove()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        function load_amount(filter = null) {
+            if (filter && filter !== last_filter) {
+                clear()
+                last_filter = filter
+            } else if (!filter && last_filter) {
+                filter = last_filter
+            }
+            fetch(`https://api.software-city.org/app/quote_api/get_quote_list?page=${load_location}&page_count=${amount}&order=rev:id${filter ? `&filter=${filter}` : ""}`).then(resp => {
+                resp.json().then(body => {
+                    for (let quote of body.data) {
+                        let tr = document.createElement("tr")
+                        tr.innerHTML = `
+                        <td>${quote.id}</td>
+                        <td>${quote.quotee}</td>
+                        <td>${quote.text}</td>
+                        <td>${quote.date}</td>
+                        <td>
+                            <a href="#edit">Edit</a> |
+                            <a href="#delete">Delete</a>
+                        </td>
+                    `
+                        tr.querySelector("a[href='#edit']").addEventListener("click", e => {
+                            e.preventDefault();
+                            edit_joke(quote, tr)
+                        })
+                        tr.querySelector("a[href='#delete']").addEventListener("click", e => {
+                            e.preventDefault();
+                            delete_joke(quote, tr)
+                        })
+                        table.append(tr)
+                    }
+                })
+            })
+            load_location++
+        }
+
+        function search_quotes() {
+            let search_s = inp.value
+            if (search_s === "") {
+                if (last_filter) reload()
+                return
+            }
+            load_amount(search_s)
+        }
+
+        function clear() {
+            last_filter = null
+            table.innerHTML = ""
+            load_location = 1
+        }
+
+        function reload() {
+            clear()
+            load_amount()
+        }
+
+        btn.addEventListener("click", _ => {
+            load_amount()
+        })
+        inp.addEventListener("keydown", e => {
+            if (e.key !== "Enter") return
+            search_quotes()
+        })
+        search.addEventListener("click", search_quotes)
+        document.querySelector("#add").addEventListener("click", add_quote)
+
+        load_amount()
+    })()
+</script>
