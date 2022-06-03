@@ -4,6 +4,7 @@
 
 
 import json
+from math import ceil
 
 from random import randint
 from user_data.user_repo import get_user_query_object
@@ -24,10 +25,10 @@ PP_SHAPES = [
     (70, "Kermit the frog", "*croak*"),
     (60, "Ohio", "Ohio shaped - Not a good shape"),
     (55, "Airplane", "flying f*ck"),
-    (40, "Square", "Like a box but in 2D"),
+    (40, "Borg (assimilated) - contains nanoprobes"),
+    (35, "Square", "Like a box but in 2D"),
     (0, "Normal", "Nothing special here")
 ]
-VCARD_LEVEL_INF = (30, 50)
 
 
 class PeePee:
@@ -107,48 +108,49 @@ class PeePee:
             self.v_card = True
 
     def __generate_level(self):
-        good_max = \
-            LENGTH_RANGE[1] + ADMIN_LENGTH_BONUS + \
-            RADIUS_RANGE[1] + \
-            HARDNESS_RANGE[1] + HARDNESS_CLOUD_BONUS + \
-            PP_SHAPES[0][0] + \
-            (VCARD_LEVEL_INF[1] if not self.v_card else 0)
-
-        bad_max = \
-            (DEVIATION_RANGE[1] if not self.user.get_cloud() else ALT_DEVIATION_RANGE[1]) + \
-            (VCARD_LEVEL_INF[1] if self.v_card else 0)
-
-        if self.durability[1] > DURABILITY_RANGE[1] * (2/3):
-            good_max += DURABILITY_RANGE[1]
+        if self.length != 0:
+            len_factor = self.length / 60
         else:
-            bad_max += DURABILITY_RANGE[1]
-        if self.durability[0] > self.durability[1] * (2/3):
-            good_max += self.durability[1]
+            len_factor = 1/60
+
+        if self.radius != 0:
+            radius_factor = self.radius / 3.5
         else:
-            bad_max += self.durability[1]
+            radius_factor = 1 / 3.5
 
-        good = \
-            self.length + \
-            self.radius + \
-            self.hardness + \
-            self.shape[0] + \
-            (VCARD_LEVEL_INF[1] if not self.v_card else 0)
-
-        bad = abs(self.deviation) + (VCARD_LEVEL_INF[1] if self.v_card else 0)
-
-        if self.durability[1] > DURABILITY_RANGE[1] * (2/3):
-            good += self.durability[1]
+        if self.hardness < 3:
+            hardness_factor = 0.8
+        elif self.hardness > 5:
+            hardness_factor = 1.5
         else:
-            bad += self.durability[1]
-        if self.durability[0] > self.durability[1] * (2/3):
-            good += self.durability[0]
+            hardness_factor = 1
+
+        if abs(self.deviation) > 90:
+            deviation_factor = 0.85
+        elif abs(self.deviation) < 45:
+            deviation_factor = 1.25
         else:
-            bad += self.durability[0]
+            deviation_factor = 1
 
-        lv = (good/bad)/(good_max/bad_max)
-        while lv > 10:
-            lv /= 10
-        while lv < 0:
-            lv *= 10
+        if self.v_card:
+            v_card_factor = 0.9
+        else:
+            v_card_factor = 1.2
 
-        self.level = round(lv)
+        if self.durability[1] - self.durability[0] != 0:
+            durability_factor = self.durability[1] - self.durability[0]
+            while durability_factor > 1.75:
+                durability_factor /= 1.5
+            if durability_factor == 0:
+                durability_factor += 0.1
+        else:
+            durability_factor = 0.5
+
+        if self.durability[0] < self.durability[1] / 3:
+            durability_factor *= 0.6
+        elif self.durability[1] / 3 < self.durability[0] < 2 * (self.durability[1] / 3):
+            durability_factor *= 0.8
+
+        level = len_factor * radius_factor * hardness_factor * deviation_factor * v_card_factor * durability_factor
+
+        self.level = ceil(level)
