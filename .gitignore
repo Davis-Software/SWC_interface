@@ -1,0 +1,9 @@
+venv/
+static/dashboard/img
+static/css/bootstrap/bootstrap
+backup/
+package-lock.json
+static/db/db.sqlite
+**/__pycache__
+.idea/
+**/node_modules
