@@ -76,7 +76,10 @@
 
         function calculate(callback){
             load(true)
-            app_fetch("https://interface.software-city.org/dashboard/module-request/pp-calc").then(resp => {
+            app_fetch(
+                (location.host === "localhost" ? "" : "https://interface.software-city.org")
+                + "/dashboard/module-request/pp-calc"
+            ).then(resp => {
                 if(!resp.ok){
                     if(resp.status === 403){
                         ppValues.parentElement.textContent = "No usage permissions"

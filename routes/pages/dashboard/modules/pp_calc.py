@@ -21,9 +21,11 @@ PP_SHAPES = [
     (100, "Tesseract", "Legendary 4-dimensional pp"),
     (99, "Walter White", "jesse we need to cook"),
     (90, "Thy Mother", "circle"),
-    (80, "1999 Honda Civic", "car go brrrrr"),
+    (80, "1999 Honda Civic", "vroom vroom"),
+    (75, "Cone", "round pyramid"),
     (70, "Kermit the frog", "*croak*"),
-    (60, "Ohio", "Ohio shaped - Not a good shape"),
+    (65, "Cuboid", "see a doctor!"),
+    (60, "Ohio", "Ohio shaped (not a good shape)"),
     (55, "Airplane", "flying f*ck"),
     (40, "Borg (assimilated)", "contains nanoprobes"),
     (35, "Square", "Like a box but in 2D"),
@@ -95,6 +97,9 @@ class PeePee:
                 self.shape = val
                 break
 
+        if self.length > 100 and self.radius < 3:
+            self.shape = (0, "Space Needle", "puncturing some bitches")
+
     def __generate_durability(self):
         max_durability = randint(*DURABILITY_RANGE)
         current_durability = randint(DURABILITY_RANGE[0], max_durability)
@@ -137,19 +142,10 @@ class PeePee:
         else:
             v_card_factor = 1.2
 
-        if self.durability[1] - self.durability[0] != 0:
-            durability_factor = self.durability[1] - self.durability[0]
-            while durability_factor > 1.75:
-                durability_factor /= 1.5
-            if durability_factor == 0:
-                durability_factor += 0.1
-        else:
-            durability_factor = 0.5
-
-        if self.durability[0] < self.durability[1] / 3:
-            durability_factor *= 0.6
-        elif self.durability[1] / 3 < self.durability[0] < 2 * (self.durability[1] / 3):
-            durability_factor *= 0.8
+        modifier = 0
+        if self.durability[0] and self.durability[1]:
+            modifier = round(self.durability[0] / self.durability[1], 2) / 2
+        durability_factor = 0.65 + modifier
 
         level = len_factor * radius_factor * hardness_factor * deviation_factor * v_card_factor * durability_factor
 
