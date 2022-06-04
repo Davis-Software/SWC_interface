@@ -46,7 +46,7 @@ temp_db_template = {
     "exposed_cloud_files_positions": {}
 }
 
-cloud_save_path = "E:\\SWC"
+cloud_save_path = "E:\SWC"
 public_cloud_folder = "open_cloud"
 personal_cloud_folder = "Users"
 max_cloud_size = 10  # in gb

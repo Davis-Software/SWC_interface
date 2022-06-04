@@ -25,7 +25,7 @@ PP_SHAPES = [
     (70, "Kermit the frog", "*croak*"),
     (60, "Ohio", "Ohio shaped - Not a good shape"),
     (55, "Airplane", "flying f*ck"),
-    (40, "Borg (assimilated) - contains nanoprobes"),
+    (40, "Borg (assimilated)", "contains nanoprobes"),
     (35, "Square", "Like a box but in 2D"),
     (0, "Normal", "Nothing special here")
 ]
