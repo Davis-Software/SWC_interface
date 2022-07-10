@@ -1,0 +1,134 @@
+<div class="dashboard-element">
+    <div class="dashboard-element-body" id="dashboard-game-module-element"></div>
+</div>
+
+<script>
+    (function(){
+        const wrapper = document.querySelector("#dashboard-game-module-element")
+        const games = {
+            dice: () => {
+                let gameDiv = document.createElement("div")
+
+                let htmlStyles = `
+                    <style>
+                        .dice-wrapper{
+                            display: flex;
+                            justify-content: center;
+                        }
+                        .dice-stats{
+                            margin-top: 5px;
+                            width: 100%;
+                            text-align: center;
+                        }
+                        .dice{
+                            display: inline-block;
+                            position: relative;
+                            width: 240px;
+                            height: 240px;
+                            background-size: cover;
+                            border-radius: 25%;
+                            background-color: #fff;
+                            /* border: inset #aa8366; */
+                            /* background-image: url(http://www.photos-public-domain.com/wp-content/uploads/2016/03/wood-grain-closeup-texture-with-brown-peeling-paint.jpg); */
+                        }
+                        .dice .dice-eye{
+                            position: absolute;
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            background-color: #000;
+                            transform: translate(-50%, -50%);
+                        }
+                        .dice .dice-eye.top{
+                            top: 25% !important;
+                        }
+                        .dice .dice-eye.bottom{
+                            top: 75% !important;
+                        }
+                        .dice .dice-eye.left{
+                            left: 25% !important;
+                        }
+                        .dice .dice-eye.right{
+                            left: 75% !important;
+                        }
+                        .dice .dice-eye.middle{
+                            top: 50%;
+                            left: 50%;
+                        }
+                        @media screen and (max-width: 600px) {
+                            .dice{
+                                display: block;
+                                width: 50%;
+                                aspect-ratio: 1/1;
+                                height: auto;
+                            }
+                            .dice .dice-eye{
+                                width: 30px;
+                                height: 30px;
+                            }
+                        }
+                    </style>
+                `
+                let diceNumberMapping = {
+                    1: ["middle"],
+                    2: ["left top", "right bottom"],
+                    3: ["right top", "middle", "left bottom"],
+                    4: ["left top", "right top", "left bottom", "right bottom"],
+                    5: ["left top", "right top", "middle", "left bottom", "right bottom"],
+                    6: ["left top", "right top", "left middle", "right middle", "left bottom", "right bottom"]
+                }
+
+                gameDiv.innerHTML += htmlStyles
+                gameDiv.innerHTML += `
+                    <div class="dice-wrapper">
+                        <div id="dice-1" class="dice"></div>
+                        <div id="dice-2" class="ms-3 dice"></div>
+                    </div>
+                    <div class="dice-stats">
+                        <span id="points"></span> <br>
+                        <span id="info"></span> <br>
+                        <div class="text-info pt-2">Info: Due to the calculation method used, doublets are extremely rare!</div>
+                    </div>
+                `
+
+                function generateDice(number, diceElemSelector){
+                    let outputLoc = gameDiv.querySelector(diceElemSelector)
+                    outputLoc.querySelectorAll("div").forEach(elem => elem.remove())
+
+                    for(let i = 0; i < number; i++){
+                        let eye = document.createElement("div")
+                        eye.classList.add("dice-eye")
+
+                        Array.from(diceNumberMapping[number][i].split(" ")).forEach(cl => {
+                            eye.classList.add(cl.toString())
+                        })
+                        outputLoc.append(eye)
+                    }
+                }
+                function generateRandomDiceNumber(){
+                    let rand = parseInt(window.crypto.getRandomValues(new Uint32Array(1))[0].toString()[3])
+                    return rand >= 1 && rand <= 6 ? rand : generateRandomDiceNumber()
+                }
+
+                let numOne = generateRandomDiceNumber()
+                let numTwo = generateRandomDiceNumber()
+                let doublets = numOne === numTwo
+
+                generateDice(numOne, "#dice-1")
+                generateDice(numTwo, "#dice-2")
+
+                gameDiv.querySelector("#points").textContent = `You achieved ${numOne + numTwo} of 12 points!`
+                gameDiv.querySelector("#info").textContent = doublets ? "Congrats! You got doublets!" : "Nothing special. Better luck next time!"
+
+                return gameDiv
+            }
+        }
+
+        function loadGame(game){
+            if(game === "random") game = games[Math.floor(Math.random()*games.length)]
+            wrapper.append(games[game]?.())
+        }
+
+        loadGame("{{ config.game_select|safe }}")
+    })()
+</script>

@@ -24,6 +24,18 @@ dashboard_module_description = {
     "pp_calc_element": [
         "PP Calculator",
         "Calculates your PP Size and Level"
+    ],
+    "minigame_element": [
+        "Mini-game",
+        "Play a small game on the dashboard", [{
+            "mode": "select",
+            "id": "game_select",
+            "desc": "Game",
+            "args": [
+                ["Dice", "dice"],
+                ["Random game", "random"]
+            ]
+        }]
     ]
 }
 
