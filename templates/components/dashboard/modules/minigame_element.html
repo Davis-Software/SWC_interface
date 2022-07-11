@@ -28,8 +28,6 @@
                             background-size: cover;
                             border-radius: 25%;
                             background-color: #fff;
-                            /* border: inset #aa8366; */
-                            /* background-image: url(http://www.photos-public-domain.com/wp-content/uploads/2016/03/wood-grain-closeup-texture-with-brown-peeling-paint.jpg); */
                         }
                         .dice .dice-eye{
                             position: absolute;
@@ -86,8 +84,7 @@
                     </div>
                     <div class="dice-stats">
                         <span id="points"></span> <br>
-                        <span id="info"></span> <br>
-                        <div class="text-info pt-2">Info: Due to the calculation method used, doublets are extremely rare!</div>
+                        <span id="info"></span>
                     </div>
                 `
 
@@ -110,15 +107,19 @@
                     return rand >= 1 && rand <= 6 ? rand : generateRandomDiceNumber()
                 }
 
-                let numOne = generateRandomDiceNumber()
-                let numTwo = generateRandomDiceNumber()
-                let doublets = numOne === numTwo
+                function runGame(){
+                    let numOne = generateRandomDiceNumber()
+                    let numTwo = generateRandomDiceNumber()
+                    let doublets = numOne === numTwo
 
-                generateDice(numOne, "#dice-1")
-                generateDice(numTwo, "#dice-2")
+                    generateDice(numOne, "#dice-1")
+                    generateDice(numTwo, "#dice-2")
 
-                gameDiv.querySelector("#points").textContent = `You achieved ${numOne + numTwo} of 12 points!`
-                gameDiv.querySelector("#info").textContent = doublets ? "Congrats! You got doublets!" : "Nothing special. Better luck next time!"
+                    gameDiv.querySelector("#points").textContent = `You achieved ${numOne + numTwo} of 12 points!`
+                    gameDiv.querySelector("#info").textContent = doublets ? "Congrats! You got doublets!" : "Nothing special. Better luck next time!"
+                }
+                runGame()
+                gameDiv.addEventListener("click", runGame)
 
                 return gameDiv
             }
