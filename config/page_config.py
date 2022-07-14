@@ -36,6 +36,11 @@ dashboard_module_description = {
                 ["Random game", "random"]
             ]
         }]
+    ],
+    "15ai_element": [
+        "15.ai",
+        "Generate TF2 & Portal voice-lines",
+        []
     ]
 }
 

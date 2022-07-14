@@ -1,0 +1,217 @@
+<style>
+    #ai-voice-dropdown{
+        display: inline-block;
+        background-color: #444;
+        border: none;
+        color: #e2e2e2;
+        padding: 4px;
+        outline: none;
+        border-radius: 5px;
+        transform: translateY(-6px);
+        margin-left: 10px;
+        transition: background-color .1s ease-in-out;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    #ai-voice-dropdown:hover{
+        background-color: #666;
+    }
+    #ai-voice-text{
+        color: #e2e2e2;
+        margin-top: 10px;
+        border-radius: 5px !important;
+        border: none;
+        min-height: 180px;
+    }
+    #ai-voice-text:disabled{
+        background-color: #444;
+        color: #e2e2e2;
+    }
+    #ai-voice-button{
+        margin-top: 10px;
+        width: 100%;
+    }
+    .ai-voice-button-play{
+        padding: 0;
+        margin: 5px;
+    }
+    .ai-voice-button-play img{
+        width: 60px;
+        height: 60px;
+        -webkit-user-drag: none;
+    }
+    .ai-voice-button-dwn{
+        padding: 10px;
+        margin: 5px;
+        margin-left: 0;
+    }
+    .ai-voice-button-dwn img{
+        width: 40px;
+        height: 40px;
+        -webkit-user-drag: none;
+    }
+</style>
+
+<div class="dashboard-element">
+    <div class="dashboard-element-body">
+        <div class="h3 d-inline">Text-to-speech using 15.ai</div>
+        <select id="ai-voice-dropdown">
+            <option value="" disabled selected>Select Character</option>
+            <optgroup label="TF2">
+                <option value="Scout">Scout</option>
+                <option value="Soldier">Soldier</option>
+                <option value="Demoman">Demoman</option>
+                <option value="Heavy">Heavy</option>
+                <option value="Engineer">Engineer</option>
+                <option value="Medic">Medic</option>
+                <option value="Sniper">Sniper</option>
+                <option value="Spy">Spy</option>
+                <option value="Miss Pauling">Miss Pauling</option>
+            </optgroup>
+            <optgroup label="Portal">
+                <option value="GLaDOS">GLaDOS</option>
+                <option value="Wheatley">Wheatley</option>
+                <option value="Sentry Turret">Sentry Turret</option>
+            </optgroup>
+        </select>
+        <div>
+            <textarea class="form-control" id="ai-voice-text"></textarea>
+            <button class="btn btn-primary" id="ai-voice-button">Generate</button>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="mt-3 me-5" id="ai-voice-1">
+                <button class="btn rounded-circle ai-voice-button-play">
+                    <img src="/static/img/play-icon.png" alt="Play">
+                </button>
+                <button class="btn rounded-circle ai-voice-button-dwn">
+                    <img src="/static/img/download-icon.png" alt="Download">
+                </button>
+            </div>
+            <div class="mt-3 me-5" id="ai-voice-2">
+                <button class="btn rounded-circle ai-voice-button-play">
+                    <img src="/static/img/play-icon.png" alt="Play">
+                </button>
+                <button class="btn rounded-circle ai-voice-button-dwn">
+                    <img src="/static/img/download-icon.png" alt="Download">
+                </button>
+            </div>
+            <div class="mt-3" id="ai-voice-3">
+                <button class="btn rounded-circle ai-voice-button-play">
+                    <img src="/static/img/play-icon.png" alt="Play">
+                </button>
+                <button class="btn rounded-circle ai-voice-button-dwn">
+                    <img src="/static/img/download-icon.png" alt="Download">
+                </button>
+            </div>
+        </div>
+        <audio id="ai-voice-audio-1"></audio>
+        <audio id="ai-voice-audio-2"></audio>
+        <audio id="ai-voice-audio-3"></audio>
+    </div>
+</div>
+
+<script>
+    const aiVoiceDropdown = document.querySelector('#ai-voice-dropdown')
+    const aiVoiceText = document.querySelector('#ai-voice-text')
+    const aiVoiceButton = document.querySelector('#ai-voice-button')
+
+    const aiVoice1 = document.querySelector('#ai-voice-1')
+    const aiVoice2 = document.querySelector('#ai-voice-2')
+    const aiVoice3 = document.querySelector('#ai-voice-3')
+
+    const voiceButtons = [
+        aiVoice1.querySelector('.ai-voice-button-play'),
+        aiVoice2.querySelector('.ai-voice-button-play'),
+        aiVoice3.querySelector('.ai-voice-button-play')
+    ]
+    const dwnButtons = [
+        aiVoice1.querySelector('.ai-voice-button-dwn'),
+        aiVoice2.querySelector('.ai-voice-button-dwn'),
+        aiVoice3.querySelector('.ai-voice-button-dwn')
+    ]
+    const audios = [
+        document.querySelector('#ai-voice-audio-1'),
+        document.querySelector('#ai-voice-audio-2'),
+        document.querySelector('#ai-voice-audio-3')
+    ]
+
+    function setLoaded(bool){
+        Array.from([aiVoice1, aiVoice2, aiVoice3]).forEach(el => {
+            el.querySelectorAll('button').forEach(btn => {
+                btn.disabled = !bool
+            })
+        })
+    }
+    setLoaded(false)
+
+    aiVoiceDropdown.addEventListener("input", () => {
+        aiVoiceButton.disabled = aiVoiceDropdown.value === "" || aiVoiceText.value === ""
+    })
+    aiVoiceText.addEventListener("input", () => {
+        aiVoiceButton.disabled = aiVoiceDropdown.value === "" || aiVoiceText.value === ""
+    })
+    aiVoiceButton.disabled = aiVoiceDropdown.value === "" || aiVoiceText.value === ""
+
+    aiVoiceButton.addEventListener("click", () => {
+        if(aiVoiceButton.disabled) return
+
+        aiVoiceButton.disabled = true
+        aiVoiceDropdown.disabled = true
+        aiVoiceText.disabled = true
+        aiVoiceButton.innerHTML = '<div class="spinner-border spinner-border-sm"></div>'
+        setLoaded(false)
+
+        const text = aiVoiceText.value
+        const voice = aiVoiceDropdown.value
+
+        fetch("https://api.15.ai/app/getAudioFile5", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text,
+                character: voice,
+                emotion: "Contextual"
+            })
+        }).then(res => res.json()).then(res => {
+            aiVoiceButton.disabled = false
+            aiVoiceDropdown.disabled = false
+            aiVoiceText.disabled = false
+            aiVoiceButton.innerHTML = 'Generate'
+            if(res){
+                let files = res.wavNames
+                files.forEach((file, i) => {
+                    audios[i].src = `https://cdn.15.ai/audio/${file}`
+                    audios[i].setAttribute("data-file", file)
+                })
+                setLoaded(true)
+            }
+        })
+    })
+
+    voiceButtons.forEach((btn, i) => {
+        let audio = audios[i]
+        btn.addEventListener("click", () => {
+            audio.paused ? audio.play() : audio.pause()
+        })
+        audio.addEventListener("ended", () => {
+            btn.querySelector('img').src = '/static/img/play-icon.png'
+        })
+        audio.addEventListener("pause", () => {
+            btn.querySelector('img').src = '/static/img/play-icon.png'
+        })
+        audio.addEventListener("play", () => {
+            btn.querySelector('img').src = '/static/img/pause-icon.png'
+        })
+    })
+    dwnButtons.forEach((btn, i) => {
+        let audio = audios[i]
+        btn.addEventListener("click", () => {
+            let link = document.createElement('a')
+            link.href = audio.src
+            link.download = audio.getAttribute("data-file")
+            link.click()
+        })
+    })
+</script>
