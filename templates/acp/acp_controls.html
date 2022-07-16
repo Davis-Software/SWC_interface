@@ -1,0 +1,26 @@
+{% extends "base/acp_base.html" %}
+
+{% block body%}
+    <div class="container mt-5 pb-4">
+        <div class="bg-dark p-4 rounded-3 mb-4">
+            <h3>Power Controls</h3>
+            <div class="btn-group btn-group-lg">
+                <button class="btn btn-danger" id="btn-power-off">Power Off</button>
+                <button class="btn btn-warning" id="btn-reboot">Reboot</button>
+            </div>
+        </div>
+        <div id="on-time-frame" class="bg-dark p-4 rounded-3 mb-4">
+            <div class="d-flex justify-content-center mt-5 mb-5">
+                <div class="text-center">
+                    <div class="spinner-border"></div>
+                    <div>Loading server on time config</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $("#on-time-frame").load("/tools?get=on_time_element");
+    </script>
+    <script src="/static/js/acp/acp_controls.js"></script>
+{% endblock %}
