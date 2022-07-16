@@ -8,3 +8,4 @@ Werkzeug
 schedule
 cryptography
 holidays
+psutil

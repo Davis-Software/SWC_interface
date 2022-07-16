@@ -38,4 +38,65 @@
         </div>
     </div>
 
+    <div class="row m-0">
+        <div class="col-lg-6 col-md-12">
+            <div class="card h-100">
+                <div class="card-header">System Info</div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Hostname</th>
+                                <td>{{ system.info.hostname }}</td>
+                            </tr>
+                            <tr>
+                                <th>OS</th>
+                                <td>{{ system.info.os }} {{ system.info.os_release }}</td>
+                            </tr>
+                            <tr>
+                                <th>OS Version</th>
+                                <td>{{ system.info.os_version }}</td>
+                            </tr>
+                            <tr>
+                                <th>CPU</th>
+                                <td>{{ system.info.processor }}</td>
+                            </tr>
+                            <tr>
+                                <th>Architecture</th>
+                                <td>{{ system.info.architecture }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="card h-100">
+                <div class="card-header">System Status</div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>CPU</th>
+                                <td>{{ system.status.cpu }}%</td>
+                            </tr>
+                            <tr>
+                                <th>Memory</th>
+                                <td>{{ system.status.memory }}%</td>
+                            </tr>
+                            <tr>
+                                <th>Disk</th>
+                                <td>{{ system.status.disk }}%</td>
+                            </tr>
+                            <tr>
+                                <th>Network</th>
+                                <td>{{ system.status.network }} Bytes sent</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
