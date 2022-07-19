@@ -22,12 +22,12 @@ function yesOrNo(title, text){
 document.querySelector("#btn-power-off").addEventListener("click", () => {
     yesOrNo("Shutdown?", "shutdown now").then(res => {
         if(!res) return
-        fetch("/acp/controls/power/shutdown").then(() => alert("Shutdown initiated"))
+        fetch("/acp/controls/power/shutdown").then(r => r.ok ? alert("Shutdown initiated") : alert("Failed to initiate shutdown"))
     })
 })
 document.querySelector("#btn-reboot").addEventListener("click", () => {
     yesOrNo("Reboot?", "reboot now").then(res => {
         if(!res) return
-        fetch("/acp/controls/power/reboot").then(() => alert("Reboot initiated"))
+        fetch("/acp/controls/power/reboot").then(r => r.ok ? alert("Reboot initiated") : alert("Failed to initiate reboot"))
     })
 })
