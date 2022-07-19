@@ -1,31 +1,25 @@
 import os
-from time import sleep
+from flask import Flask, make_response
 
-listen_file_location = "/etc/swc/triggers"  # Must be absolute path
-listen_file_name = "shutdown"
-shutdown_cmd = "/root/stopall.sh start && shutdown now"
+DEBUG = False
 
-listen_file_path = os.path.join(
-    listen_file_location,
-    listen_file_name
-)
+cmds = {
+    "shutdown": "/root/stopall.sh start && shutdown now",
+    "reboot": "/root/stopall.sh start && reboot"
+}
 
 
-def shutdown():
-    os.remove(listen_file_path)
-    os.system(shutdown_cmd)
+app = Flask(__name__)
 
 
-def check_file():
-    if os.path.exists(listen_file_path):
-        return True
-    return False
+@app.route("/power/<cmd>")
+def cmd_handler(cmd):
+    if cmd in cmds:
+        os.system(cmds[cmd])
+        return make_response("OK", 200)
+
+    return make_response("Unknown command", 400)
 
 
 if __name__ == "__main__":
-    while True:
-        if check_file():
-            shutdown()
-            break
-
-        sleep(30)
+    app.run(host="127.0.0.1", port=7556, debug=DEBUG)

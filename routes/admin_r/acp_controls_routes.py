@@ -12,6 +12,6 @@ def acp_controls(option=None, operation=None):
         if operation == "shutdown":
             PowerOptions.shutdown()
         elif operation == "reboot":
-            PowerOptions.restart()
+            PowerOptions.reboot()
         return api_utils.empty_success()
     return render_template("acp/acp_controls.html")
