@@ -1,6 +1,6 @@
 {% extends "base/acp_base.html" %}
 {% block body %}
-    <a href=".">Back</a>
+    <a class="text-info link-info" style="cursor: pointer" onclick="history.back()">Back</a>
 
     {%  if files %}
         <br><br>
@@ -9,7 +9,7 @@
         {% for api_function_type in files %}
             {% for api_function in api_function_type %}
                 <li>
-                    <a href="./{{ api_function.name }}">{{ api_function.name + ("/" if api_function.type == "folder" else "") }}</a>
+                    <span class="navigator text-info link-info" style="cursor: pointer" href="{{ api_function.name }}">{{ api_function.name + ("/" if api_function.type == "folder" else "") }}</span>
                     {% if api_function.type == "file" %}<a href="{{ api_function.route }}" target="_blank">goto</a>{% endif %}
                 </li>
             {% endfor %}
@@ -19,7 +19,18 @@
     {% endif %}
 
     {% if file %}
-        <div>{{ file.name }}:</div>
+        <div>{{ file.name }} ({{ file.path }}):</div>
         <textarea class="form-control bg-dark" style="width: 100%; min-height: 80vh" readonly>{{ file.content }}</textarea>
     {% endif %}
+
+    <script>
+        function goto(e) {
+            e.preventDefault()
+            window.location.href = window.location.href + (!window.location.href.endsWith("/") ? "/" : "") + e.target.getAttribute("href")
+        }
+
+        document.querySelectorAll(".navigator").forEach((e) => {
+            e.addEventListener("click", goto)
+        })
+    </script>
 {% endblock %}
