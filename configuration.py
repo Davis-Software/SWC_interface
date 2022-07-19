@@ -46,12 +46,14 @@ temp_db_template = {
     "exposed_cloud_files_positions": {}
 }
 
-cloud_save_path = "E:\SWC"
+cloud_save_path = "E:\\SWC"
 public_cloud_folder = "open_cloud"
 personal_cloud_folder = "Users"
 max_cloud_size = 10  # in gb
 
 max_upload_size = 8196  # in MB
 
+server_api_path = "D:\\Bibliotheken\\Desktop\\Workspace\\SWC\\SWC_api\\api\\functions"
+server_api_url = "https://api.software-city.org"  # no / at the end
 
 server_ctrl_port = 7556

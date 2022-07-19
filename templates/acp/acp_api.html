@@ -1,4 +1,25 @@
 {% extends "base/acp_base.html" %}
 {% block body %}
-    coming soon
+    <a href=".">Back</a>
+
+    {%  if files %}
+        <br><br>
+
+        <ul>
+        {% for api_function_type in files %}
+            {% for api_function in api_function_type %}
+                <li>
+                    <a href="./{{ api_function.name }}">{{ api_function.name + ("/" if api_function.type == "folder" else "") }}</a>
+                    {% if api_function.type == "file" %}<a href="{{ api_function.route }}" target="_blank">goto</a>{% endif %}
+                </li>
+            {% endfor %}
+            <hr>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if file %}
+        <div>{{ file.name }}:</div>
+        <textarea class="form-control bg-dark" style="width: 100%; min-height: 80vh" readonly>{{ file.content }}</textarea>
+    {% endif %}
 {% endblock %}
