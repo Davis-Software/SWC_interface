@@ -1,26 +1,101 @@
 {% extends "base/acp_base.html" %}
 
+{% block head %}
+    <style>
+        .tab-content{
+            height: 87.2%;
+            overflow: auto;
+        }
+        .status{
+            transform: translateY(3px);
+            padding-right: 5px;
+        }
+        .status *{
+            font-family: Consolas, monospace;
+        }
+        .status .status-online::before, .status .status-offline::before{
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status .status-online::before{
+            background-color: #5cb85c;
+        }
+        .status .status-offline::before{
+            background-color: #d9534f;
+        }
+    </style>
+{% endblock %}
 {% block body%}
-    <div class="container mt-5 pb-4">
-        <div class="bg-dark p-4 rounded-3 mb-4">
-            <h3>Power Controls</h3>
-            <div class="btn-group btn-group-lg">
-                <button class="btn btn-danger" id="btn-power-off">Power Off</button>
-                <button class="btn btn-warning" id="btn-reboot">Reboot</button>
-            </div>
-        </div>
-        <div id="on-time-frame" class="bg-dark p-4 rounded-3 mb-4">
-            <div class="d-flex justify-content-center mt-5 mb-5">
-                <div class="text-center">
-                    <div class="spinner-border"></div>
-                    <div>Loading server on time config</div>
-                </div>
-            </div>
+    <ul class="nav nav-tabs w-100">
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#general">General controls</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#other">Services / VServers</a>
+        </li>
+    </ul>
+
+    <div class="d-flex justify-content-center mt-5 mb-5" id="loading-div">
+        <div class="text-center">
+            <div class="spinner-border"></div>
+            <div>Loading content</div>
         </div>
     </div>
 
+    <div class="tab-content">
+
+        <div class="tab-pane fade" id="general">
+            <div class="container mt-5 pb-4">
+                <div class="bg-dark p-4 rounded-3 mb-4">
+                    <h3>Power Controls</h3>
+                    <div class="btn-group btn-group-lg">
+                        <button class="btn btn-danger" id="btn-power-off">Power Off</button>
+                        <button class="btn btn-warning" id="btn-reboot">Reboot</button>
+                    </div>
+                </div>
+                <div id="on-time-frame" class="bg-dark p-4 rounded-3 mb-4"></div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="other">
+            {% for mode in controls %}
+                <div class="row m-0 mt-3 bg-dark py-3">
+                    <h3 class="fw-bolder">{{ mode.upper() }}</h3>
+                    {% for control in controls[mode] %}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <div class="w-100 d-flex flex-row bg-body rounded-1 p-2">
+                            <span class="h4 m-0 flex-grow-1">{{ control }}</span>
+                            <div class="status"></div>
+                        </div>
+                        <hr>
+                        <div
+                            class="control-box mb-5 pb-5"
+                            data-commands="{{ ",".join(controls[mode][control]['commands']) }}"
+                            data-mode="{{ mode }}"
+                            data-control="{{ control }}"
+                        ></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
     <script>
-        $("#on-time-frame").load("/tools?get=on_time_element");
+        $("#on-time-frame").load("/tools?get=on_time_element", () => {
+            document.querySelector("#loading-div").remove()
+            document.querySelector(`.nav-link[href='${sessionStorage.getItem("last_acp_ctrls_tab") || "#general"}']`).click()
+        });
+        ["#general", "#other"].forEach(id => {
+            document.querySelector(`.nav-link[href='${id}']`).addEventListener("click", () => {
+                sessionStorage.setItem("last_acp_ctrls_tab", id)
+            })
+        })
     </script>
     <script src="/static/js/acp/acp_controls.js"></script>
 {% endblock %}
