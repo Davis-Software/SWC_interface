@@ -77,7 +77,7 @@ Object.keys(controlBoxes).forEach(control => {
             target.innerHTML = prevText
 
             if(status){
-                updateControl(control)
+                setTimeout(() => updateControl(control), 2500)
             }else{
                 alert(`Error while trying to execute command ${cmd} for the ${controlObj.mode.slice(0, -1)} ${control}\n\n${JSON.stringify(data)}`)
                 target.disabled = false

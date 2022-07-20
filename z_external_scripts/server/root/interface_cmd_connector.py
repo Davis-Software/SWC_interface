@@ -24,7 +24,7 @@ cmds = {
     },
     "service": {
         "apache2": {
-            "status": "service apache status",
+            "status": "service apache2 status",
             "start": "service apache2 start",
             "stop": "service apache2 stop",
             "restart": "service apache2 restart"
