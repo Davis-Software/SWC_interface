@@ -18,7 +18,11 @@ def acp_controls(option=None, operation=None):
             PowerOptions.reboot()
         return api_utils.empty_success()
 
-    return render_template("acp/acp_controls.html", controls=acp_controls_adapter.get_controls())
+    return render_template(
+        "acp/acp_controls.html",
+        controls=acp_controls_adapter.get_controls(),
+        ops=acp_controls_adapter.get_ops()
+    )
 
 
 @app.route("/acp/controls/<string:mode>/<string:name>/<string:cmd>")

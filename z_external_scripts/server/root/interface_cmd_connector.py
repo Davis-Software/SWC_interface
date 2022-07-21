@@ -7,34 +7,47 @@ from flask import Flask, make_response
 DEBUG = platform.system() == 'Windows'
 API_URL = 'https://api.software-city.org/app/'
 
+DEFAULT_SERVICE_OPS = ['start', 'stop', 'restart', 'status', 'enable', 'disable']
+PROTECTED_SERVICE_OPS = ['start', 'restart', 'status']
+ALL_OPS = {
+    "start": {"color": "success", "text": "Start"},
+    "stop": {"color": "danger", "text": "Stop"},
+    "restart": {"color": "warning", "text": "Restart"},
+    "status": {"color": "info", "text": "Status"},
+    "enable": {"color": "success", "text": "Enable"},
+    "disable": {"color": "danger", "text": "Disable"},
+}
+
 
 def make_api_request(path):
     response = requests.get(API_URL + path, timeout=2, verify=False)
     return response.json() if response.status_code in [200, 204] else None
 
 
+def generate_service_ops(service, ops):
+    resp = dict()
+    for op in ops:
+        resp[op] = f"service {service} {op}"
+    return resp
+
+
 def run_as_user(user, command, exit_code=0):
+    if user == 'root':
+        return os.system(f"cd ~ && {command}") == exit_code
     return os.system(f"runuser -l {user} -c 'cd ~ && {command}'") == exit_code
 
 
-cmds = {
+private_cmds = {
     "power": {
         "shutdown": "/root/stopall.sh start && shutdown now",
         "reboot": "/root/stopall.sh start && reboot"
-    },
+    }
+}
+cmds = {
     "service": {
-        "apache2": {
-            "status": "service apache2 status",
-            "start": "service apache2 start",
-            "stop": "service apache2 stop",
-            "restart": "service apache2 restart"
-        },
-        "mysql": {
-            "status": "service mysql status",
-            "start": "service mysql start",
-            "stop": "service mysql stop",
-            "restart": "service mysql restart"
-        }
+        "apache2": generate_service_ops("apache2", DEFAULT_SERVICE_OPS),
+        "mysql": generate_service_ops("mysql", DEFAULT_SERVICE_OPS),
+        "swc_cmd_listener": generate_service_ops("swc_cmd_listener", PROTECTED_SERVICE_OPS)
     },
     "servers": {
         "teamspeak": {
@@ -54,6 +67,11 @@ cmds = {
             "start": lambda: run_as_user("steam", "./start.sh"),
             "stop": lambda: run_as_user("steam", "./stop.sh"),
             "restart": lambda: run_as_user("steam", "./restart.sh"),
+        },
+        "vault": {
+            "status": lambda: run_as_user("root", "screen -ls | grep vault"),
+            "start": lambda: run_as_user("root", "./startvault.sh"),
+            "stop": lambda: run_as_user("root", "screen -r swc_vault -X quit")
         }
     }
 }
@@ -65,9 +83,8 @@ app = Flask(__name__)
 @app.route("/power/<cmd>")
 def cmd_handler(cmd):
     try:
-
         return make_response({
-            "exit_code": os.system(cmds["power"][cmd])
+            "exit_code": os.system(private_cmds["power"][cmd])
         }, 200)
     except KeyError:
         return make_response("Unknown command", 400)
@@ -91,6 +108,28 @@ def server_cmd_handler(server, cmd):
         }, 200)
     except KeyError:
         return make_response("Unknown command", 400)
+
+
+@app.route("/")
+def index():
+    controls = dict()
+    for mode, commands in cmds.items():
+        controls[mode] = dict()
+        for command, ops in commands.items():
+            answer = {
+                "route": f"/{mode}/{command}/<cmd>"
+            }
+            if isinstance(ops, dict):
+                answer["commands"] = list(ops.keys())
+                answer["tester_cmd"] = list(ops.keys()).index("status")
+            controls[mode][command] = answer
+
+    ops = ALL_OPS.copy()
+
+    return make_response({
+        "controls": controls,
+        "ops": ops
+    }, 200)
 
 
 if __name__ == "__main__":

@@ -33,11 +33,11 @@ document.querySelector("#btn-reboot").addEventListener("click", () => {
 })
 
 
-const controlButtons = {
-    "stop": "<button class='btn btn-danger' data-cmd='stop' id='btn-stop' disabled>Stop</button>",
-    "restart": "<button class='btn btn-warning' data-cmd='restart' id='btn-restart' disabled>Restart</button>",
-    "start": "<button class='btn btn-success' data-cmd='start' id='btn-start' disabled>Start</button>"
-}
+const controlButtons = {}
+Object.keys(buttonSets).filter(cmd => !["status", "enable", "disable"].includes(cmd)).forEach(cmd => {
+    let buttonSet = buttonSets[cmd]
+    controlButtons[cmd] = `<button class='btn btn-${buttonSet.color}' data-cmd='${cmd}' id='btn-${cmd}' disabled>${buttonSet.text}</button>`
+})
 
 const controlBoxes = {}
 const online = `<div class="status-online">Online</div>`
