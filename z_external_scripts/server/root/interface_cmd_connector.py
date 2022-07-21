@@ -7,7 +7,7 @@ from flask import Flask, make_response
 DEBUG = platform.system() == 'Windows'
 API_URL = 'https://api.software-city.org/app/'
 
-DEFAULT_SERVICE_OPS = ['start', 'stop', 'restart', 'status', 'enable', 'disable']
+DEFAULT_SERVICE_OPS = ['start', 'restart', 'stop', 'status', 'enable', 'disable']
 PROTECTED_SERVICE_OPS = ['start', 'restart', 'status']
 ALL_OPS = {
     "start": {"color": "success", "text": "Start"},
@@ -21,7 +21,7 @@ ALL_OPS = {
 
 def make_api_request(path):
     response = requests.get(API_URL + path, timeout=2, verify=False)
-    return response.json() if response.status_code in [200, 204] else None
+    return (None if ("status" in response.json() and not response.json()["status"]) else response.json()) if response.status_code in [200, 204] else None
 
 
 def generate_service_ops(service, ops):
