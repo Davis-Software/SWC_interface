@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Video preview - {{ request.path.split("/").pop() }}</title>
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}Video{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="/static/cloud_previews/css/video.css">
     <script src="/static/cloud_previews/js/video.js" defer></script>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <div>
         <video src="{{ request.path }}?download">
             <p>Your browser doesn't support HTML5 video. Here is a <a href="{{ request.path }}?download" download="{{ request.path.split("/")[-1] }}">link to the video</a> instead.</p>
@@ -32,5 +31,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

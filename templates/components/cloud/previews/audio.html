@@ -1,37 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Audio preview - {{ request.path.split("/").pop() }}</title>
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}Audio{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="/static/cloud_previews/css/audio.css">
     <script src="/static/cloud_previews/wavejs/wave.bundle.js"></script>
     <script src="/static/cloud_previews/js/audio.js" defer></script>
-</head>
-<body>
-    <div>
-        <canvas id="visualizer"></canvas>
-        <div class="fixed-bottom">
-            <div id="waveform"></div>
-            <div id="controls">
-                <span class="ripple" id="play-pause">
-                    <i class="material-icons">play_arrow</i>
-                </span>
-                <div class="extend">
-                    <input type="range" id="play-head">
-                </div>
-                <div class="vol-wrap">
-                    <span class="ripple">
-                        <i class="material-icons" id="vol-btn">volume_up</i>
-                    </span>
-                    <input type="range" id="vol-control" min="0" max="100">
-                </div>
-                <span class="ripple" id="change-visualizer">
-                    <i class="material-icons">settings</i>
-                </span>
+{% endblock %}
+
+{% block body %}
+<div>
+    <canvas id="visualizer"></canvas>
+    <div class="fixed-bottom">
+        <div id="waveform"></div>
+        <div id="controls">
+            <span class="ripple" id="play-pause">
+                <i class="material-icons">play_arrow</i>
+            </span>
+            <div class="extend">
+                <input type="range" id="play-head">
             </div>
-            <audio src="{{ request.path }}?download" id="audio-data" preload="auto"></audio>
+            <div class="vol-wrap">
+                <span class="ripple">
+                    <i class="material-icons" id="vol-btn">volume_up</i>
+                </span>
+                <input type="range" id="vol-control" min="0" max="100">
+            </div>
+            <span class="ripple" id="change-visualizer">
+                <i class="material-icons">settings</i>
+            </span>
         </div>
+        <audio src="{{ request.path }}?download" id="audio-data" preload="auto"></audio>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

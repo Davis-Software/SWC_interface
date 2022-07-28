@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SWC {% block title %}{% endblock %} >> {{ request.path.split("/").pop() }} <<</title>
+    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+
+    <script src="/static/js/bootstrap/bootstrap.min.js"></script>
+    <script src="/static/cloud_previews/js/general.js" defer></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="popout-menu">
+        <div>
+            <button class="btn ripple"><a href="?download" download="" target="_blank" class="text-decoration-none text-white material-icons">download</a></button>
+            <hr>
+            <button class="btn ripple"><a href="?preview" target="_blank" class="text-decoration-none text-white material-icons">open_in_new</a></button>
+            <button class="btn ripple" data-cmd="cp-link"><i class="material-icons">share</i></button>
+        </div>
+    </div>
+    {% block body %}{% endblock %}
+</body>
+</html>

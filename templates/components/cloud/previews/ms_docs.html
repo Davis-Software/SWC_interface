@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MS-Docs preview - {{ request.path.split("/").pop() }}</title>
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}MS-Docs{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="/static/cloud_previews/css/open_docs.css">
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https://{{ app.url }}/exposed-cloud/{{ position }}"></iframe>
-</body>
-</html>
+{% endblock %}

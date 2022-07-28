@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Markdown editor - {{ request.path.split("/").pop() }}</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}Markdown editor{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
     <link rel="stylesheet" href="/static/cloud_previews/css/markdown_editor.css">
     <script src="/static/js/modules/highlight.min.js"></script>
@@ -22,8 +19,10 @@
         let mode_list = ace.require("ace/ext/modelist")
     </script>
     <script src="/static/cloud_previews/js/markdown_editor.js" defer></script>
-</head>
-<body>
+{% endblock %}
+
+
+{% block body %}
     <div id="wrapper">
         <div id="editor"></div>
         <div class="markdown-container"></div>
@@ -39,5 +38,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

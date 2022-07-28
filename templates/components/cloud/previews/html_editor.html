@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>XML editor - {{ request.path.split("/").pop() }}</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}XML editor{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="/static/css/base_styles/base_md_styles.css">
     <link rel="stylesheet" href="/static/cloud_previews/css/html_editor.css">
     <script src="/static/cloud_previews/ace_editor/ace.js"></script>
@@ -21,8 +18,9 @@
         let mode_list = ace.require("ace/ext/modelist")
     </script>
     <script src="/static/cloud_previews/js/html_preview.js" defer></script>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <div id="wrapper">
         <div id="editor"></div>
         <iframe class="html-container"></iframe>
@@ -38,5 +36,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

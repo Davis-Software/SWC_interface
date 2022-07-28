@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Archive preview - {{ request.path.split("/").pop() }}</title>
-    <link rel="stylesheet" href="/static/cloud_previews/css/general.css">
-</head>
-<body>
+{% extends "components/cloud/previews/preview_base.html" %}
+{% block title %}ZIP file{% endblock %}
+
+{% block body %}
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -35,5 +31,4 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+{% endblock %}
