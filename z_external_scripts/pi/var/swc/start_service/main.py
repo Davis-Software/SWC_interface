@@ -32,7 +32,7 @@ def set_scheduler():
     today = calendar.day_name[int(datetime.today().weekday())]
     holiday = boot_up_times.get("holiday") == "true"
 
-    if boot_up_times.get("auto-detect") and now in holidays.Germany(years=2021):
+    if boot_up_times.get("auto-detect") and now in holidays.Germany(years=datetime.now().year):
         t = boot_up_times.get("normal-up-auto")
 
     elif today in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
@@ -69,11 +69,26 @@ def update_times(*_):
         print("scheduler reset")
 
 
-schedule.every(15).minutes.do(update_times)
+def debug(*_):
+    print(f"[DEBUG] {datetime.now()}: Current settings - {boot_up_times}")
+    print(f"[DEBUG] {datetime.now()}: Current schedule - {schedule.jobs}")
+
+
+schedule.every(5).minutes.do(update_times)
+schedule.every(30).seconds.do(debug)
 update_times()
 
 
 if __name__ == "__main__":
     while True:
-        schedule.run_pending()
-        time.sleep(0.5)
+        try:
+            schedule.run_pending()
+            time.sleep(0.5)
+        except Exception as e:
+            print("Error in scheduler", e)
+            break
+        except KeyboardInterrupt:
+            print("Keyboard interrupt")
+            break
+
+    GPIO.cleanup()

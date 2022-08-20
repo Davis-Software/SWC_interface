@@ -1,6 +1,7 @@
 requested_settings_tags = [
     "up-state",
     "auto-detect",
+    "holiday",
     "holiday-up-week",
     "holiday-up-weekend",
     "normal-up-auto",
@@ -11,6 +12,7 @@ requested_settings_tags = [
 start_times_default = {
     "up-state": True,
     "auto-detect": True,
+    "holiday": False,
     "holiday-up-week": "07:30",
     "holiday-up-weekend": "07:30",
     "normal-up-auto": "07:30",
