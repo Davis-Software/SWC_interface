@@ -47,6 +47,7 @@ cmds = {
     "service": {
         "apache2": generate_service_ops("apache2", DEFAULT_SERVICE_OPS),
         "mysql": generate_service_ops("mysql", DEFAULT_SERVICE_OPS),
+        "sinusbot": generate_service_ops("sinusbot", DEFAULT_SERVICE_OPS),
         "swc_cmd_listener": generate_service_ops("swc_cmd_listener", PROTECTED_SERVICE_OPS)
     },
     "servers": {
