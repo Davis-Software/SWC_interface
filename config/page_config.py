@@ -38,8 +38,8 @@ dashboard_module_description = {
         }]
     ],
     "15ai_element": [
-        "15.ai",
-        "Generate TF2 & Portal voice-lines",
+        "[BROKEN] 15.ai",
+        "Generate TF2 & Portal voice-lines /// [BROKEN]: The author of the API has prohibited public access /// This module is deprecated and will be removed in the future",
         []
     ]
 }
