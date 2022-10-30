@@ -39,8 +39,11 @@ dashboard_module_description = {
     ],
     "15ai_element": [
         "[BROKEN] 15.ai",
-        "Generate TF2 & Portal voice-lines /// [BROKEN]: The author of the API has prohibited public access /// This module is deprecated and will be removed in the future",
-        []
+        "Generate TF2 & Portal voice-lines /// [BROKEN]: The API is currently down for maintenance",
+    ],
+    "ipa_reader_element": [
+        "IPA Reader",
+        "A tool for reading International Phonetic Alphabet (IPA) notation aloud"
     ]
 }
 

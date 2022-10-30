@@ -1,0 +1,208 @@
+<style>
+    #ipa-voice-dropdown{
+        display: inline-block;
+        background-color: #444;
+        border: none;
+        color: #e2e2e2;
+        padding: 4px;
+        outline: none;
+        border-radius: 5px;
+        transform: translateY(-6px);
+        margin-left: 10px;
+        transition: background-color .1s ease-in-out;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    #ipa-voice-dropdown:hover{
+        background-color: #666;
+    }
+    #ipa-voice-text{
+        color: #e2e2e2;
+        margin-top: 10px;
+        border-radius: 5px !important;
+        border: none;
+        min-height: 180px;
+    }
+    #ipa-voice-text:disabled{
+        background-color: #444;
+        color: #e2e2e2;
+    }
+    #ipa-voice-button{
+        margin-top: 10px;
+        width: 100%;
+    }
+    .ipa-voice-button-play{
+        padding: 0;
+        margin: 5px;
+    }
+    .ipa-voice-button-play img{
+        width: 60px;
+        height: 60px;
+        -webkit-user-drag: none;
+    }
+    .ipa-voice-button-dwn{
+        padding: 10px;
+        margin: 5px;
+        margin-left: 0;
+    }
+    .ipa-voice-button-dwn img{
+        width: 40px;
+        height: 40px;
+        -webkit-user-drag: none;
+    }
+</style>
+
+<div class="dashboard-element">
+    <div class="dashboard-element-body">
+        <div class="h3 d-inline">IPA Reader</div>
+        <select id="ipa-voice-dropdown">
+            <option value="" disabled selected>Select Voice</option>
+        </select>
+        <div>
+            <textarea class="form-control" id="ipa-voice-text" placeholder="Enter ipa text here..."></textarea>
+            <button class="btn btn-primary" id="ipa-voice-button">Read</button>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="mt-3 me-5" id="ipa-voice">
+                <button class="btn rounded-circle ipa-voice-button-play">
+                    <img src="https://interface.software-city.org/static/img/play-icon.png" alt="Play">
+                </button>
+                <button class="btn rounded-circle ipa-voice-button-dwn">
+                    <img src="https://interface.software-city.org/static/img/download-icon.png" alt="Download">
+                </button>
+            </div>
+        </div>
+        <audio id="ipa-voice-audio"></audio>
+    </div>
+</div>
+
+<script>
+    const IPA_VOICES = {
+        Ivy: "Ivy [English - American]",
+        Joanna: "Joanna [English - American]",
+        Joey: "Joey [English - American]",
+        Justin: "Justin [English - American]",
+        Kendra: "Kendra [English - American]",
+        Kimberly: "Kimberly [English - American]",
+        Salli: "Salli [English - American]",
+        Nicole: "Nicole [English - Australian]",
+        Russell: "Russell [English - Australian]",
+        Emma: "Emma [English - British]",
+        Brian: "Brian [English - British]",
+        Amy: "Amy [English - British]",
+        Raveena: "Raveena [English - Indian]",
+        Geraint: "Geraint [English - Welsh]",
+        Ricardo: "Ricardo [Brazilian Portuguese]",
+        Vitoria: "Vitoria [Brazilian Portuguese]",
+        Lotte: "Lotte [Dutch]",
+        Ruben: "Ruben [Dutch]",
+        Mathieu: "Mathieu [French]",
+        Celine: "Celine [French]",
+        Chantal: "Chantal [Canadian French]",
+        Marlene: "Marlene [German]",
+        Dora: "Dora [Icelandic]",
+        Karl: "Karl [Icelandic]",
+        Carla: "Carla [Italian]",
+        Giorgio: "Giorgio [Italian]",
+        Mizuki: "Mizuki [Japanese]",
+        Liv: "Liv [Norwegian]",
+        Maja: "Maja [Polish]",
+        Jan: "Jan [Polish]",
+        Ewa: "Ewa [Polish]",
+        Cristiano: "Cristiano [Portuquese]",
+        Ines: "Ines [Portuquese]",
+        Carmen: "Carmen [Romanian]",
+        Maxim: "Maxim [Russian]",
+        Tatyana: "Tatyana [Russian]",
+        Enrique: "Enrique [Spanish]",
+        Penelope: "Penelope [US Spanish]",
+        Conchita: "Conchita [Castilian Spanish]",
+        Astrid: "Astrid [Swedish]",
+        Filiz: "Filiz [Turkish]",
+        Gwyneth: "Gwyneth [Welsh]",
+    }
+
+    const ipaVoiceDropdown = document.querySelector('#ipa-voice-dropdown')
+    const ipaVoiceText = document.querySelector('#ipa-voice-text')
+    const ipaVoiceButton = document.querySelector('#ipa-voice-button')
+
+    const ipaVoice = document.querySelector('#ipa-voice')
+
+    const voiceButton = ipaVoice.querySelector('.ipa-voice-button-play')
+    const dwnButton = ipaVoice.querySelector('.ipa-voice-button-dwn')
+    const audio = document.querySelector('#ipa-voice-audio')
+
+    function setLoaded(bool){
+        ipaVoice.querySelectorAll('button').forEach(btn => {
+            btn.disabled = !bool
+        })
+    }
+    setLoaded(false)
+
+    ipaVoiceDropdown.addEventListener("input", () => {
+        ipaVoiceButton.disabled = ipaVoiceDropdown.value === "" || ipaVoiceText.value === ""
+    })
+    ipaVoiceText.addEventListener("input", () => {
+        ipaVoiceButton.disabled = ipaVoiceDropdown.value === "" || ipaVoiceText.value === ""
+    })
+    ipaVoiceButton.disabled = ipaVoiceDropdown.value === "" || ipaVoiceText.value === ""
+
+    ipaVoiceButton.addEventListener("click", () => {
+        if(ipaVoiceButton.disabled) return
+
+        ipaVoiceButton.disabled = true
+        ipaVoiceDropdown.disabled = true
+        ipaVoiceText.disabled = true
+        ipaVoiceButton.innerHTML = '<div class="spinner-border spinner-border-sm"></div>'
+        setLoaded(false)
+
+        const text = ipaVoiceText.value
+        const voice = ipaVoiceDropdown.value
+
+        fetch("https://iawll6of90.execute-api.us-east-1.amazonaws.com/production", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({text, voice}),
+            json: true,
+            contentType: "application/json"
+        }).then(res => res.json()).then(res => {
+            ipaVoiceButton.disabled = false
+            ipaVoiceDropdown.disabled = false
+            ipaVoiceText.disabled = false
+            ipaVoiceButton.innerHTML = 'Read'
+            if(res){
+                audio.src = audio.src = `data:audio/mpeg;base64,${res}`
+                setLoaded(true)
+            }
+        })
+    })
+
+    voiceButton.addEventListener("click", () => {
+        audio.paused ? audio.play() : audio.pause()
+    })
+    audio.addEventListener("ended", () => {
+        voiceButton.querySelector('img').src = 'https://interface.software-city.org/static/img/play-icon.png'
+    })
+    audio.addEventListener("pause", () => {
+        voiceButton.querySelector('img').src = 'https://interface.software-city.org/static/img/play-icon.png'
+    })
+    audio.addEventListener("play", () => {
+        voiceButton.querySelector('img').src = 'https://interface.software-city.org/static/img/pause-icon.png'
+    })
+
+    dwnButton.addEventListener("click", () => {
+        let link = document.createElement('a')
+        link.href = audio.src
+        link.download = "ipa-download"
+        link.click()
+    })
+
+    Object.keys(IPA_VOICES).forEach(voice => {
+        let option = document.createElement('option')
+        option.value = voice
+        option.innerHTML = IPA_VOICES[voice]
+        ipaVoiceDropdown.appendChild(option)
+    })
+</script>
