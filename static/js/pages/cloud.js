@@ -363,6 +363,7 @@ function load_files(filter){
             }
             nav.addEventListener("click", e => {
                 e.preventDefault()
+                if(e.ctrlKey || e.shiftKey) return
                 navigate_path(link.href, false)
             })
             nav.appendChild(link)
