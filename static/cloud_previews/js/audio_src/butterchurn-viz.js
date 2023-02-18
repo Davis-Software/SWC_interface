@@ -1,15 +1,22 @@
 import butterchurn from 'butterchurn';
-import butterchurnPresets from 'butterchurn-presets';
+import butterchurnPresets from './node_modules/butterchurn-presets/lib/butterchurnPresets.min';
+import butterchurnPresetsExtra from './node_modules/butterchurn-presets/lib/butterchurnPresetsExtra.min';
+import butterchurnPresetsExtra2 from './node_modules/butterchurn-presets/lib/butterchurnPresetsExtra2.min';
+
 import _ from "lodash";
 
 class ButterChurnViz{
-    constructor(canvasSelector, audioSelector) {
+    constructor(canvasSelector, audioSelector, debugSelector=null) {
         this.visualizer = null
         this.rendering = false
         this.audioContext = new AudioContext()
         this.sourceNode = null
         this.cycleInterval = null
-        this.presets = _(butterchurnPresets.getPresets()).toPairs().sortBy(([k, v]) => k.toLowerCase()).fromPairs().value()
+        this.presets = {
+            ...butterchurnPresets.getPresets(),
+            ...butterchurnPresetsExtra.getPresets(),
+            ...butterchurnPresetsExtra2.getPresets()
+        }
         this.presetKeys = []
         this.presetIndexHist = []
         this.presetIndex = 0
@@ -18,6 +25,23 @@ class ButterChurnViz{
         this.presetRandom = true
         this.canvas = document.querySelector(canvasSelector)
         this.audio = document.querySelector(audioSelector)
+        this.debugElement = document.querySelector(debugSelector)
+    }
+    updateDebugInfo(){
+        if(this.debugElement && sessionStorage.getItem("debug") === "true"){
+            this.debugElement.innerHTML = `
+                <div>Current Preset: ${this.presetKeys[this.presetIndex]}</div>
+                <div>Current Preset Index: ${this.presetIndex}</div>
+                <div>Preset History: ${this.presetIndexHist.join(", ")}</div>
+                <div>Random Presets: ${this.presetRandom}</div>
+                <div>Cycle Presets: ${this.presetCycle}</div>
+                <div>Cycle Length: ${this.presetCycleLength}</div>
+                <div>Audio Time: ${this.audio.currentTime}</div>
+                <div>Audio Duration: ${this.audio.duration}</div>
+            `
+        }else{
+            this.debugElement.innerHTML = ""
+        }
     }
     startRenderer() {
         requestAnimationFrame(() => this.startRenderer())
@@ -85,6 +109,13 @@ class ButterChurnViz{
         })
         this.nextPreset(0)
         this.cycleInterval = setInterval(() => this.nextPreset(2.7), this.presetCycleLength)
+        setInterval(() => this.updateDebugInfo(), 1000)
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ü") {
+                sessionStorage.setItem("debug", sessionStorage.getItem("debug") === "true" ? "false" : "true")
+                this.updateDebugInfo()
+            }
+        })
     }
 }
 

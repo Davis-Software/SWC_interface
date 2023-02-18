@@ -82,7 +82,7 @@ if(viz_mode === "wave") {
         ]
     })
 }else{
-    let butterChurn = new ButterChurnViz("#visualizer", "#audio-data")
+    let butterChurn = new ButterChurnViz("#visualizer", "#audio-data", "#visualizer-info")
     butterChurn.initPlayer()
     butterChurn.connectToAudioElement()
 }
