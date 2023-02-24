@@ -16,16 +16,20 @@ sw_btn.addEventListener("click", () => {
     window.location.reload()
 })
 
-function activation(act){
+function activation(act=false){
+    if(audio.readyState <= 2) return
     vol.disabled = act
     track.disabled = act
     btn.disabled = act
+    if(!act && checker){
+        clearInterval(checker)
+        checker = null
+        if(audio.paused) toggle_play()
+    }
 }
 activation(true)
-audio.addEventListener("loadeddata",_ => {
-    activation(false)
-    toggle_play()
-})
+setTimeout(() => {toggle_play()}, 120)
+let checker = setInterval(activation, 1000)
 
 function volume_change(set=true){
     document.querySelector("#vol-btn").innerHTML = vol.value === "0" ? "volume_off" : vol.value < 50 ? "volume_down" : "volume_up"
