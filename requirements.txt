@@ -1,7 +1,7 @@
-SQLAlchemy
+SQLAlchemy==1.4.46
 flask
 flask_cors
-flask_sqlalchemy
+flask_sqlalchemy==2.5.1
 Markdown
 requests
 Werkzeug

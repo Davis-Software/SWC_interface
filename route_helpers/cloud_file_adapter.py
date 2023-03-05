@@ -6,6 +6,7 @@ import zipfile
 import markdown
 import tempfile
 import configuration
+from flask import request
 from functools import wraps
 from datetime import datetime
 from config import page_config
@@ -103,6 +104,10 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
         file_type = alt_file_type
 
     if file_type == "FILE":
+        if "force-preview" in request.args:
+            return make_response(
+                load_file_preview(path, personal, user, alt_file_type=request.args.get("force-preview"), **kwargs)
+            )
         if request.cookies.get("set-file-type-open") is not None:
             error = None
             try:
@@ -141,22 +146,28 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
         return render_template("components/cloud/previews/monaco_editor.html")
 
     elif file_type == "ARCHIVE":
-        with zipfile.ZipFile(location, "r") as zf:
-            data = zf.infolist()
-        content = list()
-        for elem in data:
-            directory = elem.filename[-1] == "/"
-            content.append({
-                "name": elem.filename,
-                "directory": directory,
-                "size": elem.file_size,
-                "type": file_utils.FileIdentifier(elem.filename, folder=directory).file_type_desc,
-                "icon": file_utils.FileIdentifier(elem.filename, folder=directory).file_type_icon
-            })
-        return render_template(
-            "components/cloud/previews/zip.html",
-            content=content
-        )
+        if "zip-file" in request.args:
+            with zipfile.ZipFile(location, "r") as zf:
+                data = zf.infolist()
+            content = dict()
+            for elem in data:
+                parts = elem.filename.split("/")
+
+                ref = content
+                for part in parts[:-1]:
+                    if part not in ref:
+                        ref[part] = dict()
+                    ref = ref[part]
+
+                identifier = file_utils.FileIdentifier(elem.filename)
+                ref[parts[-1]] = {
+                    "name": parts[-1],
+                    "size": elem.file_size,
+                    "type": identifier.file_type_desc,
+                    "icon": identifier.file_type_icon
+                }
+            return content
+        return render_template("components/cloud/previews/zip.html")
 
     elif file_type in ["OPEN_DOCUMENT", "OFFICE_DOCUMENT"]:
         return render_template(

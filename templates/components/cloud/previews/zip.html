@@ -1,34 +1,19 @@
 {% extends "components/cloud/previews/preview_base.html" %}
 {% block title %}ZIP file{% endblock %}
 
+{% block head %}
+    <script src="/static/cloud_previews/js/zip_preview.js" defer></script>
+{% endblock %}
+
 {% block body %}
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Name (in <code id="zip-path">/</code>)</th>
                 <th>Type</th>
                 <th>Size</th>
             </tr>
         </thead>
-        <tbody>
-            {% for folder in content %}
-                {% if folder.directory %}
-                    <tr>
-                        <td><i class="material-icons">{{ folder.icon }}</i> {{ folder.name }}</td>
-                        <td>{{ folder.type }}</td>
-                        <td>{{ folder.size }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-            {% for file in content %}
-                {% if not file.directory %}
-                    <tr>
-                        <td><i class="material-icons">{{ file.icon }}</i> {{ file.name }}</td>
-                        <td>{{ file.type }}</td>
-                        <td>{{ file.size }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
+        <tbody id="zip-table"></tbody>
     </table>
 {% endblock %}
