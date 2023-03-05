@@ -147,25 +147,28 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
         return render_template("components/cloud/previews/monaco_editor.html")
 
     elif file_type == "ARCHIVE":
-        if "zip-file" in request.args:
-            if "file" in request.args:
+        try:
+            if "zip-file" in request.args:
+                if "file" in request.args:
+                    with zipfile.ZipFile(location, "r") as zf:
+                        with zf.open(request.args.get("file"), "r") as f:
+                            return send_file(
+                                io.BytesIO(f.read()),
+                                download_name=request.args.get("file").split("/")[-1],
+                            )
+                content = list()
                 with zipfile.ZipFile(location, "r") as zf:
-                    with zf.open(request.args.get("file"), "r") as f:
-                        return send_file(
-                            io.BytesIO(f.read()),
-                            download_name=request.args.get("file").split("/")[-1],
-                        )
-            content = list()
-            with zipfile.ZipFile(location, "r") as zf:
-                for elem in zf.infolist():
-                    directory = elem.filename.endswith("/")
-                    content.append({
-                        "name": elem.filename,
-                        "size": elem.file_size,
-                        "directory": directory,
-                        "path": elem.filename
-                    })
-            return content
+                    for elem in zf.infolist():
+                        directory = elem.filename.endswith("/")
+                        content.append({
+                            "name": elem.filename,
+                            "size": elem.file_size,
+                            "directory": directory,
+                            "path": elem.filename
+                        })
+                return content
+        except Exception as err:
+            return make_response(str(err), 500)
         return render_template("components/cloud/previews/zip.html")
 
     elif file_type in ["OPEN_DOCUMENT", "OFFICE_DOCUMENT"]:

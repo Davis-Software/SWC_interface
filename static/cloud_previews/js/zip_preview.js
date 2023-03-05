@@ -73,8 +73,20 @@ function buildZIPStructure(path, raw_data){
 
 function loadZIPContent(){
     fetch(`?preview&force-preview=ARCHIVE&zip-file`)
-        .then(response => response.json())
+        .then(response => {
+            if(response.ok) return response.json()
+            return response.text()
+        })
         .then(data => {
+            if(typeof data === "string"){
+                zipTable.innerHTML = `
+                    <tr class="text-danger">
+                        <td colspan="2">Error while loading ZIP file:<br>${data}</td>
+                    </tr>
+                `
+                return
+            }
+
             // Remove the first item if it's a directory to avoid a bug
             if(occurrences(data[0].name, "/") > 1){
                 data = data.map(item => ({
@@ -87,6 +99,13 @@ function loadZIPContent(){
             }
 
             buildZIPStructure("", data)
+        })
+        .catch(error => {
+            zipTable.innerHTML = `
+                <tr class="text-danger">
+                    <td colspan="2">Error while loading ZIP file:<br>${error}</td>
+                </tr>
+            `
         })
 }
 
