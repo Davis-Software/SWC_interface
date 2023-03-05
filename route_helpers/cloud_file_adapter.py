@@ -1,3 +1,4 @@
+import io
 import os
 
 import uuid
@@ -147,25 +148,23 @@ def load_file_preview(path: str, personal: bool, user: str, alt_file_type: str =
 
     elif file_type == "ARCHIVE":
         if "zip-file" in request.args:
+            if "file" in request.args:
+                with zipfile.ZipFile(location, "r") as zf:
+                    with zf.open(request.args.get("file"), "r") as f:
+                        return send_file(
+                            io.BytesIO(f.read()),
+                            download_name=request.args.get("file").split("/")[-1],
+                        )
+            content = list()
             with zipfile.ZipFile(location, "r") as zf:
-                data = zf.infolist()
-            content = dict()
-            for elem in data:
-                parts = elem.filename.split("/")
-
-                ref = content
-                for part in parts[:-1]:
-                    if part not in ref:
-                        ref[part] = dict()
-                    ref = ref[part]
-
-                identifier = file_utils.FileIdentifier(elem.filename)
-                ref[parts[-1]] = {
-                    "name": parts[-1],
-                    "size": elem.file_size,
-                    "type": identifier.file_type_desc,
-                    "icon": identifier.file_type_icon
-                }
+                for elem in zf.infolist():
+                    directory = elem.filename.endswith("/")
+                    content.append({
+                        "name": elem.filename,
+                        "size": elem.file_size,
+                        "directory": directory,
+                        "path": elem.filename
+                    })
             return content
         return render_template("components/cloud/previews/zip.html")
 
