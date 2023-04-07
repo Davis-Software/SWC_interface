@@ -34,7 +34,7 @@ document.querySelector("#btn-reboot").addEventListener("click", () => {
 
 
 const controlButtons = {}
-Object.keys(buttonSets).filter(cmd => !["status", "enable", "disable"].includes(cmd)).forEach(cmd => {
+Object.keys(buttonSets).filter(cmd => !["status"].includes(cmd)).forEach(cmd => {
     let buttonSet = buttonSets[cmd]
     controlButtons[cmd] = `<button class='btn btn-${buttonSet.color}' data-cmd='${cmd}' id='btn-${cmd}' disabled>${buttonSet.text}</button>`
 })
@@ -101,7 +101,7 @@ function updateControl(control){
             if(!controlObj.commands.includes(cmd)) continue
             controlObj.buttonGroup.querySelector(`[data-cmd="${cmd}"]`).disabled = !status
         }
-        for(let cmd of ["start"]){
+        for(let cmd of ["start", "enable", "disable"]){
             if(!controlObj.commands.includes(cmd)) continue
             controlObj.buttonGroup.querySelector(`[data-cmd="${cmd}"]`).disabled = status
         }

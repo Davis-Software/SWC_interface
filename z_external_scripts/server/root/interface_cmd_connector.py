@@ -14,8 +14,8 @@ ALL_OPS = {
     "stop": {"color": "danger", "text": "Stop"},
     "restart": {"color": "warning", "text": "Restart"},
     "status": {"color": "info", "text": "Status"},
-    "enable": {"color": "success", "text": "Enable"},
-    "disable": {"color": "danger", "text": "Disable"},
+    "enable": {"color": "secondary", "text": "Enable"},
+    "disable": {"color": "secondary", "text": "Disable"},
 }
 
 
@@ -45,8 +45,9 @@ private_cmds = {
 }
 cmds = {
     "service": {
+        "satisfactory": generate_service_ops("satisfactory", DEFAULT_SERVICE_OPS),
         "apache2": generate_service_ops("apache2", DEFAULT_SERVICE_OPS),
-        "mysql": generate_service_ops("mysql", DEFAULT_SERVICE_OPS),
+        "mysql": generate_service_ops("mysql", PROTECTED_SERVICE_OPS),
         "sinusbot": generate_service_ops("sinusbot", DEFAULT_SERVICE_OPS),
         "swc_cmd_listener": generate_service_ops("swc_cmd_listener", PROTECTED_SERVICE_OPS)
     },
