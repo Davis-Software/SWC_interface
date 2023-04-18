@@ -1,3 +1,27 @@
-<div class="container text-center mt-5 pt-5 pb-5 mb-5">
-    <h2>The toolbox has to be opened in <a href="https://toolbox.software-city.org" target="_blank">a new tab</a>!</h2>
+<div class="container mt-5">
+    <div class="mt-3 mb-5">
+        <h4>Available tools</h4>
+        <div class="list-group"></div>
+    </div>
 </div>
+
+<script>
+    (function (){
+        let url = "https://toolbox.software-city.org"
+        fetch(`${url}/tool-list`)
+            .then((response) => response.json())
+            .then(function (tools) {
+                let list = document.querySelector(".list-group")
+                tools.forEach((tool) => {
+                    let item = document.createElement("a")
+                    item.classList.add("list-group-item", "list-group-item-action")
+                    item.href = `${url}/${tool}`
+                    item.target = "_blank"
+                    item.innerText = tool.split("_").map((word) => (
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    )).join(" ")
+                    list.appendChild(item)
+                })
+        })
+    })()
+</script>
