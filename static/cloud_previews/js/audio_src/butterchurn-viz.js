@@ -6,7 +6,7 @@ import butterchurnPresetsExtra2 from './node_modules/butterchurn-presets/lib/but
 import _ from "lodash";
 
 class ButterChurnViz{
-    constructor(canvasSelector, audioSelector, debugSelector=null) {
+    constructor(canvasSelector, audioSelector, votingSelector, debugSelector=null) {
         this.visualizer = null
         this.rendering = false
         this.audioContext = new AudioContext()
@@ -23,9 +23,66 @@ class ButterChurnViz{
         this.presetCycle = true
         this.presetCycleLength = 15000
         this.presetRandom = true
+        this.presetRatings = {}
         this.canvas = document.querySelector(canvasSelector)
         this.audio = document.querySelector(audioSelector)
+        this.votingElement = document.querySelector(votingSelector)
         this.debugElement = document.querySelector(debugSelector)
+    }
+    loadCustomPresetWeights(callback){
+        fetch("/butter-churn").then(res => res.json()).then(data => {
+            for(let preset of data){
+                this.presetRatings[preset.key] = preset.weight
+            }
+            callback()
+        })
+    }
+    computeCustomRatings(){
+        for(let presetKey of Object.keys(this.presets)){
+            this.presets[presetKey].rating = this.presets[presetKey].baseVals.rating || 0
+        }
+        for(let presetKey of Object.keys(this.presetRatings)){
+            if(this.presets[presetKey]){
+                this.presets[presetKey].rating += this.presetRatings[presetKey]
+            }
+        }
+        this.sortByCustomRatings()
+    }
+    sortByCustomRatings(){
+        this.presetKeys = Object.keys(this.presets).sort((a, b) => this.presets[b].rating - this.presets[a].rating)
+    }
+    setVotingInfoInteracts(){
+        let upButton = this.votingElement.querySelector("button.green")
+        let downButton = this.votingElement.querySelector("button.red")
+
+        let vote = (up) => {
+            this.presets[this.presetKeys[this.presetIndex]].rating += up ? 1 : -1
+            this.votingElement.querySelector("#viz-vote-val").textContent = this.presets[this.presetKeys[this.presetIndex]].rating
+            this.sortByCustomRatings()
+
+            let formData = new FormData()
+            formData.append("key", this.presetKeys[this.presetIndex])
+            formData.append("mode", up ? "up" : "down")
+
+            fetch("/butter-viz/vote", {
+                method: "POST",
+                body: formData
+            }).then(() => {
+                upButton.hidden = true
+                downButton.hidden = true
+            })
+        }
+
+        upButton.addEventListener("click", () => {
+            vote(true)
+        })
+        downButton.addEventListener("click", () => {
+            vote(false)
+        })
+    }
+    updateVotingInfo(){
+        this.votingElement.querySelector("#viz-vote-val").textContent = this.presets[this.presetKeys[this.presetIndex]].rating
+        this.votingElement.querySelectorAll("button").forEach(button => button.hidden = false)
     }
     updateDebugInfo(){
         if(this.debugElement && sessionStorage.getItem("debug") === "true"){
@@ -65,17 +122,36 @@ class ButterChurnViz{
 
         this.visualizer.connectAudio(delayedAudible)
     }
-    nextPreset(blendTime = 5.7) {
+    wightedRandomPreset(){
+        let total = _.sumBy(this.presetKeys, presetKey => this.presets[presetKey].rating)
+        let random = Math.random() * total
+        let sum = 0
+        for(let presetKey of this.presetKeys){
+            sum += this.presets[presetKey].rating
+            if(sum >= random){
+                return presetKey
+            }
+        }
+        return this.presetKeys[this.presetKeys.length - 1]
+    }
+    nextPreset(blendTime = 5.7, weighted=true) {
         this.presetIndexHist.push(this.presetIndex)
 
         let numPresets = this.presetKeys.length
         if (this.presetRandom) {
-            this.presetIndex = Math.floor(Math.random() * this.presetKeys.length)
+            if(weighted){
+                this.presetIndex = this.presetKeys.indexOf(this.wightedRandomPreset())
+                this.presets[this.presetKeys[this.presetIndex]].rating -= 1 // penalize the preset for being selected
+                this.sortByCustomRatings()
+            }else{
+                this.presetIndex = Math.floor(Math.random() * this.presetKeys.length)
+            }
         } else {
             this.presetIndex = (this.presetIndex + 1) % numPresets
         }
 
         this.visualizer.loadPreset(this.presets[this.presetKeys[this.presetIndex]], blendTime)
+        this.updateVotingInfo()
     }
     prevPreset(blendTime = 5.7) {
         let numPresets = this.presetKeys.length
@@ -86,6 +162,7 @@ class ButterChurnViz{
         }
 
         this.visualizer.loadPreset(this.presets[this.presetKeys[this.presetIndex]], blendTime)
+        this.updateVotingInfo()
     }
     restartCycleInterval() {
         if (this.cycleInterval) {
@@ -97,15 +174,17 @@ class ButterChurnViz{
             this.cycleInterval = setInterval(() => this.nextPreset(2.7), this.presetCycleLength)
         }
     }
-    initPlayer() {
-        this.presetKeys = _.keys(this.presets)
+    finishInit() {
+        this.computeCustomRatings()
+        this.setVotingInfoInteracts()
+
         this.presetIndex = Math.floor(Math.random() * this.presetKeys.length)
 
         this.visualizer = butterchurn.createVisualizer(this.audioContext, this.canvas , {
-          width: window.innerWidth,
-          height: window.innerHeight,
-          pixelRatio: window.devicePixelRatio || 1,
-          textureRatio: 1,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            pixelRatio: window.devicePixelRatio || 1,
+            textureRatio: 1,
         })
         this.nextPreset(0)
         this.cycleInterval = setInterval(() => this.nextPreset(2.7), this.presetCycleLength)
@@ -115,6 +194,18 @@ class ButterChurnViz{
                 sessionStorage.setItem("debug", sessionStorage.getItem("debug") === "true" ? "false" : "true")
                 this.updateDebugInfo()
             }
+        })
+        this.updateVotingInfo()
+    }
+    initPlayer(callback) {
+        this.loadCustomPresetWeights(() => {
+            this.finishInit()
+            callback()
+        })
+    }
+    startPlayer() {
+        this.initPlayer(() => {
+            this.connectToAudioElement()
         })
     }
 }

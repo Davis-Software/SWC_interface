@@ -1,6 +1,8 @@
 from __init__ import *
 
 from route_helpers import side_route_functions
+from server_settings.db_integration.server_settings_repo import butter_churn_weight_get, butter_churn_weight_up, \
+    butter_churn_weight_down
 
 from user_data import user_auth
 from utils import api_utils
@@ -55,3 +57,25 @@ def clear_cookies(mode):
         response.delete_cookie(cookie[0])
 
     return response
+
+
+# Butter Churn
+@app.route("/butter-churn", methods=["GET"])
+@app.route("/butter-churn/<key>", methods=["GET"])
+@user_auth.auth_required
+def butter_churn(key=None):
+    return butter_churn_weight_get(int(key) if key else None)
+
+
+@app.route("/butter-viz/vote", methods=["POST"])
+@user_auth.auth_required
+def butter_viz_vote():
+    mode = request.form.get("mode")
+    key = request.form.get("key")
+
+    if mode == "up":
+        butter_churn_weight_up(key)
+    elif mode == "down":
+        butter_churn_weight_down(key)
+
+    return api_utils.empty_success()

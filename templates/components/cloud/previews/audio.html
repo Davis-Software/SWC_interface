@@ -10,6 +10,11 @@
 {% block body %}
 <div>
     <div class="position-absolute top-0 start-0" id="visualizer-info"></div>
+    <div class="position-absolute top0 end-0 pe-2 pt-1 d-flex bg-dark bg-opacity-25" id="viz-voting" hidden>
+        <span>Visualizer Rating:</span>
+        <button class="material-icons text-button green" title="Upvote this visualizer">arrow_upward</button>
+        <button class="material-icons text-button red" title="Downvote this visualizer">arrow_downward</button>
+        <span id="viz-vote-val" class="ms-1">0</span>
     </div>
     <canvas id="visualizer"></canvas>
     <div class="fixed-bottom">

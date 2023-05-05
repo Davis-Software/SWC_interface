@@ -86,9 +86,13 @@ if(viz_mode === "wave") {
         ]
     })
 }else{
-    let butterChurn = new ButterChurnViz("#visualizer", "#audio-data", "#visualizer-info")
-    butterChurn.initPlayer()
-    butterChurn.connectToAudioElement()
+    let butterChurn = new ButterChurnViz(
+        "#visualizer",
+        "#audio-data",
+        "#viz-voting",
+        "#visualizer-info"
+    )
+    butterChurn.startPlayer()
 }
 
 document.querySelector("canvas").width = window.innerWidth
@@ -98,5 +102,9 @@ window.addEventListener("resize", _ => {
     document.querySelector("canvas").height = window.innerHeight - 60
 })
 
+
+document.querySelectorAll("#viz-voting *[title]").forEach(elem => {
+    new bootstrap.Tooltip(elem)
+})
 
 export default toggle_play

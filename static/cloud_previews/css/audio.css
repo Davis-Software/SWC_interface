@@ -7,6 +7,20 @@ body{
     width: 100%;
 }
 
+.text-button{
+    background: none;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+.text-button.green{
+    color: #00bc8c;
+}
+.text-button.red{
+    color: #e74c3c;
+}
+
 #controls{
     height: 60px;
     background-color: #25282c;
