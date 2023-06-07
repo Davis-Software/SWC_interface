@@ -7,6 +7,8 @@ import json
 from math import ceil
 
 from random import randint
+
+from user_data.User import UserWebQuery
 from user_data.user_repo import get_user_query_object
 
 LENGTH_RANGE = (-1, 120)
@@ -34,8 +36,8 @@ PP_SHAPES = [
 
 
 class PeePee:
-    def __init__(self, username):
-        self.user = get_user_query_object(username)
+    def __init__(self, user: UserWebQuery):
+        self.user = user
 
         self.length = 0
         self.radius = 0
