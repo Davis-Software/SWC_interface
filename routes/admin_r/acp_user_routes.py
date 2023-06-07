@@ -17,6 +17,11 @@ def acp_users():
                 admin=request.form.get("admin") == "true",
                 cloud=request.form.get("cloud") == "true"
             )
+        if "set_permissions" in request.form:
+            user_repo.set_permissions(
+                request.form.get("set_permissions"),
+                request.form.get("permissions").split(",")
+            )
         if "remove_user" in request.form:
             user_repo.delete_user(
                 request.form.get("remove_user")

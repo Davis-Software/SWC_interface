@@ -26,7 +26,26 @@ function setContent(user){
                 .replaceAll("user_username", user)
                 .replaceAll("user_created", new Date(user_data.created).toLocaleString("de-DE"))
                 .replaceAll("user_admin", user_data.admin)
+                .replaceAll("user_cloud", user_data.cloud)
                 .replaceAll("user_description", user_data.description)
+
+            let permsInput = user_content.querySelector(`#perms-acc_${user}`)
+            permsInput.value = JSON.parse(user_data.permissions).join(",")
+            permsInput.parentElement.querySelector("button").addEventListener("click", e => {
+                e.target.disabled = true
+                let data = new FormData()
+                let request = new XMLHttpRequest()
+
+                data.append("set_permissions", user)
+                data.append("permissions", permsInput.value)
+
+                request.addEventListener("load", _ => {
+                    setContent(user)
+                })
+
+                request.open("POST", "/acp/users")
+                request.send(data)
+            })
         }
     })
 }

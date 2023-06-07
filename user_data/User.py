@@ -32,6 +32,7 @@ class User(engine.Model):
     created = Column(DateTime)
     admin = Column(Boolean, default=False)
     cloud = Column(Boolean, default=True)
+    permissions = Column(String(1000), default="[]")
     settings = Column(String(1000), default="{}")
 
     def __init__(self, username, password, description, avatar, admin=False, cloud=False):
@@ -46,6 +47,7 @@ class User(engine.Model):
         self.admin = admin
         self.cloud = cloud
 
+        self.permissions = json.dumps([])
         self.settings = json.dumps({})
 
 
@@ -66,7 +68,7 @@ class SyncingSettings(engine.Model):
 class UserWebQuery:
     def __init__(self, user_model: User or None):
 
-        whitelist = ["id", "username", "password", "description", "avatar", "created", "admin", "cloud", "settings"]
+        whitelist = ["id", "username", "password", "description", "avatar", "created", "admin", "cloud", "permissions", "settings"]
 
         if user_model is None:
             for obj in whitelist:
@@ -157,6 +159,14 @@ class UserWebQuery:
         if not self.get_suspended():
             return False
         return markdown.markdown(UserSuspend.query.filter_by(username=self.username).first().message)
+
+    def get_permissions(self, string: bool = False):
+        if string:
+            return self.permissions
+        return json.loads(self.permissions)
+
+    def get_permission(self, key: str):
+        return key in self.get_permissions()
 
     def get_settings(self, string: bool = False):
         if string:

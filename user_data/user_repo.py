@@ -188,6 +188,11 @@ def apply_user_settings(user, settings):
     sql_utils.commit_db()
 
 
+def set_permissions(user, permissions: list):
+    User.query.filter_by(username=user).first().permissions = json.dumps(permissions)
+    sql_utils.commit_db()
+
+
 def check_user_passwordhash(user, pwd_hash):
     """
     This function is used on login to check if the entered password
