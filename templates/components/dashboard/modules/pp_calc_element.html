@@ -77,7 +77,7 @@
         function calculate(callback){
             load(true)
             app_fetch(
-                (location.host === "localhost" ? "" : "https://interface.software-city.org")
+                (location.host.includes("localhost") ? "" : "https://interface.software-city.org")
                 + "/dashboard/module-request/pp-calc"
             ).then(resp => {
                 if(!resp.ok){

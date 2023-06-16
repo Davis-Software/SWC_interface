@@ -38,10 +38,13 @@ def get_all_user_query_object() -> list:
     return li
 
 
-def create_user(username, password, description, avatar, admin=False, cloud=False):
+def create_user(username, password, description, avatar, admin=False, cloud=False, permissions: list = None):
     pwd_hash = secure_hash_str(password)
 
     user = User(username, pwd_hash, description, avatar, admin=admin, cloud=cloud)
+
+    if permissions is not None:
+        user.permissions = json.dumps(permissions)
 
     if User.query.filter_by(username=user.username).first() is None:
         db.session.add(user)

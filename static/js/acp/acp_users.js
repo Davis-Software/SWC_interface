@@ -88,12 +88,14 @@ function new_user(){
     modal.Custom(`
         <div>
             <form id="form_22231">
-                <input type="text" class="form-control" name="name" placeholder="name" required> <br>
-                <input type="password" class="form-control" name="id" placeholder="Password" pattern="[A-Za-z0-9-_+%€/]{6,}" title="Allowed: A-Z a-z 0-9 - _" required> <br>
+                <input type="text" class="form-control" name="name" placeholder="name" pattern="[A-Za-z0-9_-]{4,}" required> <br>
+                <input type="password" class="form-control" name="id" placeholder="Password" pattern="[A-Za-z0-9-_+%€/.!§$&?#*><]{6,}" title="Allowed: A-Z a-z 0-9 - _" required> <br>
                 <textarea class="form-control" type="text" name="desc" placeholder="description" required></textarea> <br>
                 Image: <input class="btn btn-outline-primary" type="file" name="pict" placeholder="picture" accept="image/png,image/jpeg,image/gif"> <br><br>
                 Admin: <input type="checkbox" class="form-check-input" name="admin"> <br>
                 Cloud: <input type="checkbox" class="form-check-input" name="cloud"> <br><br>
+                <label for="perms-acc_create">Permissions:</label>
+                <input id="perms-acc_create" type="text" class="form-control user-perms" name="permissions">
             </form>
         </div>
     `)
@@ -115,6 +117,7 @@ function new_user(){
         let pict = wrapper.querySelector("input[name='pict']")
         let admin = wrapper.querySelector("input[name='admin']").checked
         let cloud = wrapper.querySelector("input[name='cloud']").checked
+        let permissions = wrapper.querySelector("input[name='permissions']").value
 
         e.preventDefault()
 
@@ -128,6 +131,7 @@ function new_user(){
         data.append("create_user", null)
         data.append("admin", admin)
         data.append("cloud", cloud)
+        data.append("permissions", permissions)
 
         request.addEventListener("load", _ => {
             modal.destroy()

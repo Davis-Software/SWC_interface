@@ -13,9 +13,10 @@ def acp_users():
                 request.form.get("name"),
                 request.form.get("passwd"),
                 request.form.get("desc"),
-                request.files.get("pict").stream.read(),
+                request.files.get("pict").stream.read() if request.files.get("pict") is not None else None,
                 admin=request.form.get("admin") == "true",
-                cloud=request.form.get("cloud") == "true"
+                cloud=request.form.get("cloud") == "true",
+                permissions=request.form.get("permissions").split(",")
             )
         if "set_permissions" in request.form:
             user_repo.set_permissions(
