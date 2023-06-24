@@ -57,6 +57,8 @@ def file_getter(path: str, personal: bool, user: str, filter_by: str = None):
             for file in os.listdir(location):
                 add_to_list(file)
 
+        file_list.sort(key=lambda x: x["name"].lower())
+
         return file_list, RequestCode.Success.OK
 
     return {
