@@ -127,6 +127,21 @@ function upload(){
         }
     )
 
+    input.addEventListener("change", e => {
+        let sum = 0
+        for(let file of e.target.files){
+            sum += file.size
+        }
+        if(sum > 1024*1024*1024*32){
+            modal.clear()
+            modal.Text(
+                "err-text",
+                "span",
+                `Error - Files are too large (Max 32GB)`
+            )
+        }
+    })
+
     modal.Button(
         "accept",
         "Upload",
