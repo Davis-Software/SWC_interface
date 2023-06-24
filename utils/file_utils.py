@@ -50,13 +50,13 @@ def get_file_size(path: str, formatted: bool = True, round_to: int = 1, limit: b
         if isdir(path):
             cycle = 0
             for dir_path, _, file_names in os.walk(path):
-                if cycle > 15 and limit:
+                if cycle > 5 and limit:
                     oversize = True
                     break
                 for i in file_names:
                     f = join(dir_path, i)
                     file_size += getsize(f)
-                    cycle += 1
+                cycle += 1
 
         if not formatted:
             return round(file_size, round_to)
