@@ -29,13 +29,14 @@
     let startZoom = 13
 
     let providers = {
-        dark: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
-        light: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
-        outdoors: "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",
-        satellite: "https://tiles.stadiamaps.com/data/satellite/{z}/{x}/{y}.jpg",
+        openstreetmap: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {#dark: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",#}
+        {#light: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",#}
+        {#outdoors: "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",#}
+        {#satellite: "https://tiles.stadiamaps.com/data/satellite/{z}/{x}/{y}.jpg",#}
         satellite_2: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     }
-    let defaultProvider = 'dark'
+    let defaultProvider = 'openstreetmap'
 
     let positions = {}
 
