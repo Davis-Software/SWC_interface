@@ -1,7 +1,7 @@
 <div class="container mt-5">
     <div class="mt-3 mb-5">
         <h4>Available tools</h4>
-        <div class="list-group"></div>
+        <div class="list-group tools"></div>
     </div>
 </div>
 
@@ -11,7 +11,7 @@
         fetch(`${url}/tool-list`)
             .then((response) => response.json())
             .then(function (tools) {
-                let list = document.querySelector(".list-group")
+                let list = document.querySelector(".list-group.tools")
                 tools.forEach((tool) => {
                     let item = document.createElement("a")
                     item.classList.add("list-group-item", "list-group-item-action")
