@@ -12,11 +12,11 @@
 
         let style = document.createElement('link');
         style.rel = 'stylesheet';
-        style.href = '/static/css/modules/leaflet.min.css';
+        style.href = 'https://interface.software-city.org/static/css/modules/leaflet.min.css';
         document.head.appendChild(style);
 
         let script = document.createElement('script');
-        script.src = '/static/js/modules/leaflet.js';
+        script.src = 'https://interface.software-city.org/static/js/modules/leaflet.js';
         document.head.appendChild(script);
 
         script.onload = () => {
@@ -35,13 +35,13 @@
                 if(layer instanceof L.Marker) map.removeLayer(layer)
             })
 
-            fetch("/server/locator").then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+            app_fetch("https://interface.software-city.org/server/locator").then(resp => resp.ok ? resp.json() : Promise.reject(resp))
                 .then(pos => {
                     Object.keys(pos).forEach((position) => {
                         pos[position] = {
                             ...pos[position],
                             icon: L.icon({
-                                iconUrl: `/user?app_avatar=${position}`,
+                                iconUrl: `https://interface.software-city.org/user?app_avatar=${position}`,
                                 iconSize: [38, 38],
                                 iconAnchor: [22, 38],
                                 popupAnchor: [-3, -76],
