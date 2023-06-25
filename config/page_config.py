@@ -50,6 +50,7 @@ dashboard_module_description = {
 
 server_page_modules = {
     "dynmap": ["Software-City MC Map", "Explore Software City's map through a bird's eye view with DynMap.", False],
+    "locator": ["Software-City Member Locator", "Locate yourself and see where other SWC Members are.", False],
     "teamspeak": ["Teamspeak Channel Tree", "Get an overview of the software city teamspeak channels.", False],
     "toolbox": ["Software City Toolbox", "Access to some powerful swc tools (access restricted)", False]
 }
