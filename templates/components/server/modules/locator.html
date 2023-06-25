@@ -25,17 +25,17 @@
 <div id="map"></div>
 
 <script>
-    const startPosition = {lat: 49.7577, lng: 6.6368}
-    const startZoom = 13
+    let startPosition = {lat: 49.7577, lng: 6.6368}
+    let startZoom = 13
 
-    const providers = {
+    let providers = {
         dark: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
         light: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
         outdoors: "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",
         satellite: "https://tiles.stadiamaps.com/data/satellite/{z}/{x}/{y}.jpg",
         satellite_2: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     }
-    const defaultProvider = 'dark'
+    let defaultProvider = 'dark'
 
     let positions = {}
 
