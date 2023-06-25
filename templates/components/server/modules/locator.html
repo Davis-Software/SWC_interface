@@ -25,148 +25,150 @@
 <div id="map"></div>
 
 <script>
-    let startPosition = {lat: 49.7577, lng: 6.6368}
-    let startZoom = 13
+    (function() {
+        let startPosition = {lat: 49.7577, lng: 6.6368}
+        let startZoom = 13
 
-    let providers = {
-        openstreetmap: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {#dark: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",#}
-        {#light: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",#}
-        {#outdoors: "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",#}
-        {#satellite: "https://tiles.stadiamaps.com/data/satellite/{z}/{x}/{y}.jpg",#}
-        satellite_2: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    }
-    let defaultProvider = 'openstreetmap'
-
-    let positions = {}
-
-    let script = document.createElement('script');
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.crossOrigin = '';
-    document.head.appendChild(script);
-
-    script.onload = () => {
-        let map = L.map('map', {
-            center: startPosition,
-            zoom: startZoom
-        })
-
-        // add controls for the layers
-        L.control.layers(
-            Object.keys(providers).reduce((acc, provider) => {
-                acc[provider] = L.tileLayer(providers[provider])
-                if(provider === defaultProvider) acc[provider].addTo(map)
-                return acc
-            }, {}),
-            {}
-        ).addTo(map)
-
-        addControls(map)
-        loadMarkers(map)
-
-        map.on('locationfound', (e) => {
-            let data = new FormData()
-            data.append('lat', e.latlng.lat)
-            data.append('lng', e.latlng.lng)
-            fetch("/server/locator", {
-                method: 'POST',
-                body: data
-            }).then(resp => resp.ok ? resp.text() : Promise.reject(resp))
-                .then(() => {
-                    loadMarkers(map)
-                })
-                .catch(err => {
-                    console.error(err)
-                    alert(err.message)
-                })
-        })
-        map.on('locationerror', (e) => {
-            console.error(e)
-            alert(e.message)
-        })
-    }
-
-    function addControls(map){
-        let controlContainer = document.querySelector('.leaflet-control-container .leaflet-top.leaflet-left .leaflet-control')
-
-        let refreshButton = document.createElement('a')
-        refreshButton.title = 'Refresh'
-        refreshButton.href = '#'
-        refreshButton.textContent = '↻'
-        refreshButton.style.width = '30px'
-        refreshButton.style.height = '31px'
-        refreshButton.style.display = 'block'
-        refreshButton.onclick = () => {
-            loadMarkers(map)
+        let providers = {
+            openstreetmap: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {#dark: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",#}
+            {#light: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",#}
+            {#outdoors: "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",#}
+            {#satellite: "https://tiles.stadiamaps.com/data/satellite/{z}/{x}/{y}.jpg",#}
+            satellite_2: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         }
-        controlContainer.appendChild(refreshButton)
+        let defaultProvider = 'openstreetmap'
 
-        let locateMeButton = document.createElement('a')
-        locateMeButton.title = 'Locate me'
-        locateMeButton.href = '#'
-        locateMeButton.textContent = '⌕'
-        locateMeButton.style.width = '30px'
-        locateMeButton.style.height = '31px'
-        locateMeButton.style.display = 'block'
-        locateMeButton.onclick = () => {
-            map.locate({setView: true, maxZoom: 16})
-        }
-        controlContainer.appendChild(locateMeButton)
+        let positions = {}
 
-        let autoScaleButton = document.createElement('a')
-        autoScaleButton.title = 'Auto scale'
-        autoScaleButton.href = '#'
-        autoScaleButton.textContent = '⇱'
-        autoScaleButton.style.width = '30px'
-        autoScaleButton.style.height = '31px'
-        autoScaleButton.style.display = 'block'
-        autoScaleButton.onclick = () => {
-            map.fitBounds(new L.LatLngBounds(Object.values(positions)))
-        }
-        controlContainer.appendChild(autoScaleButton)
-    }
-    function loadMarkers(map){
-        // remove all markers
-        map.eachLayer((layer) => {
-            if(layer instanceof L.Marker) map.removeLayer(layer)
-        })
+        let script = document.createElement('script');
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.crossOrigin = '';
+        document.head.appendChild(script);
 
-        fetch("/server/locator").then(resp => resp.ok ? resp.json() : Promise.reject(resp))
-            .then(pos => {
-                Object.keys(pos).forEach((position) => {
-                    pos[position] = {
-                        ...pos[position],
-                        icon: L.icon({
-                            iconUrl: `/user?app_avatar=${position}`,
-                            iconSize: [38, 38],
-                            iconAnchor: [22, 38],
-                            popupAnchor: [-3, -76],
-                            shadowSize: [68, 95],
-                            shadowAnchor: [22, 94]
-                        })
-                    }
-                })
-                positions = pos
-
-                // add user markers
-                let markers = []
-                Object.keys(positions).forEach((position) => {
-                    let marker = L.marker(positions[position], {
-                        title: position,
-                        riseOnHover: true,
-                        icon: positions[position].icon
-                    }).addTo(map)
-                    markers.push({
-                        position: positions[position],
-                        marker: marker,
-                        popup: marker.bindPopup(`${position}<br />${positions[position].time}`),
-                        name: position
-                    })
-                })
-
-                // scale the map
-                map.fitBounds(new L.LatLngBounds(Object.values(positions)))
+        script.onload = () => {
+            let map = L.map('map', {
+                center: startPosition,
+                zoom: startZoom
             })
-            .catch(err => console.error(err))
-    }
+
+            // add controls for the layers
+            L.control.layers(
+                Object.keys(providers).reduce((acc, provider) => {
+                    acc[provider] = L.tileLayer(providers[provider])
+                    if(provider === defaultProvider) acc[provider].addTo(map)
+                    return acc
+                }, {}),
+                {}
+            ).addTo(map)
+
+            addControls(map)
+            loadMarkers(map)
+
+            map.on('locationfound', (e) => {
+                let data = new FormData()
+                data.append('lat', e.latlng.lat)
+                data.append('lng', e.latlng.lng)
+                fetch("/server/locator", {
+                    method: 'POST',
+                    body: data
+                }).then(resp => resp.ok ? resp.text() : Promise.reject(resp))
+                    .then(() => {
+                        loadMarkers(map)
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        alert(err.message)
+                    })
+            })
+            map.on('locationerror', (e) => {
+                console.error(e)
+                alert(e.message)
+            })
+        }
+
+        function addControls(map){
+            let controlContainer = document.querySelector('.leaflet-control-container .leaflet-top.leaflet-left .leaflet-control')
+
+            let refreshButton = document.createElement('a')
+            refreshButton.title = 'Refresh'
+            refreshButton.href = '#'
+            refreshButton.textContent = '↻'
+            refreshButton.style.width = '30px'
+            refreshButton.style.height = '31px'
+            refreshButton.style.display = 'block'
+            refreshButton.onclick = () => {
+                loadMarkers(map)
+            }
+            controlContainer.appendChild(refreshButton)
+
+            let locateMeButton = document.createElement('a')
+            locateMeButton.title = 'Locate me'
+            locateMeButton.href = '#'
+            locateMeButton.textContent = '⌕'
+            locateMeButton.style.width = '30px'
+            locateMeButton.style.height = '31px'
+            locateMeButton.style.display = 'block'
+            locateMeButton.onclick = () => {
+                map.locate({setView: true, maxZoom: 16})
+            }
+            controlContainer.appendChild(locateMeButton)
+
+            let autoScaleButton = document.createElement('a')
+            autoScaleButton.title = 'Auto scale'
+            autoScaleButton.href = '#'
+            autoScaleButton.textContent = '⇱'
+            autoScaleButton.style.width = '30px'
+            autoScaleButton.style.height = '31px'
+            autoScaleButton.style.display = 'block'
+            autoScaleButton.onclick = () => {
+                map.fitBounds(new L.LatLngBounds(Object.values(positions)))
+            }
+            controlContainer.appendChild(autoScaleButton)
+        }
+        function loadMarkers(map){
+            // remove all markers
+            map.eachLayer((layer) => {
+                if(layer instanceof L.Marker) map.removeLayer(layer)
+            })
+
+            fetch("/server/locator").then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+                .then(pos => {
+                    Object.keys(pos).forEach((position) => {
+                        pos[position] = {
+                            ...pos[position],
+                            icon: L.icon({
+                                iconUrl: `/user?app_avatar=${position}`,
+                                iconSize: [38, 38],
+                                iconAnchor: [22, 38],
+                                popupAnchor: [-3, -76],
+                                shadowSize: [68, 95],
+                                shadowAnchor: [22, 94]
+                            })
+                        }
+                    })
+                    positions = pos
+
+                    // add user markers
+                    let markers = []
+                    Object.keys(positions).forEach((position) => {
+                        let marker = L.marker(positions[position], {
+                            title: position,
+                            riseOnHover: true,
+                            icon: positions[position].icon
+                        }).addTo(map)
+                        markers.push({
+                            position: positions[position],
+                            marker: marker,
+                            popup: marker.bindPopup(`${position}<br />${positions[position].time}`),
+                            name: position
+                        })
+                    })
+
+                    // scale the map
+                    map.fitBounds(new L.LatLngBounds(Object.values(positions)))
+                })
+                .catch(err => console.error(err))
+        }
+    }())
 </script>
