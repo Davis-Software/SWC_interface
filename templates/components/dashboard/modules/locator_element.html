@@ -1,0 +1,77 @@
+<div class="dashboard-element">
+    <div class="dashboard-element-body position-relative p-0">
+        <div id="map" class="rounded-3" style="min-height: 350px"></div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        let startPosition = {lat: 49.7577, lng: 6.6368}
+        let startZoom = 13
+        let positions = {}
+
+        let style = document.createElement('link');
+        style.rel = 'stylesheet';
+        style.href = '/static/css/modules/leaflet.min.css';
+        document.head.appendChild(style);
+
+        let script = document.createElement('script');
+        script.src = '/static/js/modules/leaflet.js';
+        document.head.appendChild(script);
+
+        script.onload = () => {
+            let map = L.map('map', {
+                center: startPosition,
+                zoom: startZoom
+            })
+            L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png").setZIndex(-1).addTo(map)
+
+            loadMarkers(map)
+        }
+
+        function loadMarkers(map){
+            // remove all markers
+            map.eachLayer((layer) => {
+                if(layer instanceof L.Marker) map.removeLayer(layer)
+            })
+
+            fetch("/server/locator").then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+                .then(pos => {
+                    Object.keys(pos).forEach((position) => {
+                        pos[position] = {
+                            ...pos[position],
+                            icon: L.icon({
+                                iconUrl: `/user?app_avatar=${position}`,
+                                iconSize: [38, 38],
+                                iconAnchor: [22, 38],
+                                popupAnchor: [-3, -76],
+                                shadowSize: [68, 95],
+                                shadowAnchor: [22, 94]
+                            })
+                        }
+                    })
+                    positions = pos
+
+                    // add user markers
+                    let markers = []
+                    Object.keys(positions).forEach((position) => {
+                        let marker = L.marker(positions[position], {
+                            title: position,
+                            riseOnHover: true,
+                            icon: positions[position].icon
+                        }).addTo(map)
+                        markers.push({
+                            position: positions[position],
+                            marker: marker,
+                            popup: marker.bindPopup(`${position}<br />${positions[position].time}`),
+                            name: position
+                        })
+                    })
+
+                    // scale the map
+                    map.fitBounds(new L.LatLngBounds(Object.values(positions)))
+                })
+                .catch(err => console.error(err))
+        }
+    })()
+</script>

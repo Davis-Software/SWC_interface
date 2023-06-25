@@ -44,7 +44,11 @@ dashboard_module_description = {
     "ipa_reader_element": [
         "IPA Reader",
         "A tool for reading International Phonetic Alphabet (IPA) notation aloud"
-    ]
+    ],
+    "locator_element": [
+        "Member Locator",
+        "Locate yourself and see where other SWC Members are"
+    ],
 }
 
 
