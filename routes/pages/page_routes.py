@@ -20,3 +20,6 @@ def dashboard_module_request(module):
         return resp
 
     return RequestCode.ClientError.NotFound
+
+
+from .server import locator
