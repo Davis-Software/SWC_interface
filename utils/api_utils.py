@@ -7,7 +7,18 @@ route is loaded, but some data is retrieved from the JS frontend directly.
 This file makes is easier to create API responses to those calls.
 """
 
-from __init__ import make_response, RequestCode, jsonify
+from __init__ import RequestCode
+from functools import wraps
+from flask import make_response
+
+
+def no_cors_response(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        ret = make_response(func(*args, **kwargs))
+        ret.headers["Access-Control-Allow-Origin"] = "*"
+        return ret
+    return wrapper
 
 
 def craft_response(data, status_code, **kwargs):

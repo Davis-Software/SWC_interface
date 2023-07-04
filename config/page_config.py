@@ -47,7 +47,16 @@ dashboard_module_description = {
     ],
     "locator_element": [
         "Member Locator",
-        "Locate yourself and see where other SWC Members are"
+        "Locate yourself and see where other SWC Members are", [{
+            "mode": "select",
+            "id": "locator_auto_update",
+            "desc": "Auto Update",
+            "args": [
+                ["On (fast)", "fast"],
+                ["On (slow)", "slow"],
+                ["Off", "off"]
+            ]
+        }]
     ],
 }
 

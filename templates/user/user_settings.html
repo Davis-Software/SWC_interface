@@ -115,6 +115,23 @@
             <div class="collapse" id="collapse_privacy" data-bs-parent="#accordion">
                 <div class="card-body">
                     <div class="bg-dark p-3 mb-3">
+                        <h4>Locator Token</h4>
+                        <div class="mt-3 ml-3">
+                            <span>This is your SWC Member Locator Token. Please don't share it with anyone!</span>
+                            <div class="input-group mt-3">
+                                <span class="input-group-text">Token</span>
+                                <input
+                                    type="text"
+                                    id="swc-locator-token"
+                                    class="form-control bg-dark"
+                                    value="loading..."
+                                    disabled
+                                >
+                                <button class="btn btn-warning" onclick="copy_locator_token()">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-dark p-3 mb-3">
                         <h4>Cookies</h4>
                         <div class="mt-3 ml-3">
                             <ul class="list-unstyled">

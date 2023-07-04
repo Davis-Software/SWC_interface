@@ -289,10 +289,20 @@ function delete_data(mode){
     })
     modal.show()
 }
+function copy_locator_token(){
+    let token = document.querySelector("#swc-locator-token").value
+    navigator.clipboard.writeText(token).then(_ => {
+        alert("Copied token to clipboard")
+    })
+}
 
 
 {
     document.querySelector(".user-img-change").addEventListener("click", change_avatar)
+
+    fetch("/server/locator/token").then(r => r.json()).then(data => {
+        document.querySelector("#swc-locator-token").value = data.token
+    })
 
     document.querySelector("#cookies-allowed").innerText = getCookie("acceptCookies") === "true" ? "Yes" : "No*"
     document.querySelector("#cookies-count").innerText = getCookieCount() + "*"
