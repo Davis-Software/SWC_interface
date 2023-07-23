@@ -87,6 +87,26 @@
             `Click ${changer ? "Me" : "me and"}`,
             `${changer ? "M" : "m"}ake me ripple!`
         ]
+        const phrase_stages = {
+            10: "Click me harder!",
+            20: "I said click me harder!",
+            30: "Yes, that's it!",
+            40: "Harder!",
+            50: "HARDER!",
+            60: "HARDER!!!",
+            70: "CLICK ME HARDER!!!",
+            80: "CLICK ME HARDER, DAMN IT!!!",
+            90: "CLICK ME HARDER, DADDY!!!",
+            100: "You're not clicking hard enough!"
+        }
+
+        function getPhraseStage(clicks){
+            for(let stage in phrase_stages){
+                if(clicks >= stage) continue
+                return phrase_stages[stage]
+            }
+            return "rekt"
+        }
 
         const el = document.querySelector('#ripple-plate span')
         const fx = new TextScramble(el)
@@ -108,7 +128,7 @@
         })
         document.querySelector("#ripple-plate").addEventListener("click", _ => {
             click_counter++
-            fx.setText(`You've clicked me ${click_counter} times!`)
+            fx.setText(`You've clicked me ${click_counter} times!<br>${getPhraseStage(click_counter)}`)
         })
         document.querySelector("#ripple-plate").addEventListener("mouseleave", _ => {
             interrupter = false
