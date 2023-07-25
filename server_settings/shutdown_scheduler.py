@@ -25,7 +25,7 @@ data = get_settings(tags)
 
 
 def set_shutdown_time():
-    if not data.get("down-state"):
+    if data.get("down-state") == "false":
         return
 
     schedule.clear("server-shutdown-scheduler")
