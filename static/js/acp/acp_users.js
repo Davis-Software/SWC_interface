@@ -147,6 +147,46 @@ function new_user(){
     modal.show()
 }
 
+function setPassword(user){
+    let modal = new Modal("#modal-wrapper", {title: "Set Password", static_backdrop: true}, "large")
+    modal.Custom(`
+        <div>
+            <form id="form_22231">
+                <input type="password" class="form-control" name="id" placeholder="Password" pattern="[A-Za-z0-9-_+%€/.!§$&?#*><]{6,}" title="Allowed: A-Z a-z 0-9 - _" required> <br>
+            </form>
+        </div>
+    `)
+    modal.Button(
+        "form_submit",
+        "Set Password",
+        "btn btn-outline-warning w-100",
+        {
+            form: "form_22231"
+        },
+        true
+    )
+
+    document.querySelector("#form_22231").addEventListener("submit", e => {
+        let wrapper = e.target
+        let password = wrapper.querySelector("input[name='id']").value
+
+        e.preventDefault()
+
+        let data = new FormData()
+        let request = new XMLHttpRequest()
+
+        data.append("password", password)
+        data.append("set_password", user)
+
+        request.addEventListener("load", _ => {
+            modal.destroy()
+        })
+
+        request.open("POST", "/acp/users")
+        request.send(data)
+    })
+    modal.show()
+}
 function delete_avatar(user){
     let modal = new Modal("#modal-wrapper", {title: "Delete Avatar"}, "large")
     modal.Custom(`

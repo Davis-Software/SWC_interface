@@ -23,6 +23,11 @@ def acp_users():
                 request.form.get("set_permissions"),
                 request.form.get("permissions").split(",")
             )
+        if "set_password" in request.form:
+            user_repo.set_password(
+                request.form.get("set_password"),
+                request.form.get("password")
+            )
         if "remove_user" in request.form:
             user_repo.delete_user(
                 request.form.get("remove_user")
