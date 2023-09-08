@@ -1,0 +1,193 @@
+<div class="container">
+    <div class="input-group mt-5 mb-2">
+        <input id="search-bar" type="text" class="form-control bg-dark" placeholder="Search (id, text or headline)">
+        <button id="search" class="btn btn-primary">Search</button>
+        <button id="add" class="btn btn-info">Add News</button>
+    </div>
+    <table id="news-table" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Headline</th>
+                <th>Text</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="load-btn" class="w-100 btn btn-primary">Load more</button>
+</div>
+
+
+<script>
+    (function(){
+        let dev = false
+
+        let app_fetch = (url, options) => {
+            let url_extender = url.includes("?") ? "&" : "?"
+            let baseUrl = dev ? `http://localhost:8080` : `https://api.software-city.org`
+            return fetch(`${baseUrl}/app/news_api${url}${url_extender}s_key=${getCookie("s_key")}`, options)
+        }
+
+        let table = document.querySelector("#news-table tbody")
+        let btn = document.querySelector("#load-btn")
+        let inp = document.querySelector("#search-bar")
+        let search = document.querySelector("#search")
+
+        let load_location = 1
+        let amount = 50
+        let last_filter = null
+
+
+        async function add_news() {
+            let modal = new Modal(null, {
+                title: `Create news`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let head = modal.Input("news-head", "text", "form-control", {placeholder: "Headline"})
+            let text = modal.TextArea("news-text", "", {placeholder: "Text"})
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let form = new FormData()
+                form.append("headline", head.value)
+                form.append("newsline", text.value)
+                app_fetch(`/add_news`, {
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    reload()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        async function edit_news(news, elem) {
+            let modal = new Modal(null, {
+                title: `Editing news #${news.id}`,
+                close_button: "Cancel",
+                centered: true,
+                static_backdrop: true
+            }, "huge")
+
+            let head = modal.Input("news-head", "text", "form-control", {placeholder: "Headline"})
+            head.value = news.headline
+            let text = modal.TextArea("news-text", "", {placeholder: "Text"})
+            text.value = news.newsline
+
+            modal.Button("save-btn", "Save", "btn-success", {}, true).addEventListener("click", _ => {
+                let form = new FormData()
+                form.append("id", news.id)
+                form.append("headline", head.value)
+                form.append("newsline", text.value)
+                app_fetch(`/edit_news`, {
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.querySelectorAll("td")[1].innerHTML = head.value
+                    elem.querySelectorAll("td")[2].innerHTML = text.value
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+        function delete_news(news, elem) {
+            let modal = new Modal(null, {
+                title: `Delete news #${news.id}?`,
+                close_button: "Cancel",
+                centered: true
+            }, "huge")
+
+            let head = modal.Input("news-head", "text", "form-control", {disabled: true})
+            head.value = news.headline
+            let text = modal.TextArea("news-text", "bg-dark", {disabled: true})
+            text.value = news.newsline
+
+            modal.Button("save-btn", "Delete", "btn-danger", {}, true).addEventListener("click", _ => {
+                let form = new FormData()
+                form.append("id", news.id)
+                app_fetch(`/delete_news`, {
+                    method: "POST",
+                    body: form
+                }).then(_ => {
+                    elem.remove()
+                    modal.destroy()
+                })
+            })
+            modal.show()
+        }
+
+
+        function load_amount(filter = null) {
+            if (filter && filter !== last_filter) {
+                clear()
+                last_filter = filter
+            } else if (!filter && last_filter) {
+                filter = last_filter
+            }
+            app_fetch(`/get_news_list?page=${load_location}&page_count=${amount}&order=rev:id${filter ? `&filter=${filter}` : ""}`).then(resp => {
+                resp.json().then(body => {
+                    for (let news of body.data) {
+                        let tr = document.createElement("tr")
+                        tr.innerHTML = `
+                        <td>${news.id}</td>
+                        <td>${news.headline}</td>
+                        <td>${news.newsline}</td>
+                        <td>
+                            <a href="#edit">Edit</a> |
+                            <a href="#delete">Delete</a>
+                        </td>
+                    `
+                        tr.querySelector("a[href='#edit']").addEventListener("click", e => {
+                            e.preventDefault();
+                            edit_news(news, tr)
+                        })
+                        tr.querySelector("a[href='#delete']").addEventListener("click", e => {
+                            e.preventDefault();
+                            delete_news(news, tr)
+                        })
+                        table.append(tr)
+                    }
+                })
+            })
+            load_location++
+        }
+
+        function search_news() {
+            let search_s = inp.value
+            if (search_s === "") {
+                if (last_filter) reload()
+                return
+            }
+            load_amount(search_s)
+        }
+
+        function clear() {
+            last_filter = null
+            table.innerHTML = ""
+            load_location = 1
+        }
+
+        function reload() {
+            clear()
+            load_amount()
+        }
+
+        btn.addEventListener("click", _ => {
+            load_amount()
+        })
+        inp.addEventListener("keydown", e => {
+            if (e.key !== "Enter") return
+            search_news()
+        })
+        search.addEventListener("click", search_news)
+        document.querySelector("#add").addEventListener("click", add_news)
+
+        load_amount()
+    })()
+</script>

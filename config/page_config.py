@@ -67,7 +67,8 @@ server_page_modules = {
     "teamspeak": ["Teamspeak Channel Tree", "Get an overview of the software city teamspeak channels.", False],
     "sinusbot": ["Teamspeak Sinusbot Interface", "Select songs the bot should play on the ts server (requires a sinusbot account)", False],
     "joke_element": ["Joke API Settings", "Manage all jokes in the joke API.", True],
-    "quote_element": ["Quote API Settings", "Manage all quotes in the quote API", True]
+    "quote_element": ["Quote API Settings", "Manage all quotes in the quote API", True],
+    "news": ["News API Settings", "Manage all news in the news API", True]
 }
 
 

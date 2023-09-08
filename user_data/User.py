@@ -166,7 +166,12 @@ class UserWebQuery:
         return json.loads(self.permissions)
 
     def get_permission(self, key: str):
-        return key in self.get_permissions()
+        permissions = self.get_permissions()
+
+        if "*" in permissions:
+            return not key.startswith("!")
+
+        return key in permissions
 
     def get_settings(self, string: bool = False):
         if string:

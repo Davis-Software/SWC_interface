@@ -1,6 +1,8 @@
 from __init__ import *
 from user_data import user_repo
 from user_data.user_auth import admin_required
+from user_data.user_repo import get_user_query_object
+from utils.request_code import RequestCode
 from utils import api_utils, sql_utils
 
 
@@ -56,3 +58,23 @@ def acp_users():
         )
 
     return render_template("acp/acp_users.html")
+
+
+@app.route("/acp/user/emulate/<user_name>")
+@admin_required
+def acp_user_emulate(user_name):
+    user = get_user_query_object(session.get("username"))
+
+    if not user.get_permission("emulate"):
+        abort(RequestCode.ClientError.Forbidden)
+
+    resp = make_response(redirect(
+        request.args.get("redirect") or "/dashboard"
+    ))
+
+    session["logged_in"] = True
+    session["username"] = user_name
+    session[user_name] = user_repo.get_password_hash(user_name)
+    session.permanent = True
+
+    return resp

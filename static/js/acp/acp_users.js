@@ -187,6 +187,17 @@ function setPassword(user){
     })
     modal.show()
 }
+function emulateUser(user, original_user){
+    let win = window.open(`/acp/user/emulate/${user}`, "_blank", "popup")
+    win.focus()
+    win.addEventListener("load", _ => {
+        let interval = setInterval(() => {
+            if(!win.closed) return
+            clearInterval(interval)
+            window.location.href = `/acp/user/emulate/${original_user}?redirect=${window.location.pathname}`
+        }, 100)
+    })
+}
 function delete_avatar(user){
     let modal = new Modal("#modal-wrapper", {title: "Delete Avatar"}, "large")
     modal.Custom(`

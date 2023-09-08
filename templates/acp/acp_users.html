@@ -46,6 +46,11 @@
                 </div>
                 <div class="flex-grow-1 ms-3">
                     <ul class="float-end list-unstyled opt-list">
+                        {% if user.get_permission("emulate") %}
+                            <li class="mb-1">
+                                <button class="btn btn-info" onclick="emulateUser('user_username', '{{ user.username }}')">Emulate User</button>
+                            </li>
+                        {% endif %}
                         <li class="mb-1">
                             <button class="btn btn-primary" onclick="setPassword('user_username')">Set Password</button>
                         </li>
@@ -72,10 +77,20 @@
                             <button class="btn btn-warning">Save</button>
                         </div>
                         <span>Cheatsheet:</span>
-                        <li>
-                            nsfw: <code>allows viewing of nsfw content</code>
-                            !pp-calc: <code>prevents access to the pp calc</code>
-                        </li>
+                        <ul>
+                            <li>
+                                *: <code>applies every permission</code>
+                            </li>
+                            <li>
+                                nsfw: <code>allows viewing of nsfw content</code>
+                            </li>
+                            <li>
+                                emulate: <code>allows admins to emulate users</code>
+                            </li>
+                            <li>
+                                !pp-calc: <code>prevents access to the pp calc</code>
+                            </li>
+                        </ul>
                     </div>
 
                     <div class="card link-expander-card">
