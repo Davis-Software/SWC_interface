@@ -2,7 +2,7 @@ from flask import render_template
 
 from __init__ import app
 from route_helpers import acp_controls_adapter
-from server_settings.server_control import PowerOptions
+from server_settings.server_control import PowerOptions, SystemOptions
 from user_data.user_auth import admin_required
 from utils import api_utils
 
@@ -16,6 +16,11 @@ def acp_controls(option=None, operation=None):
             PowerOptions.shutdown()
         elif operation == "reboot":
             PowerOptions.reboot()
+        return api_utils.empty_success()
+
+    elif option == "system":
+        if operation == "wipe":
+            SystemOptions.wipe_screens()
         return api_utils.empty_success()
 
     return render_template(

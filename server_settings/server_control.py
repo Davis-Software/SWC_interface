@@ -14,3 +14,9 @@ class PowerOptions:
     @staticmethod
     def reboot():
         PowerOptions.__base("reboot")
+
+
+class SystemOptions:
+    @staticmethod
+    def wipe_screens():
+        requests.get(f"http://localhost:{configuration.server_ctrl_port}/servers/wipe")

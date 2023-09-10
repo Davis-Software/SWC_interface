@@ -31,6 +31,15 @@ document.querySelector("#btn-reboot").addEventListener("click", () => {
         fetch("/acp/controls/power/reboot").then(r => r.ok ? alert("Reboot initiated") : alert("Failed to initiate reboot"))
     })
 })
+document.querySelector("#btn-update").addEventListener("click", () => {
+    console.log("Not implemented")
+})
+document.querySelector("#btn-wipe").addEventListener("click", () => {
+    yesOrNo("Wipe?", "wipe").then(res => {
+        if(!res) return
+        fetch("/acp/controls/system/wipe").then(r => r.ok ? alert("Wipe initiated") : alert("Failed to initiate wipe"))
+    })
+})
 
 
 const controlButtons = {}

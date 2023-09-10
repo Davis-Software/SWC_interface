@@ -37,6 +37,10 @@ def run_as_user(user, command, exit_code=0):
     return os.system(f"runuser -l {user} -c 'cd ~ && {command}'") == exit_code
 
 
+def wipe_screens(user):
+    return run_as_user(user, "screen -wipe")
+
+
 private_cmds = {
     "power": {
         "shutdown": "/root/stopall.sh start && shutdown now",
@@ -102,8 +106,20 @@ def service_cmd_handler(service, cmd):
         return make_response("Unknown command", 400)
 
 
+@app.route("/servers/<cmd>")
 @app.route("/servers/<server>/<cmd>")
-def server_cmd_handler(server, cmd):
+def server_cmd_handler(server=None, cmd=None):
+    if cmd is None:
+        return make_response("Unknown command", 400)
+
+    if server is None:
+        if cmd == "wipe":
+            return make_response({
+                "success": wipe_screens("root")
+            }, 200)
+
+        return make_response("Unknown command", 400)
+
     try:
         return make_response({
             "success": cmds["servers"][server][cmd]()
