@@ -11,6 +11,15 @@ def index():
     return redirect("/login")
 
 
+@app.route("/sw")
+def route_service_worker():
+    resp = app.send_static_file("pwa/sw.js")
+    resp.headers.set("Service-Worker-Allowed", "/")
+    resp.headers.set("Content-Type", "application/javascript")
+
+    return resp
+
+
 @app.route("/dashboard", methods=["GET", "PUT", "PATCH"])
 @auth_required
 def dashboard():
