@@ -27,7 +27,7 @@ function change_avatar(e){
             preview.src = `/user?avatar=${username}`
             return
         }
-        if(e.target.files[0].size < 2000000){
+        if(e.target.files[0].size < 5000000){
             let reader = new FileReader()
             let file = e.target.files[0]
 
@@ -38,7 +38,7 @@ function change_avatar(e){
         }else{
             e.target.value = ""
             preview.src = `/user?avatar=${username}`
-            alert("Max file size is 2MB!")
+            alert("Max file size is 5MB!")
         }
     })
 
